@@ -1,0 +1,30 @@
+# ── Sistema ──────────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# ── Node.js ──────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ── Vercel (generado automáticamente, no se sube al repo) ────────────────────
+.vercel/
+**/.vercel/
+
+# ── PDFs generados (producto final, no código fuente) ────────────────────────
+*.pdf
+
+# ── Datos privados de mejengas (Google Sheets exportados, no subir) ──────────
+mejengas/2026-*/
+mejengas/20*/
+mejengas/2026/
+mejengas/node_modules/
+mejengas/package-lock.json
+
+# ── Archivos grandes de media / MVP ──────────────────────────────────────────
+MVP/
+*.mov
+*.mp4
+
+# ── Carpetas duplicadas o antiguas ───────────────────────────────────────────
+Cona App Demo/

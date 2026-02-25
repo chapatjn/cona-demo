@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CAMBIAR: titulo de la mejenga -->
+    <title>Cona - Mejenga [FECHA]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: letter;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #142029;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #142029;
+            color: #ffffff;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @media print {
+            body { background: #142029; }
+            .page { max-width: 100%; }
+        }
+
+        /* Background decorative elements */
+        .bg-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(167, 238, 67, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .bg-glow-1 { top: -100px; right: -100px; }
+        .bg-glow-2 { bottom: -100px; left: -100px; }
+
+        .bg-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, rgba(167, 238, 67, 0.06), transparent);
+            pointer-events: none;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo svg {
+            height: 22px;
+            width: auto;
+        }
+
+        .header-tag {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #A7EE43;
+            background: rgba(167, 238, 67, 0.1);
+            border: 1px solid rgba(167, 238, 67, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            padding: 20px 20px 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-section h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .title-section h1 span {
+            color: #A7EE43;
+        }
+
+        .title-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px 16px;
+            margin-top: 10px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .meta-item .dot {
+            width: 4px;
+            height: 4px;
+            background: #A7EE43;
+            border-radius: 50%;
+        }
+
+        /* Scoreboard */
+        .scoreboard {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 16px 16px 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .team-side {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+        }
+
+        .team-name.color { color: #A7EE43; }
+        .team-name.blanco { color: #ffffff; }
+
+        .team-label {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .score-center {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+        }
+
+        .score-num {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-num.color { color: #A7EE43; }
+        .score-num.blanco { color: #ffffff; }
+
+        .score-divider {
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 300;
+        }
+
+        .winner-badge {
+            display: inline-block;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #142029;
+            background: #A7EE43;
+            padding: 3px 10px;
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+
+        /* Tables */
+        .tables-section {
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .team-table {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 14px;
+            gap: 6px;
+        }
+
+        .table-header.color-header {
+            background: rgba(167, 238, 67, 0.1);
+            border-bottom: 1px solid rgba(167, 238, 67, 0.15);
+        }
+
+        .table-header.blanco-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .team-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .team-dot.color { background: #A7EE43; }
+        .team-dot.blanco { background: #ffffff; }
+
+        .table-header span {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .table-columns {
+            display: grid;
+            grid-template-columns: 24px 1fr 36px 36px;
+            padding: 6px 14px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .table-columns span {
+            font-size: 8px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .table-columns span:nth-child(3),
+        .table-columns span:nth-child(4) {
+            text-align: center;
+        }
+
+        .player-row {
+            display: grid;
+            grid-template-columns: 24px 1fr 36px 36px;
+            padding: 5px 14px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.2s;
+        }
+
+        .player-row:last-child {
+            border-bottom: none;
+        }
+
+        .player-num {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .player-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .player-name .pos-tag {
+            font-size: 8px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
+            margin-left: 4px;
+        }
+
+        .player-stat {
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .player-stat.has-value {
+            color: #A7EE43;
+            font-weight: 700;
+        }
+
+        .player-row.mvp-row {
+            background: rgba(167, 238, 67, 0.08);
+            border-left: 2px solid #A7EE43;
+        }
+
+        .player-row.mvp-row .player-name {
+            color: #A7EE43;
+            font-weight: 700;
+        }
+
+        .mvp-tag {
+            font-size: 7px;
+            font-weight: 800;
+            color: #142029;
+            background: #A7EE43;
+            padding: 1px 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+            letter-spacing: 0.05em;
+            vertical-align: middle;
+        }
+
+        /* Goals Summary */
+        .goals-section {
+            padding: 12px 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .goals-title {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 8px;
+        }
+
+        .goals-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .goals-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .goal-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 14px;
+            border: 1px solid;
+        }
+
+        .goal-chip.color {
+            background: rgba(167, 238, 67, 0.08);
+            border-color: rgba(167, 238, 67, 0.2);
+            color: #A7EE43;
+        }
+
+        .goal-chip.blanco {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .goal-icon {
+            font-size: 10px;
+        }
+
+        /* Awards */
+        .awards-section {
+            padding: 14px 16px;
+            display: flex;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .award-card {
+            flex: 1;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .award-card.mvp {
+            background: linear-gradient(135deg, rgba(167, 238, 67, 0.12) 0%, rgba(167, 238, 67, 0.04) 100%);
+            border: 1px solid rgba(167, 238, 67, 0.2);
+        }
+
+        .award-card.camisa {
+            background: linear-gradient(135deg, rgba(20, 99, 253, 0.12) 0%, rgba(20, 99, 253, 0.04) 100%);
+            border: 1px solid rgba(20, 99, 253, 0.2);
+        }
+
+        .award-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+        }
+
+        .award-card.mvp::before { background: linear-gradient(90deg, transparent, #A7EE43, transparent); }
+        .award-card.camisa::before { background: linear-gradient(90deg, transparent, #1463FD, transparent); }
+
+        .award-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .award-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            margin-bottom: 4px;
+        }
+
+        .award-label.mvp-label { color: #A7EE43; }
+        .award-label.camisa-label { color: #1463FD; }
+
+        .award-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 16px 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-left {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.3);
+            line-height: 1.5;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        .footer-url {
+            font-size: 10px;
+            font-weight: 700;
+            color: #A7EE43;
+            letter-spacing: 0.02em;
+        }
+
+        .footer-email {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+
+        .icon-svg {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Background elements -->
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+        <div class="bg-line"></div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <svg height="28" viewBox="0 0 1880 632" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M212.8 483.8C191.467 483.8 171.733 479.933 153.6 472.2C135.733 464.467 120 453.667 106.4 439.8C93.0667 425.933 82.6667 409.667 75.2 391C67.7333 372.333 64 351.933 64 329.8C64 307.667 67.6 287.267 74.8 268.6C82.2667 249.667 92.6667 233.4 106 219.8C119.6 205.933 135.467 195.267 153.6 187.8C171.733 180.067 191.467 176.2 212.8 176.2C234.133 176.2 253.2 179.8 270 187C287.067 194.2 301.467 203.8 313.2 215.8C324.933 227.533 333.333 240.467 338.4 254.6L289.6 277.4C284 262.467 274.533 250.2 261.2 240.6C247.867 230.733 231.733 225.8 212.8 225.8C194.133 225.8 177.6 230.2 163.2 239C149.067 247.8 138 259.933 130 275.4C122.267 290.867 118.4 309 118.4 329.8C118.4 350.6 122.267 368.867 130 384.6C138 400.067 149.067 412.2 163.2 421C177.6 429.8 194.133 434.2 212.8 434.2C231.733 434.2 247.867 429.4 261.2 419.8C274.533 409.933 284 397.533 289.6 382.6L338.4 405.4C333.333 419.533 324.933 432.6 313.2 444.6C301.467 456.333 287.067 465.8 270 473C253.2 480.2 234.133 483.8 212.8 483.8ZM480.659 483.8C459.326 483.8 439.859 478.867 422.259 469C404.926 459.133 391.059 445.667 380.659 428.6C370.526 411.533 365.459 392.067 365.459 370.2C365.459 348.333 370.526 328.867 380.659 311.8C391.059 294.733 404.926 281.267 422.259 271.4C439.593 261.533 459.059 256.6 480.659 256.6C501.993 256.6 521.326 261.533 538.659 271.4C555.993 281.267 569.726 294.733 579.859 311.8C590.259 328.6 595.459 348.067 595.459 370.2C595.459 392.067 590.259 411.533 579.859 428.6C569.459 445.667 555.593 459.133 538.259 469C520.926 478.867 501.726 483.8 480.659 483.8ZM480.659 435.8C492.393 435.8 502.659 433 511.459 427.4C520.526 421.8 527.593 414.067 532.659 404.2C537.993 394.067 540.659 382.733 540.659 370.2C540.659 357.4 537.993 346.2 532.659 336.6C527.593 326.733 520.526 319 511.459 313.4C502.659 307.533 492.393 304.6 480.659 304.6C468.659 304.6 458.126 307.533 449.059 313.4C439.993 319 432.793 326.733 427.459 336.6C422.393 346.2 419.859 357.4 419.859 370.2C419.859 382.733 422.393 394.067 427.459 404.2C432.793 414.067 439.993 421.8 449.059 427.4C458.126 433 468.659 435.8 480.659 435.8ZM635.197 479V261.4H684.397V304.2L680.397 296.6C685.464 283.533 693.73 273.667 705.197 267C716.93 260.067 730.53 256.6 745.997 256.6C761.997 256.6 776.13 260.067 788.397 267C800.93 273.933 810.664 283.667 817.597 296.2C824.53 308.467 827.997 322.733 827.997 339V479H775.597V351.4C775.597 341.8 773.73 333.533 769.997 326.6C766.264 319.667 761.064 314.333 754.397 310.6C747.997 306.6 740.397 304.6 731.597 304.6C723.064 304.6 715.464 306.6 708.797 310.6C702.13 314.333 696.93 319.667 693.197 326.6C689.464 333.533 687.597 341.8 687.597 351.4V479H635.197ZM938.306 483.8C923.106 483.8 909.906 481.267 898.706 476.2C887.506 471.133 878.84 463.933 872.706 454.6C866.573 445 863.506 433.933 863.506 421.4C863.506 409.4 866.173 398.733 871.506 389.4C876.84 379.8 885.106 371.8 896.306 365.4C907.506 359 921.64 354.467 938.706 351.8L1009.91 340.2V380.2L948.706 390.6C938.306 392.467 930.573 395.8 925.506 400.6C920.44 405.4 917.906 411.667 917.906 419.4C917.906 426.867 920.706 432.867 926.306 437.4C932.173 441.667 939.373 443.8 947.906 443.8C958.84 443.8 968.44 441.533 976.706 437C985.24 432.2 991.773 425.667 996.306 417.4C1001.11 409.133 1003.51 400.067 1003.51 390.2V334.2C1003.51 324.867 999.773 317.133 992.306 311C985.106 304.6 975.506 301.4 963.506 301.4C952.306 301.4 942.306 304.467 933.506 310.6C924.973 316.467 918.706 324.333 914.706 334.2L871.906 313.4C876.173 301.933 882.84 292.067 891.906 283.8C901.24 275.267 912.173 268.6 924.706 263.8C937.24 259 950.84 256.6 965.506 256.6C983.373 256.6 999.106 259.933 1012.71 266.6C1026.31 273 1036.84 282.067 1044.31 293.8C1052.04 305.267 1055.91 318.733 1055.91 334.2V479H1006.31V441.8L1017.51 441C1011.91 450.333 1005.24 458.2 997.506 464.6C989.773 470.733 980.973 475.533 971.106 479C961.24 482.2 950.306 483.8 938.306 483.8Z" fill="#A7EE43"/>
+                    <path d="M1773 532C1807.79 532 1836 505.361 1836 472.5C1836 439.639 1807.79 413 1773 413C1738.21 413 1710 439.639 1710 472.5C1710 505.361 1738.21 532 1773 532Z" fill="#A7EE43"/>
+                    <path d="M1492.6 147C1483.9 146.942 1477.59 140.191 1472.58 134.796C1470.37 132.401 1449.6 109.523 1459.8 91.6353C1466.99 79.0275 1484.84 77.2676 1491.75 76.5751C1499.42 75.825 1511.44 74.6133 1519.02 81.8548C1529.41 91.8084 1523.52 110.071 1521.58 116.043C1518.11 126.776 1507.79 147.087 1492.63 146.971L1492.6 147Z" fill="#A7EE43"/>
+                    <path d="M1223.55 205.546C1218.12 219.928 1231.18 236.208 1237.16 243.686C1244.36 252.66 1254.17 264.913 1266.56 264.827C1278.68 264.74 1285.82 252.832 1300.86 232.871C1318.81 209.055 1342.11 179.228 1374.91 159.67C1389.07 151.242 1406.32 141.29 1423.42 146.899C1435.81 150.983 1444.83 162.143 1448.42 173.073C1457.11 199.449 1430.35 214.146 1415.55 255.996C1398.27 304.979 1423.06 314.155 1403.22 365.899C1390.19 399.897 1369.63 420.836 1356.93 432.916C1341.74 447.413 1334.15 454.632 1327.68 453.252C1309.76 449.397 1299.25 397.739 1301.95 355.084C1303.29 333.915 1307.48 321.691 1299.22 314.874C1284.64 302.822 1249.43 322.151 1246.64 323.733C1238.98 327.99 1210.43 343.982 1211.01 366.388C1211.25 375.592 1218.6 383.387 1232.24 399.379C1235.61 403.348 1238.53 406.483 1241.35 409.36C1255.3 423.396 1266.87 433.089 1277.95 442.178C1316.23 473.501 1317.99 475.802 1324.67 475.917C1335.24 476.118 1343.75 470.509 1360.18 459.694C1370.26 453.079 1376.55 447.326 1385.75 438.87C1404.01 422.102 1410.18 411.488 1427.16 401.421C1440.82 393.339 1461.78 390.808 1503.37 386.464C1576.6 378.842 1623.86 373.895 1635.8 394.633C1641.69 404.901 1636.59 417.356 1629.69 434.153C1617.82 463.146 1595.55 482.417 1577.42 497.834C1551.18 520.125 1538.63 523.577 1537.66 536.491C1536.35 553.95 1557.77 568.216 1564.51 572.732C1566.94 574.343 1602.21 597.209 1629.88 583.806C1636.65 580.527 1645.28 573.969 1660.71 523.088C1676.9 469.704 1685.1 442.35 1674.86 417.384C1672.31 411.114 1662.1 386.206 1636.2 372.543C1611.5 359.485 1581.22 362.476 1567.06 363.771C1556.22 364.748 1545.77 366.848 1526.51 366.963C1513.03 367.049 1506.28 367.078 1498.48 365.324C1472.57 359.485 1457.32 340.933 1454.37 337.222C1439.34 318.325 1438.36 298.306 1438.03 289.016C1437.73 280.243 1437.27 254.846 1456.01 232.296C1470.38 215.009 1488.6 208.336 1497.29 205.288C1512.14 200.053 1519.71 201.146 1540.48 199.104C1564.97 196.716 1602.78 193.035 1636.16 174.224C1644.34 169.622 1653.42 161.827 1671.55 146.295C1713.65 110.198 1734.97 92.0772 1730.39 76.6028C1726.71 64.2061 1708.94 57.9645 1691.6 51.9243C1675.71 46.4019 1658.82 40.5055 1644.85 46.5457C1626.87 54.3117 1631.06 74.5607 1613.93 113.937C1601.48 142.556 1587.99 173.62 1558.34 184.204C1531.25 193.897 1501.82 182.479 1496.29 180.206C1487.91 176.755 1477.18 169.794 1456.01 155.47C1436.21 142.096 1433.2 138.155 1423.12 134.79C1416.49 132.604 1404.71 129.958 1373.27 136.372C1356.08 139.881 1331.9 146.353 1304.14 159.066C1304.14 159.066 1287.31 165.509 1242.63 188.979C1233.85 193.581 1226.56 197.579 1223.58 205.489L1223.55 205.546Z" fill="#A7EE43"/>
+                </svg>
+            </div>
+            <!-- CAMBIAR: tag del header -->
+            <div class="header-tag">Mejenga #X - 2026</div>
+        </div>
+
+        <!-- CAMBIAR: titulo, fecha, cancha, formato, organizador -->
+        <div class="title-section">
+            <h1>Mejenga [Dia] <span>Futbol 7</span></h1>
+            <div class="title-meta">
+                <div class="meta-item">
+                    <span class="dot"></span>
+                    [Dia] [DD] de [mes], 2026
+                </div>
+                <div class="meta-item">
+                    <span class="dot"></span>
+                    [Cancha], [Ubicacion]
+                </div>
+                <div class="meta-item">
+                    <span class="dot"></span>
+                    7 vs 7
+                </div>
+                <div class="meta-item">
+                    <span class="dot"></span>
+                    Organizador: [Nombre]
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMBIAR: marcador y ganador -->
+        <!-- winner-badge va en el team-side del equipo ganador -->
+        <!-- Si es empate, no poner winner-badge en ninguno -->
+        <div class="scoreboard">
+            <div class="team-side">
+                <div class="team-name blanco">Equipo Color</div>
+                <div class="winner-badge">Ganador</div>
+            </div>
+            <div class="score-center">
+                <span class="score-num blanco">[X]</span>
+                <span class="score-divider">-</span>
+                <span class="score-num blanco">[Y]</span>
+            </div>
+            <div class="team-side">
+                <div class="team-name blanco">Equipo Blanco</div>
+                <div class="team-label">&nbsp;</div>
+                <div style="height: 21px;"></div>
+            </div>
+        </div>
+
+        <!-- CAMBIAR: jugadores de cada equipo -->
+        <!-- Reglas:
+             - Porteros llevan <span class="pos-tag">POR</span> despues del nombre
+             - Stats con valor: class="player-stat has-value" y poner el numero
+             - Stats sin valor: class="player-stat" y poner "-"
+             - MVP lleva class="player-row mvp-row" y emoji balon antes del nombre
+        -->
+        <div class="tables-section">
+            <!-- Equipo Color -->
+            <div class="team-table">
+                <div class="table-header blanco-header">
+                    <span class="team-dot blanco"></span>
+                    <span style="color: #ffffff;">Equipo Color</span>
+                </div>
+                <div class="table-columns">
+                    <span>#</span>
+                    <span>Jugador</span>
+                    <span style="text-align:center;">Gol</span>
+                    <span style="text-align:center;">Ast</span>
+                </div>
+                <!-- REPETIR player-row por cada jugador -->
+                <div class="player-row">
+                    <span class="player-num">1</span>
+                    <span class="player-name">[Nombre] <span class="pos-tag">POR</span></span>
+                    <span class="player-stat">-</span>
+                    <span class="player-stat">-</span>
+                </div>
+            </div>
+
+            <!-- Equipo Blanco -->
+            <div class="team-table">
+                <div class="table-header blanco-header">
+                    <span class="team-dot blanco"></span>
+                    <span style="color: #ffffff;">Equipo Blanco</span>
+                </div>
+                <div class="table-columns">
+                    <span>#</span>
+                    <span>Jugador</span>
+                    <span style="text-align:center;">Gol</span>
+                    <span style="text-align:center;">Ast</span>
+                </div>
+                <!-- REPETIR player-row por cada jugador -->
+                <div class="player-row">
+                    <span class="player-num">1</span>
+                    <span class="player-name">[Nombre] <span class="pos-tag">POR</span></span>
+                    <span class="player-stat">-</span>
+                    <span class="player-stat">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMBIAR: goleadores (solo jugadores con goles > 0) -->
+        <!-- Usar class="goal-chip color" para Equipo Color -->
+        <!-- Usar class="goal-chip blanco" para Equipo Blanco -->
+        <div class="goals-section">
+            <div class="goals-title">Goleadores</div>
+            <div class="goals-grid">
+                <div class="goals-col">
+                    <span class="goal-chip color"><span class="goal-icon">&#9917;</span> [Nombre] x[N]</span>
+                </div>
+                <div class="goals-col">
+                    <span class="goal-chip blanco"><span class="goal-icon">&#9917;</span> [Nombre] x[N]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMBIAR: MVP -->
+        <div class="awards-section">
+            <div class="award-card mvp">
+                <span class="award-icon">&#127942;</span>
+                <div class="award-label mvp-label">MVP de la Mejenga</div>
+                <div class="award-name">[Nombre MVP]</div>
+            </div>
+        </div>
+
+        <!-- Footer (no cambiar) -->
+        <div class="footer">
+            <div class="footer-left">
+                Porque no todos los cracks juegan en primera...<br>
+                pero todos merecen cancha.
+            </div>
+            <div class="footer-right">
+                <div class="footer-url">www.cona.futbol</div>
+                <div class="footer-email">info@cona.futbol</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
