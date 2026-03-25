@@ -7,8 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+button{-webkit-appearance:none;appearance:none}
 :root{
---bg:#0a1a10;--f1:#14351d;--f2:#184826;--line:rgba(255,255,255,.1);
+--bg:#0a1a10;--f1:#0f2916;--f2:#14351d;--line:rgba(167,238,67,.12);
 --g:#A7EE43;--g2:rgba(167,238,67,.15);
 --t1b:rgba(20,20,25,.85);--t1c:rgba(255,255,255,.55);
 --t2b:rgba(167,238,67,.88);--t2c:#0a1a10;
@@ -49,26 +50,27 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* ═══ APP ═══ */
 .app{display:none;flex-direction:column;height:100dvh}
 .app.on{display:flex}
+.app-left{display:flex;flex-direction:column;flex:1;min-width:0;position:relative}
+.app-right{display:none}
 
 /* Scoreboard */
-.sb{display:flex;align-items:center;justify-content:center;padding:max(8px,calc(var(--sat) - 4px)) 12px 8px;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);flex-shrink:0;gap:6px}
-.sb-side{display:flex;align-items:center;gap:6px}
-.sb-dot{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
-.sb-dot.t1{background:var(--t1b);border:2px solid var(--t1c);color:#fff}
-.sb-dot.t2{background:var(--t2b);color:var(--t2c)}
-.sb-nm{font-size:10px;font-weight:700;color:var(--w7)}
+.sb{display:flex;flex-shrink:0;padding:max(10px,var(--sat)) 14px 10px;background:rgba(6,16,10,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(167,238,67,.08)}
+.sb-core{display:flex;align-items:center;justify-content:center;flex:1;gap:4px}
+.sb-nm{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.sb-nm.t1{color:rgba(255,255,255,.7)}
+.sb-nm.t2{color:var(--g)}
 .sb-sc{font-size:42px;font-weight:800;min-width:32px;text-align:center;line-height:1}
 .sb-sc.t1{color:#fff}
 .sb-sc.t2{color:var(--g)}
 .sb-d{padding:0 6px;font-size:20px;color:var(--w4);font-weight:300}
-.sb-tm{font-size:15px;font-weight:800;padding:7px 12px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums;margin-left:auto}
+.sb-tm{font-size:14px;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums;flex-shrink:0}
 .sb-tm.on{color:var(--g);background:rgba(167,238,67,.1);border:1px solid rgba(167,238,67,.2)}
 .sb-tm.off{color:var(--w4);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);animation:bl 1.2s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* Field */
 .pitch{flex:1;position:relative;overflow:hidden;background:var(--f1)}
-.pitch::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,var(--f1) 0%,var(--f1) 10%,var(--f2) 10%,var(--f2) 20%);opacity:.5}
+.pitch::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,var(--f1) 0%,var(--f1) 10%,var(--f2) 10%,var(--f2) 20%);opacity:.7}
 .fm{position:absolute;border:1px solid var(--line);pointer-events:none;z-index:1}
 .fm.bd{left:3%;right:3%;top:1.5%;bottom:1.5%;border-radius:3px}
 .fm.hl{left:3%;right:3%;top:50%;height:0}
@@ -82,56 +84,72 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* Nodes */
 .pn{position:absolute;z-index:5;display:flex;flex-direction:column;align-items:center;cursor:pointer}
 .pn:active .bl{transform:scale(.9)}
-.bl{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;box-shadow:0 2px 10px rgba(0,0,0,.5);position:relative;transition:transform .08s}
-.pn.t1 .bl{background:var(--t1b);border:2.5px solid var(--t1c);color:#fff;backdrop-filter:blur(3px)}
-.pn.t2 .bl{background:var(--t2b);border:2.5px solid rgba(120,200,30,.5);color:var(--t2c)}
+.bl{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;box-shadow:0 3px 12px rgba(0,0,0,.5);position:relative;transition:transform .08s}
+.pn.t1 .bl{background:rgba(20,20,25,.9);border:2.5px solid rgba(255,255,255,.5);color:#fff;backdrop-filter:blur(3px)}
+.pn.t2 .bl{background:var(--g);border:2.5px solid rgba(120,200,30,.6);color:var(--t2c)}
 .pn.por .bl{border-style:dashed}
-.pn .lb{font-size:7px;font-weight:700;color:rgba(255,255,255,.6);margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.8);max-width:56px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .lb{font-size:9px;font-weight:700;color:rgba(255,255,255,.75);margin-top:3px;text-shadow:0 1px 4px rgba(0,0,0,.9);max-width:64px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* badges */
-.badge{position:absolute;min-width:17px;height:17px;border-radius:9px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.badge{position:absolute;min-width:18px;height:18px;border-radius:9px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .badge.bg{top:-5px;right:-5px;background:var(--g);color:#0a1a10}
 .badge.bs{top:-5px;left:-5px;background:#fbbf24;color:#0a1a10}
 
 /* ═══ POPUP ═══ */
-.pop-bg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.5);backdrop-filter:blur(3px);align-items:center;justify-content:center}
+.pop-bg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center}
 .pop-bg.on{display:flex}
-.pop{background:rgba(12,22,15,.92);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:16px;width:calc(100% - 32px);max-width:360px;box-shadow:0 16px 48px rgba(0,0,0,.5)}
-.pop-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06)}
-.pop-j{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0}
-.pop-j.t1{background:var(--t1b);border:2px solid var(--t1c);color:#fff}
-.pop-j.t2{background:var(--t2b);color:var(--t2c)}
-.pop-nm{font-size:15px;font-weight:800;flex:1}
-.pop-ps{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.06em}
-.pop-x{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w4);font-size:13px;flex-shrink:0;border:none;font-family:inherit}
+.pop{background:rgba(10,20,13,.97);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:0 0 14px;width:calc(100% - 16px);max-width:400px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.pop-hd{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.pop-j{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
+.pop-j.t1{background:var(--t1b);border:2.5px solid var(--t1c);color:#fff}
+.pop-j.t2{background:var(--t2b);border:2.5px solid rgba(120,200,30,.5);color:var(--t2c)}
+.pop-nm{font-size:17px;font-weight:800;flex:1}
+.pop-ps{font-size:9px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.pop-x{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w4);font-size:14px;flex-shrink:0;border:none;font-family:inherit}
+.pop-bd{padding:0 14px}
+
+/* Section dividers */
+.pop-sec{display:flex;align-items:center;gap:8px;padding:12px 4px 8px}
+.pop-sec-ico{display:inline-flex;align-items:center;justify-content:center}
+.pop-sec-ico svg{width:14px;height:14px}
+.pop-sec-lb{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
+.pop-sec-lb.atk{color:var(--g)}
+.pop-sec-lb.def{color:#58a6ff}
+.pop-sec-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
 
 /* Stat grid */
-.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .sc{border-radius:12px;overflow:hidden;border:1.5px solid transparent;display:flex;flex-direction:column}
-.sc-top{display:flex;align-items:center;justify-content:center;gap:4px;padding:6px 4px 0}
+.sc-top{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 4px 0}
 .sc-ico{display:flex;align-items:center;justify-content:center}
 .sc-ico svg{width:16px;height:16px}
 .sc-lb{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.sc-desc{display:block;font-size:7px;color:#aaa;font-weight:400;margin-top:1px;letter-spacing:0}
 .sc-row{display:flex;align-items:center;justify-content:space-between}
-.sc-btn{width:40px;height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;transition:background .08s}
-.sc-btn:active{background:rgba(255,255,255,.1)}
+.sc-btn{width:48px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;transition:background .08s;border-radius:8px;-webkit-appearance:none;appearance:none}
+.sc-btn:active{background:rgba(255,255,255,.12)}
 .sc-btn.mn{color:rgba(255,255,255,.2)}
-.sc-v{font-size:20px;font-weight:800;min-width:20px;text-align:center;font-variant-numeric:tabular-nums}
+.sc-v{font-size:22px;font-weight:800;min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
 
 /* colors */
 .sc.gol{background:rgba(167,238,67,.06);border-color:rgba(167,238,67,.15);color:var(--g)}
-.sc.ast{background:rgba(88,166,255,.05);border-color:rgba(88,166,255,.1);color:#58a6ff}
 .sc.tap{background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.1);color:#fbbf24}
-.sc.tir{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.05);color:var(--w7)}
-.sc.cle{background:rgba(255,107,107,.04);border-color:rgba(255,107,107,.08);color:#ff6b6b}
+.sc.tir{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06);color:var(--w7)}
+.sc.pst{background:rgba(255,165,0,.05);border-color:rgba(255,165,0,.1);color:#ffa500}
+.sc.sal{background:rgba(88,166,255,.05);border-color:rgba(88,166,255,.1);color:#58a6ff}
+
+/* autogol btn */
+.og-btn{width:100%;padding:12px;border:1px dashed rgba(255,60,60,.25);border-radius:10px;background:rgba(255,60,60,.04);color:rgba(255,80,80,.8);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-appearance:none;appearance:none}
+.og-btn:active{background:rgba(255,60,60,.12)}
+.og-btn svg{width:16px;height:16px}
 
 /* primary row */
-.sc.pri{grid-column:span 3;flex-direction:row;align-items:center;padding:4px 0}
-.sc.pri .sc-top{padding:0 8px;flex-direction:column;gap:2px}
+.sc.pri{flex-direction:row;align-items:center;padding:6px 0}
+.sc.pri .sc-top{padding:0 10px;flex-direction:column;gap:1px}
 .sc.pri .sc-ico svg{width:22px;height:22px}
-.sc.pri .sc-lb{font-size:9px}
-.sc.pri .sc-row{flex:1;justify-content:center;gap:4px}
-.sc.pri .sc-btn{width:52px;height:44px;font-size:24px}
-.sc.pri .sc-v{font-size:28px;min-width:30px}
+.sc.pri .sc-lb{font-size:10px}
+.sc.pri .sc-row{flex:1;justify-content:center;gap:6px}
+.sc.pri .sc-btn{width:54px;height:48px;font-size:26px}
+.sc.pri .sc-v{font-size:30px;min-width:32px}
 
 /* ═══ ASSIST ═══ */
 .ast-bg{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.65);flex-direction:column;justify-content:flex-end}
@@ -147,19 +165,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ast-n{font-size:12px;font-weight:700;color:var(--w7)}
 .ast-no{width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);cursor:pointer;text-align:center;font-size:11px;font-weight:700;color:var(--w4);margin-top:6px;font-family:inherit}
 
-/* ═══ INFO BAR ═══ */
-.ib{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 10px calc(6px + var(--sab));background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.06);z-index:10}
-.ib-ev{font-size:9px;font-weight:600;color:var(--w4)}
-.ib-last{font-size:10px;font-weight:700;color:var(--w7);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ib-btn{padding:6px 10px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);font-family:inherit;font-size:9px;font-weight:700;color:var(--w4);cursor:pointer}
+/* ═══ INFO BAR (right side) ═══ */
+.ib{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;background:rgba(10,26,16,.85);backdrop-filter:blur(10px);border:1px solid rgba(167,238,67,.1);border-radius:12px;z-index:10}
+.ib-ev{font-size:8px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 6px;border-radius:4px}
+.ib-last{display:none}
+.ib-btn{padding:7px 8px;border-radius:8px;background:rgba(167,238,67,.06);border:1px solid rgba(167,238,67,.12);font-family:inherit;font-size:9px;font-weight:700;color:var(--g);cursor:pointer;white-space:nowrap}
+.ib-btn:active{background:rgba(167,238,67,.15)}
 
 /* ═══ TIMELINE ═══ */
-.tl-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(0,0,0,.88);flex-direction:column}
+.tl-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(6,16,10,.95);flex-direction:column}
 .tl-bg.on{display:flex}
 .tl-x{position:absolute;top:max(12px,var(--sat));right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w7);font-size:15px;z-index:1;border:none;font-family:inherit}
 .tl-w{flex:1;overflow-y:auto;padding-bottom:24px}
-.tl-hd{padding:max(20px,calc(var(--sat) + 8px)) 24px 16px;text-align:center}
-.tl-mn{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--w4);margin-bottom:12px}
+.tl-hd{padding:max(20px,calc(var(--sat) + 8px)) 24px 16px;text-align:center;border-bottom:1px solid rgba(167,238,67,.1)}
+.tl-mn{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g);margin-bottom:12px}
 .tl-sr{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px}
 .tl-ts{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:70px}
 .tl-td{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
@@ -188,33 +207,286 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .tl-rs{text-align:center;padding:2px 0 6px;font-size:14px;font-weight:800;letter-spacing:.05em}
 
 /* ═══ EXPORT ═══ */
-.ex-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(0,0,0,.8);flex-direction:column;justify-content:flex-end}
+.ex-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(6,16,10,.95);flex-direction:column;justify-content:flex-end}
 .ex-bg.on{display:flex}
-.ex-sh{background:var(--bg);border-top:2px solid var(--g);border-radius:16px 16px 0 0;padding:16px 16px calc(16px + var(--sab));max-height:80vh;overflow-y:auto}
-.ex-t{font-size:14px;font-weight:800;margin-bottom:12px;text-align:center}
+.ex-sh{background:rgba(10,26,16,.98);border-top:1px solid rgba(167,238,67,.15);border-radius:16px 16px 0 0;padding:18px 16px calc(18px + var(--sab));max-height:80vh;overflow-y:auto}
+.ex-t{font-size:16px;font-weight:800;margin-bottom:14px;text-align:center;color:var(--g)}
 .ex-pre{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;font-family:'SF Mono',monospace;font-size:10px;color:var(--w7);white-space:pre-wrap;line-height:1.5;max-height:40vh;overflow-y:auto;margin-bottom:12px}
 .ex-row{display:flex;gap:8px}
 .ex-btn{flex:1;padding:14px;border-radius:10px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .ex-btn.cp{background:var(--g);color:#0a1a10}
 .ex-btn.cl{background:rgba(255,255,255,.06);color:var(--w7)}
 
+/* ═══ HOME ═══ */
+.home{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.home.gone{display:none}
+.hm-h{padding:max(24px,var(--sat)) 20px 8px;text-align:center}
+.hm-h h1{font-size:22px;font-weight:800}
+.hm-h h1 span{color:var(--g)}
+.hm-h p{font-size:11px;color:var(--w4);margin-top:4px}
+.hm-new{margin:16px 16px 0;padding:18px;background:var(--g);color:#0a1a10;border:none;border-radius:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.hm-new:active{opacity:.85}
+.hm-new svg{width:22px;height:22px}
+.hm-sec{display:flex;align-items:center;gap:10px;padding:20px 16px 10px}
+.hm-sec-lb{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--w4)}
+.hm-sec-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.hm-sec-cnt{font-size:9px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 8px;border-radius:10px}
+.hm-list{padding:0 16px 24px;display:flex;flex-direction:column;gap:8px}
+.hm-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;cursor:pointer;transition:background .1s}
+.hm-card:active{background:rgba(255,255,255,.06)}
+.hm-card.active{border-color:rgba(167,238,67,.25)}
+.hm-card.done{border-color:rgba(255,255,255,.08)}
+.hm-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hm-name{font-size:14px;font-weight:800;color:#fff}
+.hm-badge{font-size:8px;font-weight:700;padding:3px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.08em}
+.hm-badge.live{background:rgba(167,238,67,.15);color:var(--g);border:1px solid rgba(167,238,67,.25)}
+.hm-badge.fin{background:rgba(255,255,255,.05);color:var(--w4);border:1px solid rgba(255,255,255,.06)}
+.hm-score{font-size:16px;font-weight:800;margin-bottom:6px}
+.hm-score .t1c{color:#fff}
+.hm-score .t2c{color:var(--g)}
+.hm-score .sep{color:var(--w4);font-weight:300;margin:0 4px}
+.hm-meta{display:flex;flex-wrap:wrap;gap:6px 14px}
+.hm-mi{font-size:10px;color:var(--w4);font-weight:600}
+.hm-mi span{color:var(--w7)}
+.hm-empty{text-align:center;padding:32px 16px;color:var(--w4);font-size:12px;line-height:1.6}
+.hm-loading{text-align:center;padding:24px;color:var(--w4);font-size:11px}
+
+/* Recovery overlay */
+.rec-bg{position:fixed;inset:0;z-index:250;display:none;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.rec-bg.on{display:flex}
+.rec-box{background:rgba(10,26,16,.97);border:1px solid rgba(167,238,67,.2);border-radius:20px;padding:28px 24px;width:100%;max-width:360px;text-align:center}
+.rec-ico{font-size:36px;margin-bottom:12px}
+.rec-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.rec-sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.5}
+.rec-info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;margin-bottom:20px;text-align:left}
+.rec-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.rec-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+.rec-val{font-size:12px;font-weight:700;color:#fff}
+.rec-val.g{color:#A7EE43}
+.rec-btns{display:flex;flex-direction:column;gap:8px}
+.rec-btn{width:100%;padding:16px;border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.rec-btn.cont{background:#A7EE43;color:#0a1a10}
+.rec-btn.new{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+.rec-btn.new:active{background:rgba(255,60,60,.1);border-color:rgba(255,60,60,.2);color:rgba(255,100,100,.9)}
+
 /* Toast */
 .toast{position:fixed;top:max(48px,calc(var(--sat) + 36px));left:50%;transform:translateX(-50%) translateY(-16px);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;z-index:300;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;background:var(--g);color:#0a1a10;box-shadow:0 4px 16px rgba(167,238,67,.3)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══ FINALIZAR ═══ */
+.fin-btn{padding:8px 14px;border-radius:8px;background:rgba(255,60,60,.1);border:1px solid rgba(255,60,60,.2);font-family:inherit;font-size:10px;font-weight:700;color:rgba(255,100,100,.9);cursor:pointer}
+.fin-btn:active{background:rgba(255,60,60,.2)}
+.fin-btn.done{background:var(--g);border-color:var(--g);color:#0a1a10}
+
+/* Shooter overlay (save → who shot?) */
+.sht-bg{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.65);flex-direction:column;justify-content:flex-end}
+.sht-bg.on{display:flex}
+.sht-sh{background:rgba(15,25,18,.95);backdrop-filter:blur(12px);border-top:2px solid #fbbf24;border-radius:16px 16px 0 0;padding:14px 16px calc(14px + var(--sab));max-height:55vh;overflow-y:auto}
+.sht-t{font-size:11px;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;text-align:center}
+
+/* Shot type overlay */
+.sty-bg{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.65);flex-direction:column;justify-content:flex-end}
+.sty-bg.on{display:flex}
+.sty-sh{background:rgba(15,25,18,.95);backdrop-filter:blur(12px);border-top:2px solid var(--w7);border-radius:16px 16px 0 0;padding:14px 16px calc(14px + var(--sab))}
+.sty-t{font-size:11px;font-weight:700;color:var(--w7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;text-align:center}
+.sty-opts{display:flex;flex-direction:column;gap:8px}
+.sty-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;border:none;background:rgba(255,255,255,.04);font-family:inherit;font-size:13px;font-weight:700;color:var(--w7);text-align:left;-webkit-appearance:none;width:100%}
+.sty-opt:active{background:rgba(255,255,255,.1)}
+.sty-opt .sty-emoji{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.sty-opt .sty-svg{display:flex;align-items:center;justify-content:center}
+.sty-opt .sty-svg svg{width:24px;height:24px}
+.sty-opt .sty-desc{font-size:10px;font-weight:600;color:var(--w4);margin-top:2px}
+.sty-opt.err{border:1px solid rgba(255,60,60,.2)}
+.sty-opt.neu{border:1px solid rgba(255,255,255,.08)}
+.sty-opt.good{border:1px solid rgba(167,238,67,.15)}
+
+/* ═══ TABLA (SofaScore style) ═══ */
+.tb-bg{position:fixed;inset:0;z-index:100;display:none;background:var(--bg);flex-direction:column}
+.tb-bg.on{display:flex}
+.tb-w{flex:1;overflow-y:auto;padding:0 10px calc(24px + var(--sab))}
+.tb-hd{padding:max(16px,calc(var(--sat) + 6px)) 16px 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
+.tb-ti{font-size:16px;font-weight:800;color:#fff}
+.tb-sub{font-size:11px;color:var(--w4);font-weight:600;margin-top:4px}
+
+/* Card container */
+.tb-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;margin-top:10px;overflow:hidden}
+.tb-card-title{text-align:center;font-size:12px;font-weight:800;color:var(--w7);padding:14px 16px 0}
+
+/* Stat row — SofaScore style: value | label | value */
+.tb-sr{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.03)}
+.tb-sr:last-child{border-bottom:none}
+.tb-sv{font-size:14px;font-weight:800;min-width:36px;font-variant-numeric:tabular-nums}
+.tb-sv.t1{text-align:left;color:rgba(255,255,255,.5)}
+.tb-sv.t2{text-align:right;color:rgba(255,255,255,.5)}
+.tb-sv.win{padding:2px 8px;border-radius:6px}
+.tb-sv.t1.win{background:rgba(255,255,255,.1);color:#fff}
+.tb-sv.t2.win{background:rgba(167,238,67,.15);color:var(--g)}
+.tb-sl{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--w4)}
+
+/* Big score row */
+.tb-big{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px}
+.tb-big-side{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.tb-big-dot{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.tb-big-dot.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.tb-big-dot.t2{background:var(--t2b);color:var(--t2c)}
+.tb-big-name{font-size:10px;font-weight:700;color:var(--w4)}
+.tb-big-sc{font-size:38px;font-weight:800;line-height:1}
+.tb-big-sc.t1{color:#fff}
+.tb-big-sc.t2{color:var(--g)}
+.tb-big-sep{font-size:24px;color:var(--w4);font-weight:300;padding:0 8px}
+
+/* Bar comparison */
+.tb-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:2px;margin:0 16px 14px}
+.tb-bar-bl{height:100%;border-radius:3px;transition:width .3s}
+.tb-bar-bl.t1{background:rgba(255,255,255,.35)}
+.tb-bar-bl.t2{background:var(--g)}
+
+/* Section divider */
+.tb-div{display:flex;align-items:center;gap:10px;padding:14px 6px 4px}
+.tb-div-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.tb-div-lb{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--g)}
+
+/* Individual leaderboards */
+.tb-sec{padding:0 4px}
+.tb-sec-hd{display:flex;align-items:center;gap:6px;padding:12px 12px 8px}
+.tb-sec-ico{display:inline-flex;align-items:center;justify-content:center}
+.tb-sec-ico svg{width:14px;height:14px}
+.tb-sec-lb{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.tb-sec-lb.gol{color:var(--g)}.tb-sec-lb.ast{color:var(--g)}.tb-sec-lb.tap{color:#fbbf24}.tb-sec-lb.sal{color:#58a6ff}
+.tb-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03)}
+.tb-row:last-child{border-bottom:none}
+.tb-pos{font-size:11px;font-weight:800;color:var(--w4);min-width:16px}
+.tb-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+.tb-dot.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.tb-dot.t2{background:var(--t2b);color:var(--t2c)}
+.tb-nm{font-size:12px;font-weight:600;color:var(--w7);flex:1}
+.tb-val{font-size:15px;font-weight:800;padding:2px 8px;border-radius:6px}
+.tb-val.gol{color:var(--g);background:rgba(167,238,67,.1)}.tb-val.ast{color:var(--g);background:rgba(167,238,67,.1)}
+.tb-val.tap{color:#fbbf24;background:rgba(251,191,36,.1)}.tb-val.sal{color:#58a6ff;background:rgba(88,166,255,.1)}
+.tb-empty{font-size:11px;color:var(--w4);padding:8px 12px}
+
+/* ═══ PREVIEW (pre-report editable stats) ═══ */
+.prev-bg{position:fixed;inset:0;z-index:100;display:none;background:var(--bg);flex-direction:column}
+.prev-bg.on{display:flex}
+.prev-hd{padding:max(16px,calc(var(--sat) + 6px)) 16px 12px;text-align:center;border-bottom:1px solid rgba(167,238,67,.1);flex-shrink:0}
+.prev-ti{font-size:16px;font-weight:800;color:#fff}
+.prev-sub{font-size:11px;color:var(--w4);font-weight:600;margin-top:4px}
+.prev-w{flex:1;overflow-y:auto;padding:0 10px calc(24px + var(--sab));-webkit-overflow-scrolling:touch}
+.prev-team{display:flex;align-items:center;gap:8px;padding:14px 6px 8px}
+.prev-team-dot{width:16px;height:16px;border-radius:6px}
+.prev-team-dot.t1{background:var(--t1b);border:2px solid var(--t1c)}
+.prev-team-dot.t2{background:var(--t2b)}
+.prev-team-nm{font-size:12px;font-weight:800}
+.prev-team-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.prev-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.prev-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prev-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.prev-dot.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.prev-dot.t2{background:var(--t2b);color:var(--t2c)}
+.prev-nm{font-size:13px;font-weight:700;flex:1;color:var(--w7)}
+.prev-pos{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase}
+.prev-rt{font-size:14px;font-weight:800;padding:2px 8px;border-radius:6px}
+.prev-rt.high{background:rgba(167,238,67,.15);color:var(--g)}
+.prev-rt.mid{background:rgba(251,191,36,.12);color:#fbbf24}
+.prev-rt.low{background:rgba(255,107,107,.12);color:#ff6b6b}
+.prev-stats{display:flex;flex-wrap:wrap;gap:4px}
+.prev-stat{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:4px 4px 4px 8px}
+.prev-stat-lb{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.04em;margin-right:2px}
+.prev-stat-v{font-size:13px;font-weight:800;min-width:16px;text-align:center;font-variant-numeric:tabular-nums;color:var(--w7)}
+.prev-stat-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border:none;background:none;color:var(--w4);cursor:pointer;border-radius:6px;font-family:inherit;-webkit-appearance:none;appearance:none}
+.prev-stat-btn:active{background:rgba(255,255,255,.1)}
+.prev-ft{position:sticky;bottom:0;padding:12px 16px calc(12px + var(--sab));background:linear-gradient(transparent,var(--bg) 30%);flex-shrink:0}
+.prev-go{width:100%;padding:16px;background:var(--g);color:#0a1a10;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;-webkit-appearance:none;appearance:none}
+.prev-back{width:100%;padding:12px;background:rgba(255,255,255,.06);color:var(--w7);border:1px solid rgba(255,255,255,.08);border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;-webkit-appearance:none;appearance:none}
+
+/* ═══ DESKTOP ═══ */
+@media(min-width:768px){
+  /* Home */
+  .home{align-items:center}
+  .hm-h{padding-top:40px}
+  .hm-new{max-width:400px;margin:20px auto 0}
+  .hm-sec{max-width:800px;width:100%;margin:0 auto;padding:24px 20px 12px}
+  .hm-list{max-width:800px;width:100%;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px 40px}
+  .hm-card{transition:transform .1s}
+  .hm-card:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+
+  /* Setup */
+  .setup{align-items:center}
+  .su-h{max-width:500px;width:100%}
+  .su-b{max-width:500px;width:100%}
+  .su-ft{max-width:500px;width:100%;margin:0 auto}
+
+  /* App / Tracking — side by side */
+  .app.on{flex-direction:row;height:100dvh}
+  .sb{flex-shrink:0;width:100%;position:absolute;top:0;left:0;right:0;z-index:20}
+  .app-left{display:flex;flex-direction:column;flex:1;min-width:0;position:relative}
+  .pitch{flex:1}
+
+  /* Desktop tabla sidebar */
+  .app-right{display:none;width:360px;flex-shrink:0;background:rgba(6,16,10,.95);border-left:1px solid rgba(167,238,67,.08);overflow-y:auto}
+  .app.on .app-right{display:block}
+  .desk-tb-hd{padding:16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
+  .desk-tb-hd .tb-ti{font-size:15px;font-weight:800;color:#fff}
+  .desk-tb-hd .tb-sub{font-size:10px;color:var(--w4);margin-top:2px}
+  .desk-tb-w{padding:0 8px 24px}
+
+  /* Popup wider on desktop */
+  .pop{max-width:440px}
+
+  /* Tabla fullscreen overlay — still works on desktop */
+  .tb-bg{max-width:500px;margin:0 auto;border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06)}
+  .tl-bg{max-width:500px;margin:0 auto}
+}
+
+@media(min-width:1024px){
+  .hm-list{grid-template-columns:repeat(3,1fr);max-width:1000px}
+  .hm-sec{max-width:1000px}
+  .app-right{width:420px}
+}
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
 
+<!-- HOME -->
+<div class="home" id="home">
+<div class="hm-h">
+  <h1>Cona <span>Organizador</span></h1>
+  <p>Gestiona tus mejengas</p>
+</div>
+<button class="hm-new" onclick="goToSetup()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  Nueva Mejenga
+</button>
+<div class="hm-sec">
+  <span class="hm-sec-lb">Mejengas</span>
+  <div class="hm-sec-line"></div>
+  <span class="hm-sec-cnt" id="hmCnt">...</span>
+</div>
+<div class="hm-list" id="hmList">
+  <div class="hm-loading">Cargando mejengas...</div>
+</div>
+</div>
+
 <!-- SETUP -->
-<div class="setup" id="setup">
-<div class="su-h"><h1>Setup Mejenga</h1><p>Arma los equipos y arranca</p></div>
+<div class="setup gone" id="setup">
+<div class="su-h">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px">
+    <button onclick="backToHome()" style="background:none;border:none;color:var(--w4);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:8px 0">← Volver</button>
+    <span style="font-size:9px;color:var(--w4)">Nueva mejenga</span>
+  </div>
+  <h1>Setup Mejenga</h1><p>Arma los equipos y arranca</p>
+</div>
 <div class="su-b">
   <div class="su-lbl">Partido</div>
   <div class="su-fx">
     <input class="si" id="sN" placeholder="Mejenga 7" value="Mejenga 7">
     <input class="si" id="sF" placeholder="Fut 5" value="Fut 5" style="width:80px;flex:none">
   </div>
+  <div class="su-lbl">Detalles</div>
+  <input class="si" id="sC" placeholder="Cancha (ej: PlayFútbol Curri)">
+  <input class="si" id="sU" placeholder="Ubicación (ej: Curridabat)" style="margin-top:6px">
+  <input class="si" id="sO" placeholder="Organizador (ej: Esteban)" style="margin-top:6px">
   <div class="su-t"><div class="su-td t1"></div><span class="su-tn">Equipo Negro</span></div>
   <div id="st1"></div>
   <button class="su-a" onclick="addR('st1')">+ Jugador</button>
@@ -227,24 +499,41 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- APP -->
 <div class="app" id="app">
+<div class="app-left">
 <div class="sb">
-  <div class="sb-side"><div class="sb-dot t1">N</div><div class="sb-nm">Negro</div></div>
-  <div class="sb-sc t1" id="s1">0</div>
-  <div class="sb-d">-</div>
-  <div class="sb-sc t2" id="s2">0</div>
-  <div class="sb-side" style="flex-direction:row-reverse"><div class="sb-dot t2">V</div><div class="sb-nm">Verde</div></div>
   <div class="sb-tm off" id="tmr" onclick="togT()">00:00</div>
+  <div class="sb-core">
+    <div class="sb-nm t1">Negro</div>
+    <div class="sb-sc t1" id="s1">0</div>
+    <div class="sb-d">-</div>
+    <div class="sb-sc t2" id="s2">0</div>
+    <div class="sb-nm t2">Verde</div>
+  </div>
+  <div class="sb-tm" style="visibility:hidden">00:00</div>
 </div>
 <div class="pitch">
   <div class="fm bd"></div><div class="fm hl"></div><div class="fm cc"></div><div class="fm cd"></div>
   <div class="fm bt"></div><div class="fm bb"></div><div class="fm gt"></div><div class="fm gb"></div>
   <div id="nd"></div>
+  <div class="ib">
+    <div class="ib-ev" id="ec">0</div>
+    <div class="ib-btn" onclick="openTabla()">Tabla</div>
+    <div class="ib-btn" onclick="openTl()">Timeline</div>
+    <div class="ib-btn" onclick="openEx()">Datos</div>
+    <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
+    <button class="ib-btn" onclick="resetMejenga()" style="color:rgba(255,100,100,.8);border-color:rgba(255,60,60,.2);background:rgba(255,60,60,.06);font-size:8px;padding:5px 6px">Inicio</button>
+  </div>
+  <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);z-index:10"><span id="syncBadge" style="font-size:8px;font-weight:600;transition:color .3s"></span></div>
+  <div class="ib-last" id="le" style="position:absolute;bottom:4px;left:8px;font-size:9px;font-weight:600;color:var(--w4);z-index:10;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Toca un jugador</div>
 </div>
-<div class="ib">
-  <div class="ib-ev" id="ec">0</div>
-  <div class="ib-last" id="le">Toca un jugador</div>
-  <div class="ib-btn" onclick="openTl()">Timeline</div>
-  <div class="ib-btn" onclick="openEx()">Datos</div>
+</div>
+<!-- Desktop sidebar -->
+<div class="app-right" id="deskTabla">
+  <div class="desk-tb-hd">
+    <div class="tb-ti" id="deskTbTi">Estadísticas</div>
+    <div class="tb-sub" id="deskTbSub"></div>
+  </div>
+  <div class="desk-tb-w" id="deskTbW"></div>
 </div>
 </div>
 
@@ -256,7 +545,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div style="flex:1"><div class="pop-nm" id="pN"></div><div class="pop-ps" id="pP"></div></div>
     <button class="pop-x" onclick="closePop()">✕</button>
   </div>
-  <div id="pB"></div>
+  <div class="pop-bd" id="pB"></div>
 </div>
 </div>
 
@@ -267,6 +556,25 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="ast-g" id="astG"></div>
   <button class="ast-no" onclick="doAst(null)">Sin asistencia</button>
 </div>
+</div>
+
+<!-- SHOOTER (save → who shot?) -->
+<div class="sht-bg" id="shtBg">
+<div class="sht-sh">
+  <div class="sht-t">Tapada! Quien tiro?</div>
+  <div class="ast-g" id="shtG"></div>
+  <button class="ast-no" onclick="doShooter(null)">No se</button>
+</div>
+</div>
+
+<!-- TABLA -->
+<div class="tb-bg" id="tbBg">
+<button class="tl-x" onclick="closeTabla()">✕</button>
+<div class="tb-hd">
+  <div class="tb-ti" id="tbTi">Estadísticas</div>
+  <div class="tb-sub" id="tbSub"></div>
+</div>
+<div class="tb-w" id="tbW"></div>
 </div>
 
 <!-- TIMELINE -->
@@ -286,6 +594,45 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </div>
 </div>
 
+<!-- RECOVERY -->
+<div class="rec-bg" id="recBg">
+<div class="rec-box">
+  <div class="rec-ico">&#9917;</div>
+  <div class="rec-title">Mejenga en progreso</div>
+  <div class="rec-sub">Se encontró una mejenga guardada.<br>¿Querés continuar o empezar una nueva?</div>
+  <div class="rec-info" id="recInfo"></div>
+  <div class="rec-btns">
+    <button class="rec-btn cont" onclick="resumeState()">Continuar mejenga</button>
+    <button class="rec-btn new" onclick="discardState()">Descartar y empezar nueva</button>
+  </div>
+</div>
+</div>
+
+<!-- SHOT TYPE (afuera → error/neutro/buen tiro) -->
+<div class="sty-bg" id="styBg">
+<div class="sty-sh">
+  <div class="sty-t">Tipo de tiro afuera</div>
+  <div class="sty-opts">
+    <button class="sty-opt err" onclick="doShotType('error')"><span class="sty-emoji sty-svg" id="styIcoErr"></span><div><div>Se la comió</div><div class="sty-desc">Error clave: chance clara fallada, mano a mano</div></div></button>
+    <button class="sty-opt neu" onclick="doShotType('neutral')"><span class="sty-emoji sty-svg" id="styIcoNeu"></span><div><div>Tiro y nada</div><div class="sty-desc">Tiro afuera normal, no pasó nada</div></div></button>
+    <button class="sty-opt good" onclick="doShotType('good')"><span class="sty-emoji sty-svg" id="styIcoGood"></span><div><div>Uff, estuvo cerca</div><div class="sty-desc">Buen tiro, casi entra</div></div></button>
+  </div>
+</div>
+</div>
+
+<!-- PREVIEW (pre-report) -->
+<div class="prev-bg" id="prevBg">
+<div class="prev-hd">
+  <div class="prev-ti">Revision Final</div>
+  <div class="prev-sub">Revisa y ajusta las estadisticas antes de generar el reporte</div>
+</div>
+<div class="prev-w" id="prevW"></div>
+<div class="prev-ft">
+  <button class="prev-go" onclick="confirmPreview()">Confirmar y Ver Reporte</button>
+  <button class="prev-back" onclick="closePreview()">← Volver a editar</button>
+</div>
+</div>
+
 <!-- EXPORT -->
 <div class="ex-bg" id="exBg">
 <div class="ex-sh">
@@ -298,19 +645,106 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
+firebase.initializeApp({
+  apiKey:"AIzaSyDQHb2VvCWnQSxpWTF7VlgkQykeJnSd1wA",
+  authDomain:"cona-futbol.firebaseapp.com",
+  projectId:"cona-futbol",
+  storageBucket:"cona-futbol.firebasestorage.app",
+  messagingSenderId:"690430888694",
+  appId:"1:690430888694:web:a605a46e544c875a6abad7"
+});
+const db=firebase.firestore();
+const MEJENGAS_COL='mejengas_organizador';
+
 // ── SVG ICONS ──
 const I={
-  goal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/><path d="M2 12h20"/></svg>`,
-  assist:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-  save:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 17"/></svg>`,
-  shotOn:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
-  shotOff:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>`,
-  clear:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+  goal:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" fill="#25D366" fill-opacity="0.07"/><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" stroke="#E8E8E8"/><g clip-path="url(#cg)"><mask id="mg" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M16 2H2V16H16V2Z" fill="white"/></mask><g mask="url(#mg)"><path d="M9 14.25C11.8995 14.25 14.25 11.8995 14.25 9C14.25 6.10051 11.8995 3.75 9 3.75C6.10051 3.75 3.75 6.10051 3.75 9C3.75 11.8995 6.10051 14.25 9 14.25Z" fill="white"/><path d="M10.8828 11.497C10.7201 11.497 10.5573 11.4859 10.3946 11.4696C10.3424 11.4595 10.2935 11.4369 10.2519 11.4038C10.2104 11.3707 10.1775 11.328 10.156 11.2794C9.988 10.6552 9.82525 10.0637 9.66775 9.48858C9.6388 9.41343 9.63706 9.33052 9.66285 9.25423C9.68863 9.17794 9.74031 9.11308 9.80892 9.07091L11.1763 7.84591C11.2334 7.7961 11.3067 7.76865 11.3825 7.76865C11.4583 7.76865 11.5315 7.7961 11.5887 7.84591C12.0474 8.09633 12.4588 8.42503 12.8043 8.81716C12.8827 8.91412 12.9266 9.03436 12.9292 9.15899C12.932 9.84171 12.7287 10.5094 12.3458 11.0747C12.342 11.0905 12.3346 11.1052 12.3243 11.1178C12.253 11.2147 12.1577 11.2913 12.0478 11.3401C11.6705 11.4493 11.2791 11.5024 10.8863 11.4976L10.8828 11.497Z" fill="#142029"/><path d="M6.46584 10.1728C6.40038 10.1734 6.33693 10.1502 6.28734 10.1075C5.85925 9.84832 5.48656 9.50715 5.19067 9.10358C5.14231 9.03529 5.11586 8.95391 5.11484 8.87024C5.11458 8.23357 5.28305 7.60821 5.60309 7.05783C5.60723 7.03788 5.61894 7.02032 5.63575 7.00883C5.68407 6.96581 5.74151 6.93429 5.80375 6.91666C6.17914 6.77018 6.57855 6.69501 6.9815 6.69499C7.1061 6.68414 7.23141 6.68414 7.356 6.69499C7.42674 6.70258 7.49274 6.73415 7.54304 6.78445C7.59335 6.83475 7.62492 6.90076 7.6325 6.97149C7.72992 7.39499 7.83842 7.82899 7.94167 8.26299L8.02334 8.61299C8.03691 8.666 8.036 8.72167 8.02071 8.77421C8.00542 8.82674 7.97631 8.87421 7.93642 8.91166L6.67234 10.097C6.64603 10.1233 6.61472 10.1441 6.58026 10.1581C6.5458 10.1721 6.50888 10.1791 6.47167 10.1787H6.46584V10.1728Z" fill="#142029"/><path d="M8.99984 3.16699C7.84612 3.16699 6.7183 3.50911 5.75901 4.15009C4.79973 4.79106 4.05205 5.7021 3.61054 6.76801C3.16903 7.83391 3.05351 9.0068 3.27859 10.1384C3.50367 11.2699 4.05924 12.3093 4.87505 13.1251C5.69086 13.9409 6.73026 14.4965 7.86181 14.7216C8.99337 14.9467 10.1663 14.8311 11.2322 14.3896C12.2981 13.9481 13.2091 13.2004 13.8501 12.2412C14.4911 11.2819 14.8332 10.1541 14.8332 9.00033C14.8332 7.45323 14.2186 5.9695 13.1246 4.87554C12.0307 3.78157 10.5469 3.16699 8.99984 3.16699ZM9.07042 13.3304L9.03776 13.2137C9.02663 13.134 8.98701 13.0609 8.92622 13.008C8.86543 12.9552 8.78757 12.9261 8.70701 12.9262C8.03797 12.915 7.38769 12.7032 6.84034 12.3183C6.78464 12.2907 6.72343 12.2759 6.66126 12.2752C6.62301 12.2718 6.58447 12.2763 6.54804 12.2884C6.51162 12.3006 6.47808 12.3201 6.44951 12.3457L6.05342 12.7202C5.29755 12.1246 4.74097 11.313 4.45775 10.3933C4.17453 9.47354 4.1781 8.48938 4.46798 7.57174C4.75785 6.6541 5.3203 5.84649 6.08047 5.25638C6.84063 4.66626 7.76248 4.32163 8.72334 4.26833L8.78167 4.47424C8.82056 4.58819 8.85303 4.70213 8.87909 4.81608C8.89714 4.869 8.92709 4.91708 8.96663 4.95662C9.00617 4.99616 9.05425 5.02611 9.10717 5.04416H9.15617C9.80616 5.14238 10.4374 5.33908 11.0281 5.62749C11.0696 5.65019 11.117 5.65975 11.164 5.65491C11.2287 5.65539 11.2924 5.63847 11.3483 5.60591L11.8803 5.23141C12.6579 5.82155 13.2341 6.63761 13.53 7.56787C13.826 8.49813 13.8271 9.49711 13.5333 10.428C13.2396 11.359 12.6652 12.1764 11.889 12.7683C11.1127 13.3602 10.1725 13.6977 9.19701 13.7347L9.07042 13.3304Z" fill="#142029"/></g></g><defs><clipPath id="cg"><rect width="14" height="14" fill="white" transform="translate(2 2)"/></clipPath></defs></svg>`,
+  assist:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" fill="#25D366" fill-opacity="0.07"/><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" stroke="#E8E8E8"/><g clip-path="url(#ca)"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.8069 7.88572C13.6569 7.97143 13.4837 8.06486 13.2926 8.17457C13.1589 8.25172 13.0166 8.33572 12.87 8.43172C12.1791 8.88086 7.16915 11.9571 6.15343 12.54C5.13772 13.1229 3.552 13.3363 3.09772 12.5537C2.64343 11.7711 3.97972 10.8806 4.76743 9.93514C5.66572 8.85686 6.84 7.68086 6.84 7.68086C6.76457 7.31572 7.12457 7.07057 7.26343 6.99086C7.28009 6.98135 7.29726 6.97276 7.31486 6.96514C7.21457 6.53657 7.85572 6.16886 7.85572 6.16886L8.83886 4.01057C8.85569 3.97291 8.88386 3.94145 8.91943 3.92057C8.94631 3.90519 8.97637 3.89619 9.00728 3.89426C9.03819 3.89232 9.06913 3.89751 9.09772 3.90943L9.97543 4.27286C10.5523 4.51543 9.31629 5.89286 9.57686 5.95457C9.89253 5.97756 10.2069 5.89527 10.4709 5.72057C10.7093 5.58226 10.9223 5.40428 11.1009 5.19429C11.5123 4.71429 11.0751 4.01143 11.3143 3.87172C11.4 3.82543 11.5603 3.84257 11.8646 3.95314C13.0586 4.41172 13.7434 5.84829 14.244 6.74229C14.5886 7.35 14.3477 7.57629 13.8069 7.88572ZM6.93429 8.47972C6.92285 8.47749 6.91104 8.47804 6.89985 8.48132C6.88866 8.4846 6.87843 8.49052 6.87 8.49857L6.32915 9.03C6.32008 9.0386 6.31357 9.04953 6.31034 9.0616C6.30711 9.07367 6.30727 9.08639 6.31082 9.09837C6.31437 9.11034 6.32116 9.12111 6.33045 9.12946C6.33973 9.13782 6.35115 9.14344 6.36343 9.14572L9.12943 9.71914C9.1464 9.7222 9.1639 9.71948 9.17915 9.71143L10.02 9.22886C10.0324 9.22215 10.0424 9.21185 10.0488 9.19931C10.0551 9.18678 10.0575 9.17261 10.0557 9.15867C10.0538 9.14474 10.0478 9.13169 10.0383 9.12127C10.0289 9.11084 10.0165 9.10353 10.0029 9.10029L6.93429 8.47972ZM11.6983 8.12143L7.92086 7.398C7.90935 7.39616 7.89757 7.39698 7.88643 7.40039C7.87528 7.40381 7.86507 7.40974 7.85657 7.41772L7.31829 7.94743C7.30934 7.95629 7.30296 7.96741 7.29984 7.97961C7.29673 7.99181 7.29699 8.00463 7.3006 8.0167C7.30421 8.02876 7.31103 8.03962 7.32034 8.0481C7.32965 8.05658 7.34108 8.06238 7.35343 8.06486L10.7734 8.75657C10.7904 8.7597 10.8079 8.75698 10.8231 8.74886L11.7154 8.25086C11.7277 8.24398 11.7376 8.23358 11.7439 8.22101C11.7502 8.20844 11.7526 8.19427 11.7507 8.18034C11.7489 8.1664 11.7429 8.15334 11.7335 8.14284C11.7242 8.13234 11.7119 8.12488 11.6983 8.12143ZM6.26315 13.3714C6.26863 13.3874 6.26827 13.4047 6.26215 13.4204C6.25603 13.4361 6.24454 13.4491 6.22972 13.4571L5.60057 13.8189C5.58681 13.8265 5.57089 13.8293 5.55535 13.8268C5.53981 13.8243 5.52555 13.8167 5.51486 13.8051L5.04686 13.3089C5.04106 13.3012 5.03685 13.2925 5.0345 13.2833C5.03214 13.274 5.03168 13.2643 5.03315 13.2549C5.42021 13.1719 5.7948 13.0387 6.14743 12.8589L6.26315 13.3714ZM7.69286 12.5829C7.69834 12.5988 7.69799 12.6161 7.69187 12.6318C7.68574 12.6475 7.67425 12.6606 7.65943 12.6686L7.02857 13.0286C7.01481 13.0362 6.99889 13.039 6.98335 13.0365C6.96781 13.034 6.95355 13.0264 6.94286 13.0149L6.59143 12.6C6.84857 12.4483 7.18543 12.2443 7.57715 12.0077L7.69286 12.5829ZM12.5674 9.66857C12.5727 9.68452 12.5723 9.70181 12.5662 9.71747C12.5601 9.73312 12.5487 9.74615 12.534 9.75429L11.904 10.116C11.8902 10.1236 11.8743 10.1264 11.8588 10.124C11.8432 10.1215 11.829 10.1138 11.8183 10.1023L11.4 9.67372C11.778 9.44229 12.1191 9.23143 12.3926 9.06L12.5674 9.66857ZM13.7143 8.256C13.8 8.21143 13.872 8.17029 13.944 8.124L14.0571 8.05714L14.2474 8.70343C14.2527 8.71937 14.2523 8.73667 14.2462 8.75232C14.2401 8.76798 14.2287 8.781 14.214 8.78914L13.5849 9.15086C13.5711 9.1585 13.5552 9.1613 13.5396 9.15881C13.5241 9.15633 13.5098 9.1487 13.4991 9.13714L13.0286 8.65714C13.152 8.57743 13.2806 8.50114 13.428 8.41629C13.5291 8.358 13.62 8.30572 13.7143 8.256Z" fill="#E8F0FE"/></g><defs><clipPath id="ca"><rect width="12" height="12" fill="white" transform="translate(3 3)"/></clipPath></defs></svg>`,
+  save:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="17" height="17" rx="8.5" fill="#1C2F3C"/><rect x="0.5" y="0.5" width="17" height="17" rx="8.5" stroke="#E8E8E8"/><g clip-path="url(#cs)"><path d="M9 15C12.3137 15 15 12.3137 15 9C15 5.68629 12.3137 3 9 3C5.68629 3 3 5.68629 3 9C3 12.3137 5.68629 15 9 15Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M6.00526 9.5985L8.52601 12.1238C8.58738 12.1862 8.58738 12.2863 8.52601 12.3488L7.51726 13.191C7.44254 13.2659 7.34107 13.308 7.23526 13.308C7.12944 13.308 7.02798 13.2659 6.95326 13.191L4.80076 11.0348C4.64427 10.8778 4.64427 10.6239 4.80076 10.467L5.55076 9.5955C5.6739 9.47029 5.87513 9.46828 6.00076 9.591L6.00526 9.5985Z" fill="#142029"/><path d="M12.495 11.0422C12.3542 10.8821 12.1864 10.7478 11.9993 10.6455C11.9507 10.6039 11.8791 10.6039 11.8305 10.6455L11.2733 11.145C11.2144 11.181 11.1903 11.2543 11.2163 11.3182L11.4143 12.048C11.4322 12.0874 11.4684 12.1155 11.511 12.123C11.5767 12.1309 11.6428 12.1349 11.709 12.135V12.1297C11.87 12.1327 12.0305 12.1114 12.1853 12.0667C12.2306 12.0474 12.2697 12.016 12.2985 11.976C12.303 11.9708 12.3064 11.9646 12.3083 11.958C12.464 11.7281 12.5469 11.4565 12.546 11.1787C12.5442 11.1289 12.5263 11.081 12.495 11.0422Z" fill="#142029"/><path d="M10.383 10.2923C10.3761 10.2328 10.3292 10.1859 10.2698 10.179C10.2199 10.174 10.1696 10.174 10.1198 10.179C9.95566 10.1782 9.79296 10.209 9.64051 10.2698C9.61474 10.2767 9.59106 10.2898 9.57151 10.308C9.56529 10.3139 9.55999 10.3208 9.55576 10.3283C9.426 10.5531 9.35771 10.8082 9.35776 11.0678C9.3585 11.1019 9.36947 11.1351 9.38926 11.163C9.51018 11.3286 9.66322 11.4681 9.83926 11.5733C9.86052 11.5903 9.88699 11.5996 9.91426 11.5995C9.94465 11.5994 9.97375 11.5872 9.99526 11.5658L10.5143 11.082C10.5466 11.0505 10.5599 11.0044 10.5495 10.9605L10.5158 10.8195C10.4693 10.6388 10.4228 10.4655 10.383 10.2923Z" fill="#142029"/><path d="M11.7503 8.892L12.0053 8.6355C12.1774 8.46282 12.1774 8.18344 12.0053 8.01075L11.247 8.77125C11.1463 8.75469 11.0445 8.74467 10.9425 8.74125C10.8573 8.74516 10.7724 8.75393 10.6883 8.7675L12.2895 7.1595C12.4076 7.04951 12.4563 6.8839 12.4165 6.7275C12.3768 6.57111 12.255 6.44882 12.0987 6.40852C11.9425 6.36822 11.7767 6.41633 11.6663 6.534L9.99675 8.2125L9.8835 8.32575C9.80356 8.39238 9.68599 8.38697 9.6125 8.31329C9.53901 8.23961 9.53391 8.12202 9.60075 8.04225L9.714 7.929L11.6948 5.93775C11.8534 5.76344 11.8472 5.4953 11.6808 5.32845C11.5143 5.1616 11.2462 5.1548 11.0715 5.313L9.09 7.302L8.97675 7.41525C8.89686 7.48389 8.77754 7.47922 8.70326 7.40455C8.62898 7.32988 8.62494 7.21053 8.694 7.131L8.80725 7.01775L10.5615 5.25525C10.7245 5.08155 10.7204 4.80991 10.5523 4.64118C10.3842 4.47245 10.1125 4.46739 9.93825 4.62975L8.18175 6.3915L7.4025 7.176L7.62075 8.02275C7.64901 8.12952 7.58617 8.23917 7.47975 8.26875C7.4255 8.2889 7.36477 8.28074 7.31775 8.247L6.8145 6.366C6.72565 6.03463 6.385 5.83803 6.05363 5.92688C5.72226 6.01573 5.52565 6.35638 5.6145 6.68775L6.096 8.48325L6.08925 8.49L6.28725 9.37275L8.65725 11.751C8.9534 12.8372 9.97185 13.566 11.0955 13.4957C12.2192 13.4255 13.139 12.5755 13.2975 11.4609C13.4561 10.3462 12.8098 9.27354 11.7503 8.89275V8.892ZM12.5123 12.333C12.1564 12.7934 11.616 13.0739 11.0348 13.1003L10.971 12.888L10.9575 12.8408C10.9484 12.7733 10.8906 12.7231 10.8225 12.7238C10.5493 12.7203 10.2836 12.634 10.0605 12.4763C10.0371 12.4649 10.0115 12.4588 9.9855 12.4583C9.95395 12.4554 9.92259 12.4654 9.8985 12.486L9.7005 12.672C9.05669 12.1616 8.79427 11.3071 9.04066 10.5233C9.28704 9.73959 9.99122 9.18894 10.8113 9.13875L10.851 9.27525C10.8668 9.32025 10.8795 9.36675 10.8908 9.414C10.9065 9.45764 10.9409 9.492 10.9845 9.50775H11.004C11.2693 9.54676 11.5269 9.62697 11.7675 9.7455C11.785 9.75335 11.8039 9.75744 11.823 9.7575C11.8493 9.75685 11.875 9.7499 11.898 9.73725L12.1575 9.55125C13.0231 10.2214 13.1819 11.4662 12.5123 12.3323V12.333Z" fill="#142029"/></g><defs><clipPath id="cs"><rect width="12" height="12" fill="white" transform="translate(3 3)"/></clipPath></defs></svg>`,
+  shotOff:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#ctn)"><mask id="mtn" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M15.2308 2.76923H2.76923V15.2308H15.2308V2.76923Z" fill="white"/></mask><g mask="url(#mtn)"><path d="M5.10576 11.4284V7.09754C5.10576 6.98276 5.1513 6.87272 5.23239 6.79153C5.31349 6.71033 5.42352 6.66465 5.53828 6.66451H12.4612C12.576 6.66465 12.686 6.71033 12.767 6.79153C12.8481 6.87272 12.8937 6.98276 12.8937 7.09754V11.4284H14.1923V7.09754C14.192 6.6385 14.0097 6.19832 13.6852 5.87359C13.3608 5.54885 12.9207 5.36607 12.4617 5.36539H5.53828C5.07924 5.36607 4.63922 5.54885 4.31477 5.87359C3.99032 6.19832 3.80796 6.6385 3.80768 7.09754V11.4284H5.10576Z" fill="#757575"/><path d="M10.4264 11.8947L9.52289 10.9902L10.4253 10.0867C10.5012 10.0045 10.5423 9.89626 10.5401 9.78445C10.5379 9.67265 10.4925 9.56596 10.4135 9.4869C10.3344 9.40777 10.2279 9.36228 10.1161 9.36C10.0043 9.35771 9.89584 9.39877 9.81366 9.47458L8.91117 10.378L8.00881 9.47458C7.92657 9.39877 7.81822 9.35771 7.70641 9.36C7.5946 9.36228 7.48799 9.40777 7.40893 9.4869C7.32987 9.56596 7.28452 9.67265 7.2823 9.78445C7.28016 9.89626 7.32128 10.0045 7.39716 10.0867L8.29958 10.9912L7.39612 11.8947C7.33554 11.9553 7.29435 12.0325 7.27767 12.1166C7.26091 12.2006 7.2695 12.2878 7.30231 12.3669C7.33506 12.4461 7.39058 12.5137 7.46182 12.5614C7.53299 12.6091 7.61676 12.6345 7.7024 12.6346C7.75924 12.6348 7.81545 12.6235 7.86786 12.6017C7.92034 12.5799 7.96783 12.5478 8.00777 12.5074L8.91117 11.604L9.81463 12.5074C9.85478 12.5477 9.90241 12.5796 9.95489 12.6015C10.0074 12.6233 10.0637 12.6345 10.1205 12.6345C10.1773 12.6345 10.2336 12.6233 10.2861 12.6015C10.3386 12.5796 10.3863 12.5477 10.4264 12.5074C10.5075 12.4261 10.5531 12.3159 10.5531 12.201C10.5531 12.0862 10.5075 11.976 10.4264 11.8947Z" fill="#757575"/></g><path d="M17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17C13.4183 17 17 13.4183 17 9Z" stroke="#757575" stroke-width="0.8"/></g><defs><clipPath id="ctn"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>`,
+  post:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#cp)"><mask id="mp" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M15.2308 2.76923H2.76923V15.2308H15.2308V2.76923Z" fill="white"/></mask><g mask="url(#mp)"><path d="M5.10576 11.4284V7.09754C5.10576 6.98276 5.1513 6.87272 5.23239 6.79153C5.31349 6.71033 5.42352 6.66465 5.53828 6.66451H12.4612C12.576 6.66465 12.686 6.71033 12.767 6.79153C12.8481 6.87272 12.8937 6.98276 12.8937 7.09754V11.4284H14.1923V7.09754C14.192 6.6385 14.0097 6.19832 13.6852 5.87359C13.3608 5.54885 12.9207 5.36607 12.4617 5.36539H5.53828C5.07924 5.36607 4.63922 5.54885 4.31477 5.87359C3.99032 6.19832 3.80796 6.6385 3.80768 7.09754V11.4284H5.10576Z" fill="#FECE2F"/></g><path d="M17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17C13.4183 17 17 13.4183 17 9Z" stroke="#FECE2F" stroke-width="0.8"/></g><defs><clipPath id="cp"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>`,
+  salvada:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5.19952C3 4.83635 3.19689 4.50173 3.51436 4.32536L9.01436 1.2698C9.31638 1.10201 9.68362 1.10201 9.98564 1.2698L15.4856 4.32536C15.8031 4.50173 16 4.83635 16 5.19951V7.75485C16 11.3865 14.0311 14.7327 10.8564 16.4964L9.98564 16.9802C9.68362 17.148 9.31638 17.148 9.01436 16.9802L8.14357 16.4964C4.96892 14.7327 3 11.3865 3 7.75485V5.19952Z" fill="#25D366" fill-opacity="0.07" stroke="#A7EE43"/></svg>`,
+  autogoal:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" fill="#E55E5B" fill-opacity="0.2"/><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" stroke="#DD3636"/><g clip-path="url(#cag)"><mask id="mag" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M16 2H2V16H16V2Z" fill="white"/></mask><g mask="url(#mag)"><path d="M9 14.25C11.8995 14.25 14.25 11.8995 14.25 9C14.25 6.10051 11.8995 3.75 9 3.75C6.10051 3.75 3.75 6.10051 3.75 9C3.75 11.8995 6.10051 14.25 9 14.25Z" fill="white"/><path d="M10.8828 11.497C10.7201 11.497 10.5573 11.4859 10.3946 11.4696C10.3424 11.4595 10.2935 11.4369 10.2519 11.4038C10.2104 11.3707 10.1775 11.328 10.156 11.2794C9.988 10.6552 9.82525 10.0637 9.66775 9.48858C9.6388 9.41343 9.63706 9.33052 9.66285 9.25423C9.68863 9.17794 9.74031 9.11308 9.80892 9.07091L11.1763 7.84591C11.2334 7.7961 11.3067 7.76865 11.3825 7.76865C11.4583 7.76865 11.5315 7.7961 11.5887 7.84591C12.0474 8.09633 12.4588 8.42503 12.8043 8.81716C12.8827 8.91412 12.9266 9.03436 12.9292 9.15899C12.932 9.84171 12.7287 10.5094 12.3458 11.0747C12.342 11.0905 12.3346 11.1052 12.3243 11.1178C12.253 11.2147 12.1577 11.2913 12.0478 11.3401C11.6705 11.4493 11.2791 11.5024 10.8863 11.4976L10.8828 11.497Z" fill="#142029"/><path d="M6.46584 10.1728C6.40038 10.1735 6.33693 10.1502 6.28734 10.1075C5.85925 9.84833 5.48656 9.50716 5.19067 9.10359C5.14231 9.0353 5.11586 8.95392 5.11484 8.87025C5.11458 8.23358 5.28305 7.60822 5.60309 7.05784C5.60723 7.03789 5.61894 7.02033 5.63575 7.00884C5.68407 6.96582 5.74151 6.9343 5.80375 6.91667C6.17914 6.77019 6.57855 6.69502 6.9815 6.695C7.1061 6.68415 7.23141 6.68415 7.356 6.695C7.42674 6.70259 7.49274 6.73416 7.54304 6.78446C7.59335 6.83476 7.62492 6.90077 7.6325 6.9715C7.72992 7.395 7.83842 7.829 7.94167 8.263L8.02334 8.613C8.03691 8.66601 8.036 8.72168 8.02071 8.77422C8.00542 8.82675 7.97631 8.87422 7.93642 8.91167L6.67234 10.097C6.64603 10.1233 6.61472 10.1441 6.58026 10.1581C6.5458 10.1721 6.50888 10.1791 6.47167 10.1787H6.46584V10.1728Z" fill="#142029"/><path d="M8.99984 3.16699C7.84612 3.16699 6.7183 3.50911 5.75901 4.15009C4.79973 4.79106 4.05205 5.7021 3.61054 6.76801C3.16903 7.83391 3.05351 9.0068 3.27859 10.1384C3.50367 11.2699 4.05924 12.3093 4.87505 13.1251C5.69086 13.9409 6.73026 14.4965 7.86181 14.7216C8.99337 14.9467 10.1663 14.8311 11.2322 14.3896C12.2981 13.9481 13.2091 13.2004 13.8501 12.2412C14.4911 11.2819 14.8332 10.1541 14.8332 9.00033C14.8332 7.45323 14.2186 5.9695 13.1246 4.87554C12.0307 3.78157 10.5469 3.16699 8.99984 3.16699ZM9.07042 13.3304L9.03776 13.2137C9.02663 13.134 8.98701 13.0609 8.92622 13.008C8.86543 12.9552 8.78757 12.9261 8.70701 12.9262C8.03797 12.915 7.38769 12.7032 6.84034 12.3183C6.78464 12.2907 6.72343 12.2759 6.66126 12.2752C6.62301 12.2718 6.58447 12.2763 6.54804 12.2884C6.51162 12.3006 6.47808 12.3201 6.44951 12.3457L6.05342 12.7202C5.29755 12.1246 4.74097 11.313 4.45775 10.3933C4.17453 9.47354 4.1781 8.48938 4.46798 7.57174C4.75785 6.6541 5.3203 5.84649 6.08047 5.25638C6.84063 4.66626 7.76248 4.32163 8.72334 4.26833L8.78167 4.47424C8.82056 4.58819 8.85303 4.70213 8.87909 4.81608C8.89714 4.869 8.92709 4.91708 8.96663 4.95662C9.00617 4.99616 9.05425 5.02611 9.10717 5.04416H9.15617C9.80616 5.14238 10.4374 5.33908 11.0281 5.62749C11.0696 5.65019 11.117 5.65975 11.164 5.65491C11.2287 5.65539 11.2924 5.63847 11.3483 5.60591L11.8803 5.23141C12.6579 5.82155 13.2341 6.63761 13.53 7.56787C13.826 8.49813 13.8271 9.49711 13.5333 10.428C13.2396 11.359 12.6652 12.1764 11.889 12.7683C11.1127 13.3602 10.1725 13.6977 9.19701 13.7347L9.07042 13.3304Z" fill="#142029"/></g></g><defs><clipPath id="cag"><rect width="14" height="14" fill="white" transform="translate(2 2)"/></clipPath></defs></svg>`,
+  defcon:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5.19952C3 4.83635 3.19689 4.50173 3.51436 4.32536L9.01436 1.2698C9.31638 1.10201 9.68362 1.10201 9.98564 1.2698L15.4856 4.32536C15.8031 4.50173 16 4.83635 16 5.19951V7.75485C16 11.3865 14.0311 14.7327 10.8564 16.4964L9.98564 16.9802C9.68362 17.148 9.31638 17.148 9.01436 16.9802L8.14357 16.4964C4.96892 14.7327 3 11.3865 3 7.75485V5.19952Z" stroke="#1463FD"/><path d="M8 9.4375L9.21875 10.6562L11.6562 8.21875" stroke="#1463FD" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  shotOn:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#caa)"><mask id="maa" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M15.2308 2.76923H2.76923V15.2308H15.2308V2.76923Z" fill="white"/></mask><g mask="url(#maa)"><path d="M5.10576 11.4284V7.09754C5.10576 6.98276 5.1513 6.87272 5.23239 6.79153C5.31349 6.71033 5.42352 6.66465 5.53828 6.66451H12.4612C12.576 6.66465 12.686 6.71033 12.767 6.79153C12.8481 6.87272 12.8937 6.98276 12.8937 7.09754V11.4284H14.1923V7.09754C14.192 6.6385 14.0097 6.19832 13.6852 5.87359C13.3608 5.54885 12.9207 5.36607 12.4617 5.36539H5.53828C5.07924 5.36607 4.63922 5.54885 4.31477 5.87359C3.99032 6.19832 3.80796 6.6385 3.80768 7.09754V11.4284H5.10576Z" fill="white"/><path d="M10.4264 11.8947L9.52289 10.9902L10.4253 10.0867C10.5012 10.0045 10.5423 9.89626 10.5401 9.78445C10.5379 9.67265 10.4925 9.56596 10.4135 9.4869C10.3344 9.40777 10.2279 9.36228 10.1161 9.36C10.0043 9.35771 9.89584 9.39877 9.81366 9.47458L8.91117 10.378L8.00881 9.47458C7.92657 9.39877 7.81822 9.35771 7.70641 9.36C7.5946 9.36228 7.48799 9.40777 7.40893 9.4869C7.32987 9.56596 7.28452 9.67265 7.2823 9.78445C7.28016 9.89626 7.32128 10.0045 7.39716 10.0867L8.29958 10.9912L7.39612 11.8947C7.33554 11.9553 7.29435 12.0325 7.27767 12.1166C7.26091 12.2006 7.2695 12.2878 7.30231 12.3669C7.33506 12.4461 7.39058 12.5137 7.46182 12.5614C7.53299 12.6091 7.61676 12.6345 7.7024 12.6346C7.75924 12.6348 7.81545 12.6235 7.86786 12.6017C7.92034 12.5799 7.96783 12.5478 8.00777 12.5074L8.91117 11.604L9.81463 12.5074C9.85478 12.5477 9.90241 12.5796 9.95489 12.6015C10.0074 12.6233 10.0637 12.6345 10.1205 12.6345C10.1773 12.6345 10.2336 12.6233 10.2861 12.6015C10.3386 12.5796 10.3863 12.5477 10.4264 12.5074C10.5075 12.4261 10.5531 12.3159 10.5531 12.201C10.5531 12.0862 10.5075 11.976 10.4264 11.8947Z" fill="white"/></g><path d="M17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17C13.4183 17 17 13.4183 17 9Z" stroke="#F0F0F0" stroke-width="0.8"/></g><defs><clipPath id="caa"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>`,
+  tfError:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#cte)"><mask id="mte" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M15.2308 2.76923H2.76923V15.2308H15.2308V2.76923Z" fill="white"/></mask><g mask="url(#mte)"><path d="M5.10576 11.4284V7.09754C5.10576 6.98276 5.1513 6.87272 5.23239 6.79153C5.31349 6.71033 5.42352 6.66465 5.53828 6.66451H12.4612C12.576 6.66465 12.686 6.71033 12.767 6.79153C12.8481 6.87272 12.8937 6.98276 12.8937 7.09754V11.4284H14.1923V7.09754C14.192 6.6385 14.0097 6.19832 13.6852 5.87359C13.3608 5.54885 12.9207 5.36607 12.4617 5.36539H5.53828C5.07924 5.36607 4.63922 5.54885 4.31477 5.87359C3.99032 6.19832 3.80796 6.6385 3.80768 7.09754V11.4284H5.10576Z" fill="#DD3636"/><path d="M10.4264 11.8947L9.52289 10.9902L10.4253 10.0867C10.5012 10.0045 10.5423 9.89626 10.5401 9.78445C10.5379 9.67265 10.4925 9.56596 10.4135 9.4869C10.3344 9.40777 10.2279 9.36228 10.1161 9.36C10.0043 9.35771 9.89584 9.39877 9.81366 9.47458L8.91117 10.378L8.00881 9.47458C7.92657 9.39877 7.81822 9.35771 7.70641 9.36C7.5946 9.36228 7.48799 9.40777 7.40893 9.4869C7.32987 9.56596 7.28452 9.67265 7.2823 9.78445C7.28016 9.89626 7.32128 10.0045 7.39716 10.0867L8.29958 10.9912L7.39612 11.8947C7.33554 11.9553 7.29435 12.0325 7.27767 12.1166C7.26091 12.2006 7.2695 12.2878 7.30231 12.3669C7.33506 12.4461 7.39058 12.5137 7.46182 12.5614C7.53299 12.6091 7.61676 12.6345 7.7024 12.6346C7.75924 12.6348 7.81545 12.6235 7.86786 12.6017C7.92034 12.5799 7.96783 12.5478 8.00777 12.5074L8.91117 11.604L9.81463 12.5074C9.85478 12.5477 9.90241 12.5796 9.95489 12.6015C10.0074 12.6233 10.0637 12.6345 10.1205 12.6345C10.1773 12.6345 10.2336 12.6233 10.2861 12.6015C10.3386 12.5796 10.3863 12.5477 10.4264 12.5074C10.5075 12.4261 10.5531 12.3159 10.5531 12.201C10.5531 12.0862 10.5075 11.976 10.4264 11.8947Z" fill="#DD3636"/></g><path d="M17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17C13.4183 17 17 13.4183 17 9Z" stroke="#DD3636" stroke-width="0.8"/></g><defs><clipPath id="cte"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>`,
+  tfNeutral:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#ctn2)"><mask id="mtn2" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M15.2308 2.76923H2.76923V15.2308H15.2308V2.76923Z" fill="white"/></mask><g mask="url(#mtn2)"><path d="M5.10576 11.4284V7.09754C5.10576 6.98276 5.1513 6.87272 5.23239 6.79153C5.31349 6.71033 5.42352 6.66465 5.53828 6.66451H12.4612C12.576 6.66465 12.686 6.71033 12.767 6.79153C12.8481 6.87272 12.8937 6.98276 12.8937 7.09754V11.4284H14.1923V7.09754C14.192 6.6385 14.0097 6.19832 13.6852 5.87359C13.3608 5.54885 12.9207 5.36607 12.4617 5.36539H5.53828C5.07924 5.36607 4.63922 5.54885 4.31477 5.87359C3.99032 6.19832 3.80796 6.6385 3.80768 7.09754V11.4284H5.10576Z" fill="#757575"/><path d="M10.4264 11.8947L9.52289 10.9902L10.4253 10.0867C10.5012 10.0045 10.5423 9.89626 10.5401 9.78445C10.5379 9.67265 10.4925 9.56596 10.4135 9.4869C10.3344 9.40777 10.2279 9.36228 10.1161 9.36C10.0043 9.35771 9.89584 9.39877 9.81366 9.47458L8.91117 10.378L8.00881 9.47458C7.92657 9.39877 7.81822 9.35771 7.70641 9.36C7.5946 9.36228 7.48799 9.40777 7.40893 9.4869C7.32987 9.56596 7.28452 9.67265 7.2823 9.78445C7.28016 9.89626 7.32128 10.0045 7.39716 10.0867L8.29958 10.9912L7.39612 11.8947C7.33554 11.9553 7.29435 12.0325 7.27767 12.1166C7.26091 12.2006 7.2695 12.2878 7.30231 12.3669C7.33506 12.4461 7.39058 12.5137 7.46182 12.5614C7.53299 12.6091 7.61676 12.6345 7.7024 12.6346C7.75924 12.6348 7.81545 12.6235 7.86786 12.6017C7.92034 12.5799 7.96783 12.5478 8.00777 12.5074L8.91117 11.604L9.81463 12.5074C9.85478 12.5477 9.90241 12.5796 9.95489 12.6015C10.0074 12.6233 10.0637 12.6345 10.1205 12.6345C10.1773 12.6345 10.2336 12.6233 10.2861 12.6015C10.3386 12.5796 10.3863 12.5477 10.4264 12.5074C10.5075 12.4261 10.5531 12.3159 10.5531 12.201C10.5531 12.0862 10.5075 11.976 10.4264 11.8947Z" fill="#757575"/></g><path d="M17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17C13.4183 17 17 13.4183 17 9Z" stroke="#757575" stroke-width="0.8"/></g><defs><clipPath id="ctn2"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>`,
+  tfGood:`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#ctg)"><mask id="mtg" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M15.2308 2.76923H2.76923V15.2308H15.2308V2.76923Z" fill="white"/></mask><g mask="url(#mtg)"><path d="M5.10576 11.4284V7.09754C5.10576 6.98276 5.1513 6.87272 5.23239 6.79153C5.31349 6.71033 5.42352 6.66465 5.53828 6.66451H12.4612C12.576 6.66465 12.686 6.71033 12.767 6.79153C12.8481 6.87272 12.8937 6.98276 12.8937 7.09754V11.4284H14.1923V7.09754C14.192 6.6385 14.0097 6.19832 13.6852 5.87359C13.3608 5.54885 12.9207 5.36607 12.4617 5.36539H5.53828C5.07924 5.36607 4.63922 5.54885 4.31477 5.87359C3.99032 6.19832 3.80796 6.6385 3.80768 7.09754V11.4284H5.10576Z" fill="#0D9F68"/><path d="M10.4264 11.8947L9.52289 10.9902L10.4253 10.0867C10.5012 10.0045 10.5423 9.89626 10.5401 9.78445C10.5379 9.67265 10.4925 9.56596 10.4135 9.4869C10.3344 9.40777 10.2279 9.36228 10.1161 9.36C10.0043 9.35771 9.89584 9.39877 9.81366 9.47458L8.91117 10.378L8.00881 9.47458C7.92657 9.39877 7.81822 9.35771 7.70641 9.36C7.5946 9.36228 7.48799 9.40777 7.40893 9.4869C7.32987 9.56596 7.28452 9.67265 7.2823 9.78445C7.28016 9.89626 7.32128 10.0045 7.39716 10.0867L8.29958 10.9912L7.39612 11.8947C7.33554 11.9553 7.29435 12.0325 7.27767 12.1166C7.26091 12.2006 7.2695 12.2878 7.30231 12.3669C7.33506 12.4461 7.39058 12.5137 7.46182 12.5614C7.53299 12.6091 7.61676 12.6345 7.7024 12.6346C7.75924 12.6348 7.81545 12.6235 7.86786 12.6017C7.92034 12.5799 7.96783 12.5478 8.00777 12.5074L8.91117 11.604L9.81463 12.5074C9.85478 12.5477 9.90241 12.5796 9.95489 12.6015C10.0074 12.6233 10.0637 12.6345 10.1205 12.6345C10.1773 12.6345 10.2336 12.6233 10.2861 12.6015C10.3386 12.5796 10.3863 12.5477 10.4264 12.5074C10.5075 12.4261 10.5531 12.3159 10.5531 12.201C10.5531 12.0862 10.5075 11.976 10.4264 11.8947Z" fill="#0D9F68"/></g><path d="M17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17C13.4183 17 17 13.4183 17 9Z" stroke="#0D9F68" stroke-width="0.8"/></g><defs><clipPath id="ctg"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>`
 };
 
 // ── STATE ──
-let N='',F='',P=[],EV=[],sel=null,tOn=false,tS=0,tI=null,goalP=null;
+let N='',F='',CA='',UB='',ORG='',P=[],EV=[],sel=null,tOn=false,tS=0,tI=null,goalP=null,saveP=null,MVP=null,done=false,mejengaId=null;
+
+// ── PERSISTENCE (localStorage + Firebase) ──
+const LS_KEY='cona_org_state';
+let _syncTimer=null;
+
+function getStateObj(){
+  return {N,F,CA,UB,ORG,P,EV,tS,MVP,done,mejengaId,ts:Date.now()};
+}
+function saveState(){
+  try{
+    localStorage.setItem(LS_KEY,JSON.stringify(getStateObj()));
+  }catch(e){}
+  // Debounce Firebase sync — max 1 write per 3 seconds
+  if(_syncTimer)clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(syncToFirebase,3000);
+  // Update desktop sidebar if visible
+  try{updDeskTabla();}catch(e){}
+}
+let _firstSync=true;
+function syncToFirebase(){
+  if(!mejengaId||!P.length)return;
+  const data=getStateObj();
+  data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+  if(_firstSync){
+    data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
+    _firstSync=false;
+  }
+  db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{
+    updateSyncBadge(true);
+  }).catch(e=>{
+    console.warn('Firebase sync failed:',e.message);
+    updateSyncBadge(false);
+    // Retry once after 10s
+    setTimeout(()=>{if(mejengaId&&P.length)syncToFirebase();},10000);
+  });
+}
+function updateSyncBadge(ok){
+  const el=document.getElementById('syncBadge');
+  if(!el)return;
+  el.textContent=ok?'☁️ Guardado':'⚠️ Sin conexión';
+  el.style.color=ok?'rgba(167,238,67,.6)':'rgba(255,180,60,.7)';
+  if(ok){clearTimeout(el._t);el._t=setTimeout(()=>{el.textContent='';},2500);}
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw)return false;
+    const s=JSON.parse(raw);
+    N=s.N||'';F=s.F||'';CA=s.CA||'';UB=s.UB||'';ORG=s.ORG||'';
+    P=s.P||[];EV=s.EV||[];tS=s.tS||0;MVP=s.MVP||null;done=s.done||false;
+    mejengaId=s.mejengaId||null;
+    P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;});
+    return P.length>0;
+  }catch(e){return false;}
+}
+function clearState(){
+  localStorage.removeItem(LS_KEY);
+}
+function generateId(){
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return `mej_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+function resetMejenga(){
+  if(!confirm('¿Iniciar nueva mejenga? Se borrarán los datos locales.\n\nLa mejenga anterior queda guardada en Firebase.'))return;
+  clearState();
+  location.reload();
+}
 
 // ── SETUP ──
 function initS(){
@@ -334,26 +768,48 @@ function focusNext(el){
   if(i<all.length-1)all[i+1].focus();
   else all[i].blur();
 }
-function addR(id){const c=document.getElementById(id),d=c._d||[];d.push({n:'',m:''});ren(id,d);const ins=c.querySelectorAll('.sn');ins[ins.length-1]?.focus();}
-function delR(b){const r=b.closest('.su-r'),c=r.parentElement,d=c._d,i=[...c.children].indexOf(r);if(d.length>2){d.splice(i,1);ren(c.id,d);}}
+function syncD(id){
+  const c=document.getElementById(id),rows=c.querySelectorAll('.su-r');
+  const d=[];
+  rows.forEach((r,i)=>{
+    const n=r.querySelector('.sn').value;
+    const m=r.querySelectorAll('.si')[1].value;
+    const p=!!r.querySelector('.su-p');
+    d.push({n,m,p:p?1:0});
+  });
+  c._d=d;return d;
+}
+function addR(id){const d=syncD(id);d.push({n:'',m:''});ren(id,d);const c=document.getElementById(id),ins=c.querySelectorAll('.sn');ins[ins.length-1]?.focus();}
+function delR(b){const r=b.closest('.su-r'),c=r.parentElement;const d=syncD(c.id);const i=[...c.children].indexOf(r);if(d.length>2){d.splice(i,1);ren(c.id,d);}}
 function readT(id,t){
   const rows=document.getElementById(id).querySelectorAll('.su-r'),out=[];
   rows.forEach((r,i)=>{
     const n=r.querySelector('.sn').value.trim();
     const m=r.querySelectorAll('.si')[1].value.trim();
-    if(m||n)out.push({id:t+'_'+i,team:t,num:n||'-',name:m||(i===0?'Portero':'Jugador '+(i+1)),por:i===0,goals:0,assists:0,saves:0,shotsOn:0,shotsOff:0,clearances:0});
+    if(m||n)out.push({id:t+'_'+i,team:t,num:n||'-',name:m||(i===0?'Portero':'Jugador '+(i+1)),por:i===0,goals:0,autogoals:0,assists:0,saves:0,shotsOn:0,shotsOff:0,shotsOffError:0,shotsOffGood:0,shotsOffNeutral:0,posts:0,salvadas:0,defcon:0,rating:0});
   });
   return out;
 }
 function go(){
   N=document.getElementById('sN').value.trim()||'Mejenga';
   F=document.getElementById('sF').value.trim()||'Fut 5';
+  CA=document.getElementById('sC').value.trim();
+  UB=document.getElementById('sU').value.trim();
+  ORG=document.getElementById('sO').value.trim();
   const a=readT('st1','t1'),b=readT('st2','t2');
-  if(!a.length&&!b.length){show('Agrega jugadores');return;}
+  if(!a.length||!b.length){show('Ambos equipos necesitan jugadores');return;}
   P=[...a,...b];
+  mejengaId=generateId();
   document.getElementById('setup').classList.add('gone');
   document.getElementById('app').classList.add('on');
   draw();
+  // Auto-start timer
+  const tmr=document.getElementById('tmr');
+  tI=setInterval(()=>{tS++;tmr.textContent=ft(tS);if(tS%10===0)saveState();},1000);
+  tOn=true;tmr.className='sb-tm on';tmr.textContent=ft(tS);
+  saveState();
+  // Force immediate first sync
+  syncToFirebase();
 }
 
 // ── FIELD ──
@@ -368,19 +824,20 @@ function draw(){
 }
 function form(n,top){
   if(!n)return[];
-  const pts=[],yA=top?5:53,yB=top?47:95;
-  pts.push([50,top?yA+3:yB-3]);
+  const pts=[],yA=top?3:52,yB=top?48:97;
+  pts.push([50,top?yA+2:yB-2]);
   const f=n-1;if(!f)return pts;
   let rows;
   if(f<=2)rows=[f];
-  else if(f<=4)rows=[Math.ceil(f/2),Math.floor(f/2)];
-  else if(f<=6)rows=[2,Math.ceil((f-2)/2),Math.floor((f-2)/2)];
+  else if(f<=3)rows=[f];
+  else if(f<=5)rows=[Math.ceil(f/2),Math.floor(f/2)];
+  else if(f<=7)rows=[2,Math.ceil((f-2)/2),Math.floor((f-2)/2)];
   else rows=[3,Math.ceil((f-3)/2),Math.floor((f-3)/2)];
   rows.forEach((cnt,ri)=>{
     const frac=(ri+1)/(rows.length+1);
     const ry=top?yA+(yB-yA)*frac:yB-(yB-yA)*frac;
     for(let j=0;j<cnt;j++){
-      pts.push([10+(j+1)/(cnt+1)*80,ry]);
+      pts.push([6+(j+1)/(cnt+1)*88,ry]);
     }
   });
   return pts;
@@ -408,30 +865,48 @@ function tap(id){
 }
 function buildPop(p){
   let h='';
+  const atkIco=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
+  const defIco=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+  const ogIco=I.autogoal;
+  const secAtk=`<div class="pop-sec"><span class="pop-sec-ico">${atkIco}</span><span class="pop-sec-lb atk">Ataque</span><div class="pop-sec-line"></div></div>`;
+  const secDef=`<div class="pop-sec"><span class="pop-sec-ico">${defIco}</span><span class="pop-sec-lb def">Defensa</span><div class="pop-sec-line"></div></div>`;
+  const totalOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  const shotOffBtn=`<div class="sc tir">
+    <div class="sc-top"><span class="sc-ico">${I.shotOff}</span><span class="sc-lb">Afuera</span></div>
+    <div class="sc-row">
+      <button class="sc-btn mn" onclick="undoShotOff()">-</button>
+      <div class="sc-v">${totalOff}</div>
+      <button class="sc-btn" onclick="openShotType()">+</button>
+    </div>
+  </div>`;
   if(p.por){
     h+=sc('saves',I.save,'Tapadas','tap',p.saves,true);
+    h+=secAtk;
     h+=`<div class="sg">`;
     h+=sc('goals',I.goal,'Goles','gol',p.goals);
-    h+=sc('assists',I.assist,'Asist','ast',p.assists);
-    h+=sc('clearances',I.clear,'Clear','cle',p.clearances);
-    h+=sc('shotsOn',I.shotOn,'Al arco','tir',p.shotsOn);
-    h+=sc('shotsOff',I.shotOff,'Afuera','tir',p.shotsOff);
+    h+=shotOffBtn;
+    h+=sc('posts',I.post,'Palo','pst',p.posts);
     h+=`</div>`;
+    h+=`<button type="button" class="og-btn" ontouchend="event.preventDefault();doAutogoal()" onclick="doAutogoal()">${ogIco} Autogol</button>`;
   }else{
     h+=sc('goals',I.goal,'Goles','gol',p.goals,true);
+    h+=secAtk;
     h+=`<div class="sg">`;
-    h+=sc('assists',I.assist,'Asist','ast',p.assists);
-    h+=sc('shotsOn',I.shotOn,'Al arco','tir',p.shotsOn);
-    h+=sc('shotsOff',I.shotOff,'Afuera','tir',p.shotsOff);
-    h+=sc('clearances',I.clear,'Clear','cle',p.clearances);
-    h+=sc('saves',I.save,'Tapadas','tap',p.saves);
+    h+=shotOffBtn;
+    h+=sc('posts',I.post,'Palo','pst',p.posts);
     h+=`</div>`;
+    h+=secDef;
+    h+=`<div class="sg">`;
+    h+=sc('salvadas',I.salvada,'Salvada Clave','sal',p.salvadas,false,'En la línea, sin ella es gol');
+    h+=sc('defcon',I.defcon,'DEF CON','sal',p.defcon||0,false,'Buena acción defensiva');
+    h+=`</div>`;
+    h+=`<button type="button" class="og-btn" ontouchend="event.preventDefault();doAutogoal()" onclick="doAutogoal()">${ogIco} Autogol</button>`;
   }
   document.getElementById('pB').innerHTML=h;
 }
-function sc(t,ico,lbl,cls,v,pri){
+function sc(t,ico,lbl,cls,v,pri,desc){
   return `<div class="sc ${cls}${pri?' pri':''}">
-    <div class="sc-top"><span class="sc-ico">${ico}</span><span class="sc-lb">${lbl}</span></div>
+    <div class="sc-top"><span class="sc-ico">${ico}</span><span class="sc-lb">${lbl}</span>${desc?`<span class="sc-desc">${desc}</span>`:''}</div>
     <div class="sc-row">
       <button class="sc-btn mn" onclick="adj('${t}',-1)">-</button>
       <div class="sc-v">${v}</div>
@@ -454,23 +929,70 @@ function adj(t,d){
       if(navigator.vibrate)navigator.vibrate([15,50,15]);
       return;
     }
+    if(t==='saves'){
+      addEv('saves',p);
+      updSc();draw();buildPop(p);
+      saveP=p;
+      showShooter(p);
+      if(navigator.vibrate)navigator.vibrate([15,50,15]);
+      return;
+    }
     addEv(t,p);
   }else{
     // undo last event of type
+    const evType=t==='goals'?'goal':t==='autogoals'?'autogoal':t;
     for(let i=EV.length-1;i>=0;i--){
-      if(EV[i].type===(t==='goals'?'goal':t)&&EV[i].pid===p.id){
-        if(t==='goals'&&EV[i].astBy){
+      if(EV[i].type===evType&&EV[i].pid===p.id){
+        if((t==='goals'||t==='autogoals')&&EV[i].astBy){
           const a=P.find(x=>x.name===EV[i].astBy);
           if(a)a.assists=Math.max(0,a.assists-1);
+        }
+        if(t==='saves'&&EV[i].shotBy){
+          const sh=P.find(x=>x.name===EV[i].shotBy);
+          if(sh)sh.shotsOn=Math.max(0,sh.shotsOn-1);
         }
         EV.splice(i,1);break;
       }
     }
   }
-  updSc();draw();buildPop(p);
+  updSc();draw();buildPop(p);saveState();
   if(navigator.vibrate)navigator.vibrate(8);
 }
 function closePop(){document.getElementById('popBg').classList.remove('on');sel=null;}
+
+// ── SHOT TYPE ──
+function openShotType(){
+  document.getElementById('styBg').classList.add('on');
+}
+function doShotType(type){
+  document.getElementById('styBg').classList.remove('on');
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  if(type==='error'){p.shotsOffError=(p.shotsOffError||0)+1;}
+  else if(type==='good'){p.shotsOffGood=(p.shotsOffGood||0)+1;}
+  else{p.shotsOffNeutral=(p.shotsOffNeutral||0)+1;}
+  p.shotsOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  addEv('shotsOff',p,{shotType:type});
+  updSc();draw();buildPop(p);saveState();
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function undoShotOff(){
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  const total=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  if(!total)return;
+  // Find last shotsOff event for this player and undo it
+  for(let i=EV.length-1;i>=0;i--){
+    if(EV[i].type==='shotsOff'&&EV[i].pid===p.id){
+      const st=EV[i].shotType||'neutral';
+      if(st==='error')p.shotsOffError=Math.max(0,(p.shotsOffError||0)-1);
+      else if(st==='good')p.shotsOffGood=Math.max(0,(p.shotsOffGood||0)-1);
+      else p.shotsOffNeutral=Math.max(0,(p.shotsOffNeutral||0)-1);
+      EV.splice(i,1);break;
+    }
+  }
+  p.shotsOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  updSc();draw();buildPop(p);saveState();
+  if(navigator.vibrate)navigator.vibrate(8);
+}
 
 // ── ASSIST ──
 function showAst(scorer){
@@ -493,47 +1015,68 @@ function doAst(id){
   }
   show('Gol registrado'+(id?' + asistencia':''));
   goalP=null;
-  updSc();draw();
+  updSc();draw();saveState();
   if(sel){const p=P.find(x=>x.id===sel);if(p)buildPop(p);}
 }
 
 // ── EVENTS ──
-function addEv(t,p){EV.push({type:t,pid:p.id,player:p.name,team:p.team,num:p.num,time:ft(tS),ts:Date.now()});updIb();}
+function addEv(t,p,extra){const ev={type:t,pid:p.id,player:p.name,team:p.team,num:p.num,time:ft(tS),ts:Date.now()};if(extra)Object.assign(ev,extra);EV.push(ev);updIb();saveState();}
 function updIb(){
   document.getElementById('ec').textContent=EV.length;
   if(EV.length){const l=EV[EV.length-1];document.getElementById('le').textContent=`${l.time} ${l.player}`;}
 }
 function updSc(){
-  document.getElementById('s1').textContent=P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.goals,0);
-  document.getElementById('s2').textContent=P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.goals,0);
+  const t1g=P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.autogoals,0);
+  const t2g=P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.autogoals,0);
+  document.getElementById('s1').textContent=t1g;
+  document.getElementById('s2').textContent=t2g;
+}
+function teamScore(team){
+  const opp=team==='t1'?'t2':'t1';
+  return P.filter(p=>p.team===team).reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team===opp).reduce((s,p)=>s+p.autogoals,0);
 }
 
 // ── TIMER ──
 function togT(){
   const el=document.getElementById('tmr');
-  if(tOn){clearInterval(tI);tOn=false;el.className='sb-tm off';el.textContent=ft(tS);}
-  else{tI=setInterval(()=>{tS++;document.getElementById('tmr').textContent=ft(tS);},1000);tOn=true;el.className='sb-tm on';el.textContent=ft(tS);}
+  if(tOn){clearInterval(tI);tOn=false;el.className='sb-tm off';el.textContent=ft(tS);saveState();}
+  else{tI=setInterval(()=>{tS++;document.getElementById('tmr').textContent=ft(tS);if(tS%10===0)saveState();},1000);tOn=true;el.className='sb-tm on';el.textContent=ft(tS);}
 }
 function ft(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 
 // ── TIMELINE ──
 function openTl(){
-  const g1=P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.goals,0);
-  const g2=P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.goals,0);
+  const g1=teamScore('t1'),g2=teamScore('t2');
   document.getElementById('tlM').textContent=N+' · '+F;
   document.getElementById('tS1').textContent=g1;
   document.getElementById('tS2').textContent=g2;
   document.getElementById('tDur').textContent=ft(tS)+' jugados';
-  const bd=document.getElementById('tlBd'),goals=EV.filter(e=>e.type==='goal');
-  if(!goals.length){bd.innerHTML='<div class="tl-emp">No hay goles todavia</div>';document.getElementById('tlBg').classList.add('on');return;}
+  const bd=document.getElementById('tlBd'),notable=EV.filter(e=>e.type==='goal'||e.type==='autogoal'||e.type==='posts'||e.type==='salvadas');
+  if(!notable.length){bd.innerHTML='<div class="tl-emp">No hay eventos todavia</div>';document.getElementById('tlBg').classList.add('on');return;}
   let r1=0,r2=0,h='';
-  goals.forEach(g=>{
-    if(g.team==='t1')r1++;else r2++;
-    const ast=g.astBy?`<div class="tl-a">Ast. ${g.astBy.split(' ')[0]}</div>`:'';
-    h+=`<div class="tl-r ${g.team}"><div class="tl-dt"></div><div class="tl-c">
-      <div class="tl-m">${g.time}'</div><div><div class="tl-p">${g.player}</div>${ast}</div>
-    </div></div>`;
-    h+=`<div class="tl-rs" style="color:${g.team==='t1'?'#fff':'var(--g)'}">${r1} - ${r2}</div>`;
+  notable.forEach(g=>{
+    const isOg=g.type==='autogoal';
+    const isGoal=g.type==='goal'||isOg;
+    const isPost=g.type==='posts';
+    const isSalvada=g.type==='salvadas';
+    if(isGoal){
+      const scoringTeam=isOg?(g.team==='t1'?'t2':'t1'):g.team;
+      if(scoringTeam==='t1')r1++;else r2++;
+      const ast=g.astBy?`<div class="tl-a">Ast. ${g.astBy.split(' ')[0]}</div>`:'';
+      const label=isOg?`${g.player} (AG)`:`${g.player}`;
+      h+=`<div class="tl-r ${scoringTeam}"><div class="tl-dt"></div><div class="tl-c">
+        <div class="tl-m">${g.time}'</div><div><div class="tl-p">${label}</div>${ast}</div>
+      </div></div>`;
+      h+=`<div class="tl-rs" style="color:${scoringTeam==='t1'?'#fff':'var(--g)'}">${r1} - ${r2}</div>`;
+    }else if(isPost){
+      h+=`<div class="tl-r ${g.team}"><div class="tl-dt" style="background:#ffa500"></div><div class="tl-c">
+        <div class="tl-m" style="color:#ffa500">${g.time}'</div><div><div class="tl-p" style="color:#ffa500">Palo! ${g.player}</div></div>
+      </div></div>`;
+    }else if(isSalvada){
+      h+=`<div class="tl-r ${g.team}"><div class="tl-dt" style="background:#58a6ff"></div><div class="tl-c">
+        <div class="tl-m" style="color:#58a6ff">${g.time}'</div><div><div class="tl-p" style="color:#58a6ff">Salvada Clave! ${g.player}</div></div>
+      </div></div>`;
+    }
   });
   bd.innerHTML=h;
   document.getElementById('tlBg').classList.add('on');
@@ -543,7 +1086,7 @@ function closeTl(){document.getElementById('tlBg').classList.remove('on')}
 // ── EXPORT ──
 function openEx(){
   const t1=P.filter(p=>p.team==='t1'),t2=P.filter(p=>p.team==='t2');
-  const g1=t1.reduce((s,p)=>s+p.goals,0),g2=t2.reduce((s,p)=>s+p.goals,0);
+  const g1=teamScore('t1'),g2=teamScore('t2');
   let t=`${N} · ${F}\n`;
   t+=`Resultado: Negro ${g1} - ${g2} Verde\n\n`;
   t+=`EQUIPO NEGRO\n`;t1.forEach(p=>{t+=pL(p)});
@@ -557,8 +1100,9 @@ function openEx(){
 }
 function pL(p){
   let s=[];
-  if(p.goals)s.push(p.goals+'G');if(p.assists)s.push(p.assists+'A');if(p.saves)s.push(p.saves+'T');
-  if(p.shotsOn)s.push(p.shotsOn+'TA');if(p.shotsOff)s.push(p.shotsOff+'TF');if(p.clearances)s.push(p.clearances+'CL');
+  if(p.goals)s.push(p.goals+'G');if(p.autogoals)s.push(p.autogoals+'AG');if(p.assists)s.push(p.assists+'A');if(p.saves)s.push(p.saves+'T');
+  if(p.shotsOffError)s.push(p.shotsOffError+'TF❌');if(p.shotsOffNeutral)s.push(p.shotsOffNeutral+'TF');if(p.shotsOffGood)s.push(p.shotsOffGood+'TF👍');
+  if(p.posts)s.push(p.posts+'PAL');if(p.salvadas)s.push(p.salvadas+'SAL');if(p.defcon)s.push(p.defcon+'DEF');
   return `#${p.num} ${p.name}${p.por?' (POR)':''}${s.length?' - '+s.join(' '):''}\n`;
 }
 function closeEx(){document.getElementById('exBg').classList.remove('on')}
@@ -570,8 +1114,472 @@ function cpEx(){
 // ── TOAST ──
 function show(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1500)}
 
+// ── AUTOGOL ──
+function doAutogoal(){
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  p.autogoals++;
+  addEv('autogoal',p);
+  updSc();draw();
+  // ask who from opposing team "assisted" the own goal
+  goalP=p;
+  const opp=P.filter(x=>x.team!==p.team);
+  document.getElementById('astG').innerHTML=opp.map(x=>
+    `<div class="ast-b" onclick="doOgAst('${x.id}')"><div class="ast-j ${x.team}">${x.num}</div><div class="ast-n">${x.name.split(' ')[0]}</div></div>`
+  ).join('');
+  document.getElementById('astBg').querySelector('.ast-t').textContent='Autogol! Quien provoco?';
+  document.getElementById('astBg').querySelector('.ast-no').textContent='Nadie / No se';
+  document.getElementById('astBg').querySelector('.ast-no').setAttribute('onclick',"doOgAst(null)");
+  document.getElementById('astBg').classList.add('on');
+  if(navigator.vibrate)navigator.vibrate([15,50,15]);
+}
+function doOgAst(id){
+  document.getElementById('astBg').classList.remove('on');
+  // restore assist overlay text for normal goals
+  document.getElementById('astBg').querySelector('.ast-t').textContent='Gol! Quien asistio?';
+  document.getElementById('astBg').querySelector('.ast-no').textContent='Sin asistencia';
+  document.getElementById('astBg').querySelector('.ast-no').setAttribute('onclick',"doAst(null)");
+  if(id&&goalP){
+    const a=P.find(p=>p.id===id);
+    if(a){
+      a.assists++;
+      addEv('assists',a);
+      const lg=[...EV].reverse().find(e=>e.type==='autogoal'&&e.pid===goalP.id);
+      if(lg)lg.astBy=a.name;
+    }
+  }
+  show('Autogol registrado'+(id?' + asistencia':''));
+  goalP=null;
+  updSc();draw();saveState();
+  if(sel){const p=P.find(x=>x.id===sel);if(p)buildPop(p);}
+}
+
+// ── SHOOTER (save follow-up) ──
+function showShooter(keeper){
+  const opp=P.filter(p=>p.team!==keeper.team);
+  document.getElementById('shtG').innerHTML=opp.map(p=>
+    `<div class="ast-b" onclick="doShooter('${p.id}')"><div class="ast-j ${p.team}">${p.num}</div><div class="ast-n">${p.name.split(' ')[0]}</div></div>`
+  ).join('');
+  document.getElementById('shtBg').classList.add('on');
+}
+function doShooter(id){
+  document.getElementById('shtBg').classList.remove('on');
+  if(id&&saveP){
+    const sh=P.find(p=>p.id===id);
+    if(sh){
+      sh.shotsOn++;
+      addEv('shotsOn',sh);
+      const ls=[...EV].reverse().find(e=>e.type==='saves'&&e.pid===saveP.id);
+      if(ls)ls.shotBy=sh.name;
+    }
+  }
+  show('Tapada registrada'+(id?' + tiro al arco':''));
+  saveP=null;
+  updSc();draw();saveState();
+  if(sel){const p=P.find(x=>x.id===sel);if(p)buildPop(p);}
+}
+
+// ── TABLA ──
+function openTabla(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  document.getElementById('tbTi').textContent=N||'Mejenga';
+  document.getElementById('tbSub').textContent=`${ft(tS)} jugados`;
+  const t1p=P.filter(p=>p.team==='t1'),t2p=P.filter(p=>p.team==='t2');
+  const sum=(arr,fn)=>arr.reduce((s,p)=>s+fn(p),0);
+
+  const t1shots=sum(t1p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t2shots=sum(t2p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t1onT=sum(t1p,p=>p.goals+p.shotsOn);
+  const t2onT=sum(t2p,p=>p.goals+p.shotsOn);
+  const t1off=sum(t1p,p=>p.shotsOff);
+  const t2off=sum(t2p,p=>p.shotsOff);
+  const t1posts=sum(t1p,p=>p.posts);
+  const t2posts=sum(t2p,p=>p.posts);
+  const t1saves=sum(t1p,p=>p.saves);
+  const t2saves=sum(t2p,p=>p.saves);
+  const t1ast=sum(t1p,p=>p.assists);
+  const t2ast=sum(t2p,p=>p.assists);
+  const t1salv=sum(t1p,p=>p.salvadas);
+  const t2salv=sum(t2p,p=>p.salvadas);
+  const t1def=sum(t1p,p=>p.defcon||0);
+  const t2def=sum(t2p,p=>p.defcon||0);
+
+  let h='';
+
+  // Score card
+  const gTotal=g1+g2||1;const gP1=Math.round(g1/gTotal*100);
+  h+=`<div class="tb-card">`;
+  h+=`<div class="tb-big">
+    <div class="tb-big-side"><div class="tb-big-dot t1">N</div><div class="tb-big-name">Negro</div></div>
+    <div class="tb-big-sc t1">${g1}</div>
+    <div class="tb-big-sep">-</div>
+    <div class="tb-big-sc t2">${g2}</div>
+    <div class="tb-big-side"><div class="tb-big-dot t2">V</div><div class="tb-big-name">Verde</div></div>
+  </div>`;
+  h+=`<div class="tb-bar"><div class="tb-bar-bl t1" style="width:${gP1}%"></div><div class="tb-bar-bl t2" style="width:${100-gP1}%"></div></div>`;
+  h+=`</div>`;
+
+  // Top stats card
+  h+=`<div class="tb-card">`;
+  h+=`<div class="tb-card-title">Estadísticas</div>`;
+  h+=sRow(g1,g2,'Goles');
+  h+=sRow(t1shots,t2shots,'Tiros totales');
+  h+=sRow(t1onT,t2onT,'Tiros al arco');
+  h+=sRow(t1off,t2off,'Tiros afuera');
+  h+=sRow(t1posts,t2posts,'Palos');
+  h+=sRow(t1saves,t2saves,'Tapadas');
+  h+=sRow(t1ast,t2ast,'Asistencias');
+  h+=sRow(t1salv,t2salv,'Salvadas Clave');
+  h+=sRow(t1def,t2def,'DEF CON');
+  h+=`</div>`;
+
+  // Individuales
+  h+=`<div class="tb-div"><div class="tb-div-line"></div><span class="tb-div-lb">Individuales</span><div class="tb-div-line"></div></div>`;
+
+  const scorers=P.filter(p=>p.goals>0).sort((a,b)=>b.goals-a.goals);
+  const assisters=P.filter(p=>p.assists>0).sort((a,b)=>b.assists-a.assists);
+  const savers=P.filter(p=>p.saves>0).sort((a,b)=>b.saves-a.saves);
+  const salvadores=P.filter(p=>p.salvadas>0).sort((a,b)=>b.salvadas-a.salvadas);
+
+  if(scorers.length||assisters.length||savers.length||salvadores.length){
+    h+=`<div class="tb-card">`;
+    if(scorers.length) h+=tbSection(I.goal,'Goleadores','gol',scorers,p=>p.goals);
+    if(assisters.length) h+=tbSection(I.assist,'Asistidores','ast',assisters,p=>p.assists);
+    if(savers.length) h+=tbSection(I.save,'Tapadas','tap',savers,p=>p.saves);
+    if(salvadores.length) h+=tbSection(I.salvada,'Salvadas Clave','sal',salvadores,p=>p.salvadas);
+    h+=`</div>`;
+  }else{
+    h+=`<div class="tb-card"><div class="tb-empty">No hay stats individuales todavía</div></div>`;
+  }
+
+  document.getElementById('tbW').innerHTML=h;
+  document.getElementById('tbBg').classList.add('on');
+}
+function updDeskTabla(){
+  const el=document.getElementById('deskTbW');
+  if(!el||!window.matchMedia('(min-width:768px)').matches)return;
+  document.getElementById('deskTbTi').textContent=N||'Mejenga';
+  document.getElementById('deskTbSub').textContent=`${ft(tS)} jugados`;
+  // Reuse the same tabla content builder
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  const t1p=P.filter(p=>p.team==='t1'),t2p=P.filter(p=>p.team==='t2');
+  const sum=(arr,fn)=>arr.reduce((s,p)=>s+fn(p),0);
+  const t1shots=sum(t1p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t2shots=sum(t2p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t1onT=sum(t1p,p=>p.goals+p.shotsOn);const t2onT=sum(t2p,p=>p.goals+p.shotsOn);
+  const t1off=sum(t1p,p=>p.shotsOff);const t2off=sum(t2p,p=>p.shotsOff);
+  const t1posts=sum(t1p,p=>p.posts);const t2posts=sum(t2p,p=>p.posts);
+  const t1saves=sum(t1p,p=>p.saves);const t2saves=sum(t2p,p=>p.saves);
+  const t1ast=sum(t1p,p=>p.assists);const t2ast=sum(t2p,p=>p.assists);
+  const t1salv=sum(t1p,p=>p.salvadas);const t2salv=sum(t2p,p=>p.salvadas);
+  let h=`<div class="tb-card"><div class="tb-big">
+    <div class="tb-big-side"><div class="tb-big-dot t1">N</div><div class="tb-big-name">Negro</div></div>
+    <div class="tb-big-sc t1">${g1}</div><div class="tb-big-sep">-</div><div class="tb-big-sc t2">${g2}</div>
+    <div class="tb-big-side"><div class="tb-big-dot t2">V</div><div class="tb-big-name">Verde</div></div>
+  </div></div>`;
+  h+=`<div class="tb-card"><div class="tb-card-title">Estadísticas</div>`;
+  h+=sRow(g1,g2,'Goles')+sRow(t1shots,t2shots,'Tiros totales')+sRow(t1onT,t2onT,'Al arco');
+  h+=sRow(t1off,t2off,'Afuera')+sRow(t1posts,t2posts,'Palos')+sRow(t1saves,t2saves,'Tapadas');
+  h+=sRow(t1ast,t2ast,'Asistencias')+sRow(t1salv,t2salv,'Salvadas Clave')+`</div>`;
+  const scorers=P.filter(p=>p.goals>0).sort((a,b)=>b.goals-a.goals);
+  const assisters=P.filter(p=>p.assists>0).sort((a,b)=>b.assists-a.assists);
+  if(scorers.length||assisters.length){
+    h+=`<div class="tb-card">`;
+    if(scorers.length) h+=tbSection(I.goal,'Goleadores','gol',scorers,p=>p.goals);
+    if(assisters.length) h+=tbSection(I.assist,'Asistidores','ast',assisters,p=>p.assists);
+    h+=`</div>`;
+  }
+  el.innerHTML=h;
+}
+function sRow(v1,v2,label){
+  const w1=v1>v2?' win':'';
+  const w2=v2>v1?' win':'';
+  return `<div class="tb-sr">
+    <div class="tb-sv t1${w1}">${v1}</div>
+    <div class="tb-sl">${label}</div>
+    <div class="tb-sv t2${w2}">${v2}</div>
+  </div>`;
+}
+function tbSection(icon,label,cls,players,valFn){
+  let h=`<div class="tb-sec"><div class="tb-sec-hd"><span class="tb-sec-ico">${icon}</span><span class="tb-sec-lb ${cls}">${label}</span></div>`;
+  if(!players.length){h+=`<div class="tb-empty">Nada todavía</div>`;h+=`</div>`;return h;}
+  players.forEach((p,i)=>{
+    h+=`<div class="tb-row">
+      <span class="tb-pos">${i+1}</span>
+      <div class="tb-dot ${p.team}">${p.num}</div>
+      <span class="tb-nm">${p.name}</span>
+      <span class="tb-val ${cls}">${valFn(p)}</span>
+    </div>`;
+  });
+  h+=`</div>`;
+  return h;
+}
+function closeTabla(){document.getElementById('tbBg').classList.remove('on')}
+
+// ── FINALIZAR ──
+function finalizar(){
+  if(done){openReport();return;}
+  if(!confirm('¿Finalizar la mejenga?'))return;
+  if(tOn){clearInterval(tI);tOn=false;document.getElementById('tmr').className='sb-tm off';}
+  calcRatings();
+  openPreview();
+}
+function openPreview(){
+  const w=document.getElementById('prevW');
+  let h='';
+  ['t1','t2'].forEach(team=>{
+    const nm=team==='t1'?'Negro':'Verde';
+    h+=`<div class="prev-team"><div class="prev-team-dot ${team}"></div><span class="prev-team-nm">${nm}</span><div class="prev-team-line"></div></div>`;
+    P.filter(p=>p.team===team).forEach(p=>{
+      const rc=p.rating>=7?'high':p.rating>=5?'mid':'low';
+      h+=`<div class="prev-card" id="prc_${p.id}">
+        <div class="prev-card-top">
+          <div class="prev-dot ${p.team}">${p.num}</div>
+          <div style="flex:1"><div class="prev-nm">${p.name}</div><div class="prev-pos">${p.por?'Portero':'Jugador'}</div></div>
+          <span class="prev-rt ${rc}" id="prr_${p.id}">${p.rating.toFixed(1)}</span>
+        </div>
+        <div class="prev-stats">`;
+      const stats=p.por
+        ?[['goals','GOL'],['assists','AST'],['saves','TAP'],['shotsOn','TA'],['shotsOffError','TF ❌'],['shotsOffNeutral','TF ➖'],['shotsOffGood','TF 👍'],['posts','PAL'],['autogoals','AG']]
+        :[['goals','GOL'],['assists','AST'],['defcon','DEF'],['salvadas','SAL'],['shotsOn','TA'],['shotsOffError','TF ❌'],['shotsOffNeutral','TF ➖'],['shotsOffGood','TF 👍'],['posts','PAL'],['autogoals','AG']];
+      stats.forEach(([key,lbl])=>{
+        h+=`<div class="prev-stat">
+          <span class="prev-stat-lb">${lbl}</span>
+          <button class="prev-stat-btn" onclick="prevAdj('${p.id}','${key}',-1)">-</button>
+          <span class="prev-stat-v" id="prv_${p.id}_${key}">${p[key]||0}</span>
+          <button class="prev-stat-btn" onclick="prevAdj('${p.id}','${key}',1)">+</button>
+        </div>`;
+      });
+      h+=`</div></div>`;
+    });
+  });
+  w.innerHTML=h;
+  document.getElementById('prevBg').classList.add('on');
+}
+function prevAdj(pid,key,d){
+  const p=P.find(x=>x.id===pid);if(!p)return;
+  p[key]=Math.max(0,(p[key]||0)+d);
+  document.getElementById('prv_'+pid+'_'+key).textContent=p[key];
+  // Recalc this player's rating
+  calcRatings();
+  const rc=p.rating>=7?'high':p.rating>=5?'mid':'low';
+  const el=document.getElementById('prr_'+pid);
+  el.textContent=p.rating.toFixed(1);
+  el.className='prev-rt '+rc;
+}
+function closePreview(){
+  document.getElementById('prevBg').classList.remove('on');
+}
+function confirmPreview(){
+  done=true;
+  document.getElementById('finBtn').textContent='Ver Reporte';
+  document.getElementById('finBtn').classList.add('done');
+  calcRatings();
+  updSc();draw();
+  saveState();
+  document.getElementById('prevBg').classList.remove('on');
+  show('Guardando...');
+  // Wait for Firebase to finish before opening report
+  if(_syncTimer)clearTimeout(_syncTimer);
+  const data=getStateObj();
+  data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+  db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{
+    updateSyncBadge(true);
+    openReport();
+  }).catch(()=>{
+    show('Error guardando, abriendo igual...');
+    openReport();
+  });
+}
+function calcRatings(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  const winTeam=g1>g2?'t1':g2>g1?'t2':null;
+  const conceded={t1:g2,t2:g1};
+  P.forEach(p=>{
+    let r=6.0;
+    r+=p.goals*0.8;
+    r+=p.assists*0.5;
+    r+=(p.defcon||0)*0.1;
+    r+=p.salvadas*0.35;
+    r+=(p.por?p.saves*0.2:0);
+    if(p.por)r+=(conceded[p.team]||0)*(-0.2);
+    r+=p.shotsOn*0.1;
+    r+=p.posts*0.05;
+    r+=(p.shotsOffError||0)*(-0.2);
+    r+=(p.shotsOffGood||0)*0.05;
+    r+=p.autogoals*(-1.0);
+    if(winTeam&&p.team===winTeam)r+=0.3;
+    p.rating=Math.round(Math.min(10,Math.max(1,r))*10)/10;
+  });
+  // MVP = highest rated
+  let best=null;
+  P.forEach(p=>{if(!best||p.rating>best.rating)best=p;});
+  MVP=best||null;
+}
+
+// ── REPORT ──
+function openReport(){
+  if(!mejengaId){show('Guardá la mejenga primero');return;}
+  const base=location.href.replace(/\/[^\/]*$/,'/');
+  window.open(base+'reporte.html?id='+mejengaId,'_blank');
+}
+
+
+// ── HOME ──
+function goToSetup(){
+  document.getElementById('home').classList.add('gone');
+  document.getElementById('setup').classList.remove('gone');
+  initS();
+}
+function backToHome(){
+  document.getElementById('setup').classList.add('gone');
+  document.getElementById('home').classList.remove('gone');
+}
+function enterApp(){
+  document.getElementById('home').classList.add('gone');
+  document.getElementById('setup').classList.add('gone');
+  document.getElementById('app').classList.add('on');
+  document.getElementById('tmr').textContent=ft(tS);
+  document.getElementById('tmr').className='sb-tm off';
+  updSc();draw();updIb();
+  if(done){
+    document.getElementById('finBtn').textContent='Ver Reporte';
+    document.getElementById('finBtn').classList.add('done');
+  }
+}
+function loadMejengasList(){
+  db.collection(MEJENGAS_COL).orderBy('ts','desc').limit(20).get().then(snap=>{
+    const list=document.getElementById('hmList');
+    const cnt=document.getElementById('hmCnt');
+    if(snap.empty){
+      list.innerHTML='<div class="hm-empty">No hay mejengas todavía.<br>Creá tu primera mejenga.</div>';
+      cnt.textContent='0';
+      return;
+    }
+    cnt.textContent=snap.size;
+    let h='';
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const g1=calcScore(d.P,'t1');
+      const g2=calcScore(d.P,'t2');
+      const isActive=!d.done;
+      const evCount=(d.EV||[]).length;
+      const date=d.ts?new Date(d.ts):null;
+      const dateStr=date?formatDate(date):'';
+      h+=`<div class="hm-card ${isActive?'active':'done'}">
+        <div onclick="openMejenga('${doc.id}')" style="cursor:pointer">
+          <div class="hm-top">
+            <span class="hm-name">${d.N||'Mejenga'} · ${d.F||''}</span>
+            <span class="hm-badge ${isActive?'live':'fin'}">${isActive?'En vivo':'Finalizada'}</span>
+          </div>
+          <div class="hm-score">
+            <span class="t1c">${g1}</span><span class="sep">-</span><span class="t2c">${g2}</span>
+          </div>
+          <div class="hm-meta">
+            ${d.CA?`<span class="hm-mi"><span>${d.CA}</span></span>`:''}
+            <span class="hm-mi">${ft(d.tS||0)} jugados</span>
+            <span class="hm-mi">${evCount} eventos</span>
+            ${dateStr?`<span class="hm-mi">${dateStr}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.04)">
+          <button onclick="deleteMejenga('${doc.id}',event)" style="background:none;border:none;font-family:inherit;font-size:10px;font-weight:600;color:rgba(255,80,80,.5);cursor:pointer;padding:4px 8px">Borrar</button>
+        </div>
+      </div>`;
+    });
+    list.innerHTML=h;
+  }).catch(()=>{
+    document.getElementById('hmList').innerHTML='<div class="hm-empty">No se pudo cargar.<br>Revisá tu conexión.</div>';
+  });
+}
+function calcScore(players,team){
+  if(!players||!players.length)return 0;
+  const opp=team==='t1'?'t2':'t1';
+  return players.filter(p=>p.team===team).reduce((s,p)=>s+(p.goals||0),0)
+       + players.filter(p=>p.team===opp).reduce((s,p)=>s+(p.autogoals||0),0);
+}
+function formatDate(d){
+  const dias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
+}
+function deleteMejenga(id,e){
+  e.stopPropagation();
+  if(!confirm('¿Borrar esta mejenga? No se puede deshacer.'))return;
+  db.collection(MEJENGAS_COL).doc(id).delete().then(()=>{
+    show('Mejenga borrada');
+    loadMejengasList();
+  }).catch(()=>{show('Error al borrar');});
+}
+function openMejenga(id){
+  // Load from Firebase
+  db.collection(MEJENGAS_COL).doc(id).get().then(doc=>{
+    if(!doc.exists){show('Mejenga no encontrada');return;}
+    const d=doc.data();
+    N=d.N||'';F=d.F||'';CA=d.CA||'';UB=d.UB||'';ORG=d.ORG||'';
+    P=d.P||[];EV=d.EV||[];tS=d.tS||0;MVP=d.MVP||null;done=d.done||false;
+    mejengaId=id;
+    _firstSync=false;
+    P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;});
+    saveState(); // save to localStorage
+    if(done){
+      // Finished game — open report directly
+      openReport();
+    }else{
+      // Active game — enter tracking
+      enterApp();
+    }
+  }).catch(()=>{show('Error al cargar');});
+}
+
+// ── RECOVERY FLOW ──
+function showRecovery(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  const evCount=EV.length;
+  const status=done?'Finalizada':'En progreso';
+  let h='';
+  h+=`<div class="rec-row"><span class="rec-lbl">Partido</span><span class="rec-val">${N} · ${F}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Marcador</span><span class="rec-val g">Negro ${g1} - ${g2} Verde</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Tiempo</span><span class="rec-val">${ft(tS)}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Eventos</span><span class="rec-val">${evCount}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Estado</span><span class="rec-val">${status}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Backup</span><span class="rec-val" style="color:${mejengaId?'rgba(167,238,67,.7)':'rgba(255,180,60,.7)'}">☁️ ${mejengaId?'Guardada en Firebase':'Solo local'}</span></div>`;
+  document.getElementById('recInfo').innerHTML=h;
+  document.getElementById('recBg').classList.add('on');
+}
+function resumeState(){
+  document.getElementById('recBg').classList.remove('on');
+  enterApp();
+}
+function discardState(){
+  clearState();
+  document.getElementById('recBg').classList.remove('on');
+  N='';F='';CA='';UB='';ORG='';P=[];EV=[];sel=null;tOn=false;tS=0;MVP=null;done=false;mejengaId=null;
+  document.getElementById('home').classList.remove('gone');
+}
+
+// ── BACK TO HOME (from tracking) ──
+function resetMejenga(){
+  if(!confirm('¿Volver al inicio?\nLa mejenga queda guardada en Firebase.'))return;
+  clearState();
+  N='';F='';CA='';UB='';ORG='';P=[];EV=[];sel=null;tOn=false;tS=0;MVP=null;done=false;mejengaId=null;
+  if(tOn){clearInterval(tI);tOn=false;}
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('home').classList.remove('gone');
+  loadMejengasList();
+}
+
+// Inject SVG icons into shot-type modal
+document.getElementById('styIcoErr').innerHTML=I.tfError;
+document.getElementById('styIcoNeu').innerHTML=I.tfNeutral;
+document.getElementById('styIcoGood').innerHTML=I.tfGood;
+
 // INIT
-initS();
+if(loadState()){
+  document.getElementById('home').classList.add('gone');
+  showRecovery();
+}else{
+  loadMejengasList();
+}
 </script>
 </body>
 </html>
