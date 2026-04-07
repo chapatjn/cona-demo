@@ -1,0 +1,63 @@
+/* Screen routing */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* Password modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal-card {
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 28px 24px;
+  width: 90%; max-width: 340px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.modal-title {
+  font-size: 17px; font-weight: 700; color: #fff; text-align: center;
+}
+
+.modal-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #fff; font-size: 15px; width: 100%;
+  font-family: inherit;
+  outline: none;
+}
+
+.modal-error {
+  color: #ff5555; font-size: 12px; text-align: center; min-height: 16px;
+}
+
+.modal-btns {
+  display: flex; gap: 10px;
+}
+
+.modal-btns button {
+  flex: 1; padding: 12px;
+  border: none; border-radius: 10px;
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-btns button:first-child {
+  background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+}
+
+.modal-btns button:last-child {
+  background: #00e676; color: #000;
+}
+
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)}
+}
+.modal-card.shake { animation: shake 0.4s ease; }
