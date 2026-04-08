@@ -1,0 +1,263 @@
+// ── Organizador Panel ─────────────────────────────────────────────────────
+// Password gate, pagos confirmation, and team setup before live tracking.
+// Relies on jugadoresRef (set by registro.js's initRegistro) and
+// mejengaCache (set by home.js) for the current mejenga context.
+
+const ORG_PANEL_PASS = 'messi';
+
+// ── Password modal ───────────────────────────────────────────────────────
+
+function openOrgPanel() {
+  const overlay = document.getElementById('opOverlay');
+  const input   = document.getElementById('opInput');
+  const errEl   = document.getElementById('opError');
+  if (!overlay) return;
+  errEl.textContent = '';
+  input.value = '';
+  overlay.classList.remove('hidden');
+  setTimeout(() => input.focus(), 100);
+}
+
+function closeOrgPanel() {
+  document.getElementById('opOverlay').classList.add('hidden');
+}
+
+function checkOrgPass() {
+  const val   = document.getElementById('opInput').value;
+  const errEl = document.getElementById('opError');
+  if (val === ORG_PANEL_PASS) {
+    closeOrgPanel();
+    openChoice();
+  } else {
+    errEl.textContent = 'Contraseña incorrecta';
+    const card = document.getElementById('opCard');
+    card.classList.add('op-shake');
+    setTimeout(() => card.classList.remove('op-shake'), 400);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('opInput');
+  if (inp) {
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkOrgPass(); });
+  }
+});
+
+// ── Choice modal ─────────────────────────────────────────────────────────
+
+function openChoice() {
+  // Show the mejenga name
+  const nameEl = document.getElementById('ocMejengaName');
+  if (nameEl && typeof jugadoresRef !== 'undefined' && jugadoresRef) {
+    // jugadoresRef path: mejengas/{id}/jugadores — grab the subtitle
+    const subtitle = document.getElementById('regSubtitle');
+    if (subtitle) nameEl.textContent = subtitle.textContent || 'Mejenga';
+  }
+  document.getElementById('ocOverlay').classList.remove('hidden');
+}
+
+function closeChoice() {
+  document.getElementById('ocOverlay').classList.add('hidden');
+}
+
+// ── Navigate override: init pagos/equipo screens on navigate ────────────
+// Hook into router.js navigate by wrapping it.
+const _origNavigate = navigate;
+window.navigate = function(screen) {
+  _origNavigate(screen);
+  if (screen === 'pagos')  initPagos();
+  if (screen === 'equipo') initEquipo();
+};
+
+// ── PAGOS SCREEN ─────────────────────────────────────────────────────────
+
+function initPagos() {
+  const list = document.getElementById('pagosList');
+  const sub  = document.getElementById('pagosSubtitle');
+  if (!list) return;
+
+  const subtitle = document.getElementById('regSubtitle');
+  if (sub && subtitle) sub.textContent = subtitle.textContent || '';
+
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) {
+    list.innerHTML = '<div class="panel-empty">Abrí una mejenga primero.</div>';
+    return;
+  }
+
+  list.innerHTML = '<div class="panel-empty">Cargando...</div>';
+
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    if (snap.empty) {
+      list.innerHTML = '<div class="panel-empty">No hay jugadores registrados.</div>';
+      return;
+    }
+    renderPagosList(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  }).catch(() => {
+    list.innerHTML = '<div class="panel-empty">Error al cargar.</div>';
+  });
+}
+
+function renderPagosList(players) {
+  const list = document.getElementById('pagosList');
+  if (!list) return;
+
+  const active = players.filter(p => !p.banca);
+  const banca  = players.filter(p => p.banca);
+
+  let html = '';
+
+  if (active.length > 0) {
+    html += '<div class="panel-section-label">En lista</div>';
+    html += active.map(p => pagosRow(p)).join('');
+  }
+  if (banca.length > 0) {
+    html += '<div class="panel-section-label">Banca</div>';
+    html += banca.map(p => pagosRow(p)).join('');
+  }
+
+  list.innerHTML = html || '<div class="panel-empty">No hay jugadores.</div>';
+}
+
+function pagosRow(p) {
+  const pos  = p.position === 'portero' ? 'Portero' : 'Jugador';
+  const paid = !!p.paid;
+  return `<div class="pagos-row" id="prow-${p.id}">
+    <div class="pagos-info">
+      <div class="pagos-name">${escapePanel(p.name)}</div>
+      <div class="pagos-pos">${pos}</div>
+    </div>
+    <button class="pagos-toggle ${paid ? 'paid' : 'unpaid'}"
+            onclick="togglePago('${p.id}', ${paid})">
+      ${paid ? '✓ Pagado' : '● Pendiente'}
+    </button>
+  </div>`;
+}
+
+function togglePago(playerId, currentlyPaid) {
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) return;
+  const newVal = !currentlyPaid;
+  jugadoresRef.doc(playerId).update({ paid: newVal }).then(() => {
+    // Re-fetch and re-render
+    initPagos();
+  }).catch(err => console.error('togglePago error:', err));
+}
+
+// ── EQUIPO SCREEN ─────────────────────────────────────────────────────────
+
+function initEquipo() {
+  const list = document.getElementById('equipoList');
+  const sub  = document.getElementById('equipoSubtitle');
+  if (!list) return;
+
+  const subtitle = document.getElementById('regSubtitle');
+  if (sub && subtitle) sub.textContent = subtitle.textContent || '';
+
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) {
+    list.innerHTML = '<div class="panel-empty">Abrí una mejenga primero.</div>';
+    return;
+  }
+
+  list.innerHTML = '<div class="panel-empty">Cargando...</div>';
+
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    if (snap.empty) {
+      list.innerHTML = '<div class="panel-empty">No hay jugadores registrados.</div>';
+      return;
+    }
+    renderEquipoList(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  }).catch(() => {
+    list.innerHTML = '<div class="panel-empty">Error al cargar.</div>';
+  });
+}
+
+function renderEquipoList(players) {
+  const list = document.getElementById('equipoList');
+  if (!list) return;
+
+  const active  = players.filter(p => !p.banca);
+  const porteros = active.filter(p => p.position === 'portero');
+  const jugadores = active.filter(p => p.position === 'jugador');
+
+  let html = '';
+
+  if (porteros.length > 0) {
+    html += '<div class="panel-section-label">Porteros</div>';
+    html += porteros.map(p => equipoRow(p, true)).join('');
+  }
+  if (jugadores.length > 0) {
+    html += '<div class="panel-section-label">Jugadores de Campo</div>';
+    html += jugadores.map(p => equipoRow(p, false)).join('');
+  }
+
+  list.innerHTML = html || '<div class="panel-empty">No hay jugadores.</div>';
+}
+
+function equipoRow(p, isPortero) {
+  const eq = p.equipo || 0; // 0=unassigned, 1=negro, 2=verde
+  const num = p.numero || '';
+  return `<div class="equipo-row" id="erow-${p.id}">
+    <div class="equipo-info">
+      <div class="equipo-name">${escapePanel(p.name)}</div>
+      ${!isPortero ? `<input class="equipo-num-input"
+        type="number" min="1" max="99" placeholder="#"
+        value="${escapePanel(String(num))}"
+        onchange="updateNumero('${p.id}', this.value)"
+        oninput="this.value=this.value.slice(0,2)">` : '<span class="equipo-gk-badge">GK</span>'}
+    </div>
+    <div class="equipo-team-btns">
+      <button class="eq-btn t1-btn ${eq === 1 ? 'active' : ''}"
+              onclick="updateEquipo('${p.id}', 1, this)">Negro</button>
+      <button class="eq-btn t2-btn ${eq === 2 ? 'active' : ''}"
+              onclick="updateEquipo('${p.id}', 2, this)">Verde</button>
+    </div>
+  </div>`;
+}
+
+function updateEquipo(playerId, equipo, btn) {
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) return;
+  jugadoresRef.doc(playerId).update({ equipo }).then(() => {
+    // Update buttons in the row
+    const row = document.getElementById('erow-' + playerId);
+    if (!row) return;
+    row.querySelectorAll('.eq-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }).catch(err => console.error('updateEquipo error:', err));
+}
+
+function updateNumero(playerId, val) {
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) return;
+  const num = parseInt(val);
+  if (isNaN(num) || num < 1 || num > 99) return;
+  jugadoresRef.doc(playerId).update({ numero: num })
+    .catch(err => console.error('updateNumero error:', err));
+}
+
+function goToOrganizador() {
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) {
+    navigate('organizador');
+    return;
+  }
+
+  const mejengaData = (typeof currentMejengaData !== 'undefined' && currentMejengaData)
+    ? currentMejengaData
+    : { nombre: document.getElementById('regSubtitle')?.textContent || 'Mejenga', lugar: '' };
+
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    const players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Activate the organizador screen first
+    _origNavigate('organizador');
+    // Then immediately launch the live match — no timeout needed
+    startFromRegistro(mejengaData, players);
+  }).catch(err => {
+    console.error('goToOrganizador error:', err);
+    _origNavigate('organizador');
+  });
+}
+
+// ── Util ──────────────────────────────────────────────────────────────────
+
+function escapePanel(str) {
+  const el = document.createElement('div');
+  el.textContent = String(str || '');
+  return el.innerHTML;
+}

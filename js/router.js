@@ -1,16 +1,51 @@
 // ── App state ──────────────────────────────────────────────────────────────
-const ORGANIZADOR_PASS = 'cona2025';
+const ORGANIZADOR_PASS = 'messi';
 
 let currentUnsub = null; // active Firestore listener
+
+// Ensure scrolling works on page load (organizador.css no longer sets global overflow:hidden)
+document.documentElement.style.overflow = 'auto';
+document.documentElement.style.height   = 'auto';
+document.documentElement.style.overscrollBehavior = '';
+document.body.style.overflow = 'auto';
+document.body.style.height   = 'auto';
+document.body.style.overscrollBehavior = '';
 
 function navigate(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('screen-' + screen);
-  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+  if (el) { el.classList.add('active'); }
+
+  if (screen === 'organizador') {
+    // Organizador needs fixed-height overflow:hidden (its own app layout)
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height   = '100%';
+    document.documentElement.style.overscrollBehavior = 'none';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height   = '100%';
+    document.body.style.overscrollBehavior = 'none';
+    document.body.style.background = '';
+  } else {
+    // All other screens: normal scrolling
+    document.documentElement.style.overflow = 'auto';
+    document.documentElement.style.height   = 'auto';
+    document.documentElement.style.overscrollBehavior = '';
+    document.body.style.overflow = 'auto';
+    document.body.style.height   = 'auto';
+    document.body.style.overscrollBehavior = '';
+    const bg = (screen === 'registro' || screen === 'reporte' || screen === 'pagos' || screen === 'equipo') ? '#142029' : '#0e1a22';
+    document.body.style.background = bg;
+    window.scrollTo(0, 0);
+  }
+
+  if (screen === 'home' && typeof initHome === 'function') initHome();
 }
 
 // Password gate
-function openPasswordGate() {
+let _passwordDest = 'organizador';
+
+function openPasswordGate(dest) {
+  _passwordDest = dest || 'organizador';
   document.getElementById('modal-password').classList.remove('hidden');
   document.getElementById('passwordInput').value = '';
   document.getElementById('passwordError').textContent = '';
@@ -23,9 +58,9 @@ function closePasswordModal() {
 
 function checkPassword() {
   const val = document.getElementById('passwordInput').value;
-  if (val === ORGANIZADOR_PASS) {
+  if (val.toLowerCase() === ORGANIZADOR_PASS) {
     closePasswordModal();
-    navigate('organizador');
+    navigate(_passwordDest);
   } else {
     const err = document.getElementById('passwordError');
     err.textContent = 'Contraseña incorrecta';

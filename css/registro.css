@@ -8,10 +8,72 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        #screen-registro { min-height: 100vh; background: #142029; }
+
         .container {
             max-width: 480px;
             margin: 0 auto;
             padding: 0 20px 48px;
+        }
+
+        @media (min-width: 900px) {
+            .container { max-width: 1100px; padding: 0; }
+        }
+
+        @media (min-width: 900px) {
+            body { background: #0e1a22; }
+            #screen-registro { background: #0e1a22; }
+
+            .page-wrapper {
+                display: grid;
+                grid-template-columns: 1fr 420px;
+                grid-template-rows: auto 1fr auto;
+                grid-template-areas:
+                    "header  header"
+                    "left    right"
+                    "footer  footer";
+                max-width: 1100px;
+                margin: 0 auto;
+                min-height: 100vh;
+                padding: 0 40px 60px;
+            }
+
+            .header { grid-area: header; padding: 28px 0 20px; }
+            .logo svg { height: 26px; }
+
+            .left-col {
+                grid-area: left;
+                padding-right: 48px;
+                padding-top: 28px;
+                border-right: 1px solid rgba(255,255,255,0.06);
+                min-width: 0;
+            }
+
+            .right-col {
+                grid-area: right;
+                padding-left: 48px;
+                padding-top: 28px;
+            }
+
+            .footer { grid-area: footer; margin-top: 32px; }
+
+            .event-section { text-align: left; padding: 0 0 24px; }
+            .event-title { font-size: 36px; margin-bottom: 18px; }
+            .event-details { justify-content: flex-start; }
+            .spots-section { padding: 0 0 24px; }
+            .list-section { padding: 0; }
+            .banca-section { padding: 8px 0 0; }
+
+            .form-section {
+                padding: 0;
+                position: sticky;
+                top: 32px;
+            }
+        }
+
+        @media (min-width: 600px) and (max-width: 899px) {
+            .container { max-width: 580px; padding: 0 32px 48px; }
+            .event-title { font-size: 30px; }
         }
 
         /* Header */
@@ -21,8 +83,22 @@
             justify-content: space-between;
             padding: 20px 0 16px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative;
         }
 
+        .reg-back-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.45);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px 0;
+            flex-shrink: 0;
+        }
+
+        .logo { position: absolute; left: 50%; transform: translateX(-50%); }
         .logo svg { height: 22px; width: auto; }
 
         .live-badge {
@@ -42,8 +118,7 @@
         }
 
         .live-dot {
-            width: 6px;
-            height: 6px;
+            width: 6px; height: 6px;
             background: #A7EE43;
             border-radius: 50%;
             animation: pulse 1.5s infinite;
@@ -51,16 +126,10 @@
             flex-shrink: 0;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         /* Event Info */
-        .event-section {
-            text-align: center;
-            padding: 28px 0 20px;
-        }
+        .event-section { text-align: center; padding: 28px 0 20px; }
 
         .event-subtitle {
             font-size: 12px;
@@ -158,16 +227,11 @@
             transition: all 0.5s ease;
         }
 
-        .progress-fill.paid-fill   { background: #A7EE43; left: 0; }
+        .progress-fill.paid-fill    { background: #A7EE43; left: 0; }
         .progress-fill.pending-fill { background: #f59e0b; }
 
         /* Payment steps */
-        .payment-steps {
-            margin-top: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .payment-steps { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
 
         .payment-step {
             display: flex;
@@ -179,8 +243,7 @@
         }
 
         .step-num {
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             border-radius: 50%;
             background: rgba(255,255,255,0.08);
             color: rgba(255,255,255,0.4);
@@ -259,11 +322,7 @@
         .pos-btn .pos-name { display: block; font-size: 13px; font-weight: 700; }
         .pos-btn .pos-tag  { display: block; font-size: 9px; font-weight: 700; margin-top: 3px; }
 
-        .pos-btn.selected {
-            background: rgba(167,238,67,0.1);
-            border-color: rgba(167,238,67,0.4);
-            color: #A7EE43;
-        }
+        .pos-btn.selected { background: rgba(167,238,67,0.1); border-color: rgba(167,238,67,0.4); color: #A7EE43; }
 
         .pos-btn.banca-available {
             background: rgba(255,255,255,0.02);
@@ -310,16 +369,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .payment-check.checked-active {
-            border-color: rgba(167,238,67,0.25);
-            background: rgba(167,238,67,0.04);
-        }
-
+        .payment-check.checked-active { border-color: rgba(167,238,67,0.25); background: rgba(167,238,67,0.04); }
         .payment-check.error { border-color: rgba(239,68,68,0.4); }
 
         .custom-check {
-            width: 22px;
-            height: 22px;
+            width: 22px; height: 22px;
             border: 2px solid rgba(255,255,255,0.2);
             border-radius: 6px;
             flex-shrink: 0;
@@ -331,28 +385,42 @@
         }
 
         .custom-check.checked { background: #A7EE43; border-color: #A7EE43; }
-
         .custom-check.checked::after {
             content: '';
-            width: 6px;
-            height: 10px;
+            width: 6px; height: 10px;
             border: 2px solid #142029;
-            border-top: none;
-            border-left: none;
+            border-top: none; border-left: none;
             transform: rotate(45deg) translateY(-1px);
         }
 
         .check-text { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); line-height: 1.4; }
 
-        .payment-disclaimer {
-            font-size: 11px;
-            color: rgba(255,255,255,0.28);
-            line-height: 1.5;
-            margin-top: 8px;
-            padding: 0 2px;
-        }
+        .payment-disclaimer { font-size: 11px; color: rgba(255,255,255,0.28); line-height: 1.5; margin-top: 8px; padding: 0 2px; }
 
         .form-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 14px 0; }
+
+        /* Moving border button */
+        .mb-wrapper {
+            position: relative;
+            display: block;
+            border-radius: 12px;
+            padding: 2px;
+            background: rgba(255,255,255,0.04);
+            overflow: hidden;
+        }
+
+        .mb-dot {
+            position: absolute;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(167,238,67,1) 0%, rgba(167,238,67,0.4) 35%, transparent 70%);
+            top: 0; left: 0;
+            z-index: 0;
+        }
+
+        .mb-wrapper .submit-btn { position: relative; z-index: 1; border-radius: 10px; }
 
         .submit-btn {
             width: 100%;
@@ -378,8 +446,7 @@
         .success-toast {
             display: none;
             position: fixed;
-            top: 20px;
-            left: 50%;
+            top: 20px; left: 50%;
             transform: translateX(-50%);
             background: #A7EE43;
             color: #142029;
@@ -390,7 +457,6 @@
             z-index: 100;
             box-shadow: 0 8px 32px rgba(167,238,67,0.3);
             white-space: nowrap;
-            transition: background 0.2s;
         }
 
         .success-toast.show { display: block; animation: slideDown 0.3s ease; }
@@ -405,23 +471,10 @@
         .list-section { padding: 8px 0; }
         .list-block { margin-bottom: 14px; }
 
-        .list-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
+        .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 
-        .list-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.4);
-        }
-
+        .list-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); }
         .list-title.banca-color { color: rgba(148,163,184,0.7); }
-
         .list-count { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.2); }
         .list-count.banca-color { color: rgba(148,163,184,0.4); }
 
@@ -432,13 +485,7 @@
             overflow: hidden;
         }
 
-        .list-empty {
-            text-align: center;
-            padding: 20px;
-            color: rgba(255,255,255,0.18);
-            font-size: 12px;
-            font-weight: 500;
-        }
+        .list-empty { text-align: center; padding: 20px; color: rgba(255,255,255,0.18); font-size: 12px; font-weight: 500; }
 
         .player-item {
             display: flex;
@@ -456,14 +503,10 @@
         }
 
         .player-number {
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 26px; height: 26px;
+            display: flex; align-items: center; justify-content: center;
             border-radius: 7px;
-            font-size: 11px;
-            font-weight: 800;
+            font-size: 11px; font-weight: 800;
             margin-right: 12px;
             flex-shrink: 0;
         }
@@ -474,34 +517,19 @@
 
         .player-info { flex: 1; min-width: 0; }
 
-        .player-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.85);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
+        .player-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-time { font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 2px; }
 
         .player-status {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            padding: 3px 8px;
-            border-radius: 6px;
+            font-size: 9px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            padding: 3px 8px; border-radius: 6px;
             flex-shrink: 0;
         }
 
-        .player-status.in   { background: rgba(167,238,67,0.12); color: #A7EE43; }
-        .player-status.wait { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); }
-        .player-status.pending {
-            background: rgba(251,191,36,0.12);
-            color: #fbbf24;
-            animation: pendingPulse 2s infinite;
-        }
+        .player-status.in      { background: rgba(167,238,67,0.12); color: #A7EE43; }
+        .player-status.wait    { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); }
+        .player-status.pending { background: rgba(251,191,36,0.12); color: #fbbf24; animation: pendingPulse 2s infinite; }
 
         @keyframes pendingPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
@@ -519,160 +547,9 @@
             padding: 10px 14px;
             background: rgba(148,163,184,0.04);
             border-bottom: 1px solid rgba(148,163,184,0.08);
-            font-size: 11px;
-            color: rgba(148,163,184,0.65);
-            line-height: 1.45;
-            font-weight: 500;
+            font-size: 11px; color: rgba(148,163,184,0.65);
+            line-height: 1.45; font-weight: 500;
         }
-
-        /* ── Divisor entre secciones ── */
-        .section-divider {
-            height: 1px;
-            background: rgba(255,255,255,0.06);
-            margin: 24px 0 20px;
-        }
-
-        .section-heading {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .section-heading-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.4);
-        }
-
-        /* ── Último resultado ── */
-        .resultado-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        .resultado-field {
-            background: linear-gradient(135deg,#1a3a22 0%,#1e4a2a 60%,#163320 100%);
-            padding: 18px 18px 14px;
-            position: relative;
-        }
-
-        .resultado-match-label {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.35);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .resultado-score-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .resultado-team { text-align: center; }
-        .resultado-team-name { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.45); margin-bottom: 3px; }
-        .resultado-team-score { font-size: 42px; font-weight: 800; color: white; line-height: 1; }
-        .resultado-team-score.winner { color: #A7EE43; }
-        .resultado-dash { font-size: 20px; font-weight: 800; color: rgba(255,255,255,0.15); margin-top: 12px; }
-
-        .resultado-date-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 700;
-            color: rgba(255,255,255,0.45);
-            padding: 3px 8px;
-        }
-
-        .resultado-bottom {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .mvp-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: rgba(255,255,255,0.65); font-weight: 600; }
-        .mvp-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; background: rgba(255,193,7,0.12); color: #ffc107; padding: 2px 7px; border-radius: 5px; }
-        .resultado-cancha { font-size: 10px; color: rgba(255,255,255,0.25); font-weight: 600; }
-
-        /* ── Goleadores ── */
-        .scorer-row {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            gap: 12px;
-        }
-
-        .scorer-row:last-child { border-bottom: none; }
-
-        .scorer-rank {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.06);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: rgba(255,255,255,0.3);
-            flex-shrink: 0;
-        }
-
-        .scorer-rank.gold { background: rgba(255,193,7,0.14); color: #ffc107; }
-
-        .scorer-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.06);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: rgba(255,255,255,0.5);
-            flex-shrink: 0;
-        }
-
-        .scorer-info { flex: 1; }
-        .scorer-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); }
-        .scorer-sub  { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 1px; }
-
-        .scorer-goals .num { font-size: 18px; font-weight: 800; color: #A7EE43; line-height: 1; }
-        .scorer-goals .lbl { font-size: 9px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.06em; text-align: right; }
-
-        /* ── Season stats chips ── */
-        .season-stats {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .season-stat-chip {
-            flex: 1;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 10px;
-            padding: 10px 8px;
-            text-align: center;
-        }
-
-        .season-stat-chip .val { font-size: 18px; font-weight: 800; color: #A7EE43; line-height: 1; margin-bottom: 3px; }
-        .season-stat-chip .lbl { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); }
 
         /* Footer */
         .footer {
@@ -684,7 +561,273 @@
             justify-content: space-between;
         }
 
-        .footer-left { font-size: 8px; color: rgba(255,255,255,0.2); line-height: 1.5; }
+        .footer-left  { font-size: 8px; color: rgba(255,255,255,0.2); line-height: 1.5; }
         .footer-right { text-align: right; }
         .footer-url   { font-size: 10px; font-weight: 700; color: #A7EE43; }
         .footer-email { font-size: 9px; color: rgba(255,255,255,0.2); margin-top: 1px; }
+
+        /* ── Footer Organizador button ── */
+        .footer-org-btn {
+            display: inline-block;
+            margin-top: 10px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: rgba(255,255,255,0.3);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .footer-org-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.5); }
+
+        /* ── Org Password Modal ── */
+        .op-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 8000;
+        }
+        .op-overlay.hidden { display: none; }
+        .op-card {
+            background: #1a2830;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 28px 24px;
+            width: 90%; max-width: 320px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .op-title {
+            font-size: 16px; font-weight: 800; color: #fff; text-align: center;
+        }
+        .op-input {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #fff; font-size: 15px; font-family: inherit;
+            outline: none; width: 100%;
+        }
+        .op-input:focus { border-color: rgba(167,238,67,0.35); }
+        .op-error { color: #ff5555; font-size: 12px; text-align: center; min-height: 14px; }
+        .op-btns { display: flex; gap: 10px; }
+        .op-cancel {
+            flex: 1; padding: 11px;
+            background: rgba(255,255,255,0.07);
+            border: none; border-radius: 10px;
+            color: rgba(255,255,255,0.55); font-family: inherit;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+        }
+        .op-enter {
+            flex: 1; padding: 11px;
+            background: #A7EE43;
+            border: none; border-radius: 10px;
+            color: #0e1a22; font-family: inherit;
+            font-size: 13px; font-weight: 800; cursor: pointer;
+        }
+        @keyframes op-shake {
+            0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-7px)} 40%,80%{transform:translateX(7px)}
+        }
+        .op-shake { animation: op-shake 0.35s ease; }
+
+        /* ── Org Choice Modal ── */
+        .oc-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 8000;
+        }
+        .oc-overlay.hidden { display: none; }
+        .oc-card {
+            background: #1a2830;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 28px 20px 20px;
+            width: 90%; max-width: 340px;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .oc-title { font-size: 18px; font-weight: 800; color: #fff; text-align: center; }
+        .oc-sub   { font-size: 11px; color: rgba(255,255,255,0.35); text-align: center; margin-top: -4px; }
+        .oc-btn {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            color: #fff; font-family: inherit;
+            font-size: 14px; font-weight: 700;
+            cursor: pointer; text-align: left;
+            transition: background 0.15s, border-color 0.15s;
+            position: relative;
+        }
+        .oc-btn svg { flex-shrink: 0; opacity: 0.7; }
+        .oc-btn .oc-desc {
+            display: block; font-size: 10px; font-weight: 500;
+            color: rgba(255,255,255,0.35); margin-top: 2px;
+        }
+        .oc-btn.pagos:hover  { background: rgba(167,238,67,0.08); border-color: rgba(167,238,67,0.2); }
+        .oc-btn.equipo:hover { background: rgba(167,238,67,0.08); border-color: rgba(167,238,67,0.2); }
+        .oc-btn.home-btn { opacity: 0.6; }
+        .oc-btn.home-btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); opacity: 1; }
+        .oc-cancel-sm {
+            background: none; border: none;
+            color: rgba(255,255,255,0.3); font-family: inherit;
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            text-align: center; padding: 4px;
+        }
+
+        /* ── Panel screens (pagos + equipo) shared ── */
+        #screen-pagos, #screen-equipo {
+            background: #142029; min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .panel-wrap {
+            width: 100%;
+            padding: 0 20px 80px;
+            box-sizing: border-box;
+        }
+        @media (min-width: 600px) { .panel-wrap { padding: 0 40px 80px; } }
+        @media (min-width: 960px) { .panel-wrap { padding: 0 80px 80px; } }
+
+        .panel-top {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 0 0;
+        }
+        .panel-back {
+            background: none; border: none;
+            color: rgba(255,255,255,0.45); font-family: inherit;
+            font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px 0;
+        }
+        .panel-back:hover { color: rgba(255,255,255,0.8); }
+        .panel-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: rgba(255,255,255,0.25);
+        }
+        .panel-hero { padding: 28px 0 8px; }
+        .panel-title {
+            font-size: 34px; font-weight: 800; color: #fff;
+            letter-spacing: -0.02em; line-height: 1.1;
+        }
+        .panel-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; font-weight: 500; }
+
+        .panel-legend { display: flex; gap: 10px; padding: 8px 0 4px; }
+        .legend-chip {
+            font-size: 11px; font-weight: 700; padding: 5px 12px;
+            border-radius: 20px; letter-spacing: 0.04em;
+        }
+        .legend-chip.confirmed { background: rgba(167,238,67,0.12); color: #A7EE43; border: 1px solid rgba(167,238,67,0.2); }
+        .legend-chip.pending   { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08); }
+
+        .panel-section-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: rgba(255,255,255,0.25);
+            padding: 24px 0 10px;
+        }
+        .panel-list  { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+        .panel-empty { font-size: 14px; color: rgba(255,255,255,0.3); text-align: center; padding: 48px 0; }
+
+        /* ── Pagos rows ── */
+        .pagos-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 16px 18px;
+            gap: 12px;
+        }
+        .pagos-name { font-size: 15px; font-weight: 700; color: #fff; }
+        .pagos-pos  { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 3px; font-weight: 500; }
+        .pagos-toggle {
+            padding: 9px 18px;
+            border-radius: 20px; font-family: inherit;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .pagos-toggle.paid {
+            background: rgba(167,238,67,0.15); color: #A7EE43;
+            border: 1px solid rgba(167,238,67,0.3);
+        }
+        .pagos-toggle.unpaid {
+            background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .pagos-toggle:active { opacity: 0.7; transform: scale(0.97); }
+
+        /* ── Equipo rows ── */
+        .equipo-row {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px 18px;
+            gap: 14px;
+        }
+        .equipo-info { flex: 1; min-width: 0; }
+        .equipo-name {
+            font-size: 15px; font-weight: 700; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .equipo-num-input {
+            width: 54px; background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 9px;
+            padding: 6px 8px; color: #fff; font-family: inherit;
+            font-size: 14px; font-weight: 700; text-align: center;
+            outline: none; margin-top: 6px; display: block;
+            -moz-appearance: textfield;
+        }
+        .equipo-num-input::-webkit-outer-spin-button,
+        .equipo-num-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        .equipo-num-input:focus { border-color: rgba(167,238,67,0.4); }
+        .equipo-gk-badge {
+            display: inline-block; margin-top: 6px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px; padding: 4px 8px;
+            font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.3);
+            letter-spacing: 0.1em;
+        }
+        .equipo-team-btns { display: flex; gap: 8px; flex-shrink: 0; }
+        .eq-btn {
+            padding: 9px 16px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.4); font-family: inherit;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .eq-btn.t1-btn.active {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.35); color: #fff;
+        }
+        .eq-btn.t2-btn.active {
+            background: rgba(167,238,67,0.18);
+            border-color: rgba(167,238,67,0.5); color: #A7EE43;
+        }
+
+        /* ── Teams bar ── */
+        .eq-teams-bar { display: flex; gap: 16px; padding: 8px 0 4px; }
+        .eq-team-pill {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5);
+        }
+        .eq-team-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .t1-dot { background: rgba(255,255,255,0.75); }
+        .t2-dot { background: #A7EE43; }
+
+        /* ── Equipo footer ── */
+        .eq-footer { padding: 32px 0 0; }
+        .eq-go-btn {
+            width: 100%; padding: 16px;
+            background: #A7EE43; color: #0e1a22;
+            border: none; border-radius: 14px;
+            font-family: inherit; font-size: 16px; font-weight: 800;
+            cursor: pointer; letter-spacing: -0.01em;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .eq-go-btn:hover  { background: #b5f560; }
+        .eq-go-btn:active { background: #93d93b; transform: scale(0.98); }

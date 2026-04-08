@@ -16,7 +16,7 @@ const IC = {
 };
 
 /* ── Helpers ── */
-function teamScore(players, team) {
+function teamScoreR(players, team) {
   const own = team === 't1' ? 't2' : 't1';
   let g = 0;
   players.forEach(p => {
@@ -138,42 +138,23 @@ function teamStat(players, team, key) {
 function render(D) {
   const $=s=>document.getElementById(s);
 
+  // Reset state (handles both direct render and initReporteFromId paths)
+  const loadEl = $('loading'); if (loadEl) loadEl.classList.add('hidden');
+  const errEl  = $('error');   if (errEl)  errEl.classList.add('hidden');
+
+
   // Header
   $('game-name').textContent = D.N || 'Mejenga';
   $('format-badge').textContent = D.F || '';
-  $('meta-date').textContent = formatDate(D.ts);
+  $('meta-date').textContent = formatDate(D.ts) + (D.HO ? ' · ' + D.HO : '');
   $('meta-location').textContent = [D.CA, D.UB].filter(Boolean).join(' - ');
   $('meta-org').textContent = D.ORG ? 'Org: ' + D.ORG : '';
 
   const P = D.P || [];
 
-  // Rank-based rating: guarantees exactly ONE player gets 10.0.
-  // Players are fully ranked by composite score (no ties possible),
-  // then mapped linearly from 10.0 (rank 1) down to 6.0 (last).
-  // Display-only — raw Firebase data is never modified.
-  (function normalizeRatings(players) {
-    const rated = players.filter(p => p.rating > 0);
-    if (rated.length < 2) return;
-    // Composite sort score — fully deterministic, breaks all ties
-    const score = p =>
-      (p.rating || 0) * 1000 +
-      (p.goals   || 0) * 30  +
-      (p.assists || 0) * 20  +
-      (p.salvadas|| 0) * 10  +
-      (p.saves   || 0) * 8   +
-      (p.defcon  || 0) * 5   +
-      (p.shotsOn || 0) * 3   -
-      (p.autogoals||0) * 50;
-    const sorted = [...rated].sort((a, b) => score(b) - score(a));
-    const n = sorted.length;
-    sorted.forEach((p, rank) => {
-      // rank 0 → 10.0 | rank n-1 → 6.0
-      p.rating = Math.round((10.0 - (rank / (n - 1)) * 4.0) * 10) / 10;
-    });
-  })(P);
 
-  const s1 = teamScore(P, 't1');
-  const s2 = teamScore(P, 't2');
+  const s1 = teamScoreR(P, 't1');
+  const s2 = teamScoreR(P, 't2');
 
   // Score
   $('score-t1').textContent = s1;
@@ -182,8 +163,9 @@ function render(D) {
   else if (s2 > s1) $('winner-wrap').innerHTML = '<div class="winner-badge">Verde Gana</div>';
   else $('winner-wrap').innerHTML = '<div class="winner-badge draw">Empate</div>';
 
-  // Pitch
+  // Pitch — clear player nodes but keep field markings (.fm elements)
   const pitch = $('pitch');
+  Array.from(pitch.querySelectorAll('.pn')).forEach(n=>n.remove());
   const t1p = P.filter(p => p.team === 't1');
   const t2p = P.filter(p => p.team === 't2');
   // MVP = highest ranked player after normalization (rating 10.0)
@@ -242,7 +224,7 @@ function render(D) {
   let cmpHtml = '';
 
   // Goles bar (regular)
-  const g1=teamScore(P,'t1'), g2=teamScore(P,'t2'), gT=g1+g2;
+  const g1=teamScoreR(P,'t1'), g2=teamScoreR(P,'t2'), gT=g1+g2;
   const gP1=gT>0?Math.round(g1/gT*100):50;
   cmpHtml += `<div class="cmp-row"><div class="cmp-lb">Goles</div><div class="cmp-bar-wrap"><div class="cmp-bar t1${g1>g2?' win':''}" style="flex:${gP1}">${g1}</div><div class="cmp-bar t2${g2>g1?' win':''}" style="flex:${100-gP1}">${g2}</div></div></div>`;
 
@@ -411,9 +393,11 @@ function render(D) {
   }
 
 
-  // Show report
+  // Show report, store id for share button
   document.getElementById('loading').classList.add('hidden');
-  document.getElementById('report').classList.remove('hidden');
+  const reportEl = document.getElementById('report');
+  if (D.mejengaId) reportEl.dataset.mejengaId = D.mejengaId;
+  reportEl.classList.remove('hidden');
 }
 
 /* ── Player Popup ── */
@@ -457,20 +441,22 @@ function openPP(id) {
   if (p.goals) lines.push({l:'Goles', stat:'x'+p.goals, pts:p.goals*0.8});
   if (p.assists) lines.push({l:'Asistencias', stat:'x'+p.assists, pts:p.assists*0.5});
   if (p.por && p.saves) lines.push({l:'Tapadas', stat:'x'+p.saves, pts:p.saves*0.2});
+  const allP = window._allPlayers || [];
+  const s1r = teamScoreR(allP,'t1'), s2r = teamScoreR(allP,'t2');
+  const gc = p.team === 't1' ? s2r : s1r;
   if (p.por) {
-    const allP = window._allPlayers || [];
-    const s1 = teamScore(allP,'t1'), s2 = teamScore(allP,'t2');
-    const gc = p.team === 't1' ? s2 : s1;
-    if (gc) lines.push({l:'Goles recibidos', stat:'x'+gc, pts:gc*(-0.2)});
+    if (gc) lines.push({l:'Goles recibidos (POR)', stat:'x'+gc, pts:gc*(-0.2)});
+  } else {
+    if (gc) lines.push({l:'Goles recibidos', stat:'x'+gc, pts:gc*(-0.05)});
   }
   if (p.defcon) lines.push({l:'DEF CON', stat:'x'+p.defcon, pts:p.defcon*0.1});
   if (p.salvadas) lines.push({l:'Salvadas Clave', stat:'x'+p.salvadas, pts:p.salvadas*0.35});
   if (p.shotsOn) lines.push({l:'Tiros al arco', stat:'x'+p.shotsOn, pts:p.shotsOn*0.1});
   if (p.posts) lines.push({l:'Palos', stat:'x'+p.posts, pts:p.posts*0.05});
-  if (p.shotsOffError) lines.push({l:'TF Error', stat:'x'+p.shotsOffError, pts:p.shotsOffError*(-0.2)});
-  if (p.shotsOffGood) lines.push({l:'TF Buen tiro', stat:'x'+p.shotsOffGood, pts:p.shotsOffGood*0.05});
+  if (p.shotsOffError) lines.push({l:'Tiro afuera (error)', stat:'x'+p.shotsOffError, pts:p.shotsOffError*(-0.2)});
+  if (p.shotsOffGood) lines.push({l:'Tiro afuera (buen tiro)', stat:'x'+p.shotsOffGood, pts:p.shotsOffGood*0.05});
   if (p.autogoals) lines.push({l:'Autogoles', stat:'x'+p.autogoals, pts:p.autogoals*(-1.0)});
-  if (winTeam && p.team === winTeam) lines.push({l:'Equipo ganador', stat:'', pts:0.3});
+  if (winTeam && p.team === winTeam) lines.push({l:'Equipo ganador', stat:'', pts:0.5});
 
   let bh = '<div class="pp-brk">';
   lines.forEach(ln => {
@@ -515,17 +501,20 @@ function closePP() {
 })();
 
 /* ── Init ── */
-(async function() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
+async function initReporteFromId(id) {
+  // Reset state for re-use within SPA
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('error').classList.add('hidden');
+  document.getElementById('report').classList.add('hidden');
   if (!id) {
     document.getElementById('loading').classList.add('hidden');
-    document.getElementById('error-msg').textContent = 'Falta el parametro ?id= en la URL.';
+    document.getElementById('error-msg').textContent = 'ID de mejenga no encontrado.';
     document.getElementById('error').classList.remove('hidden');
     return;
   }
   try {
-    const doc = await db.collection('mejengas_organizador').doc(id).get();
+    const _t=new Promise((_,r)=>setTimeout(()=>r(new Error('Tiempo de espera agotado')),10000));
+    const doc = await Promise.race([db.collection('mejengas_organizador').doc(id).get(),_t]);
     if (!doc.exists) {
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('error-msg').textContent = 'No se encontro la mejenga con ID: ' + id;
@@ -539,19 +528,26 @@ function closePP() {
     document.getElementById('error-msg').textContent = 'Error al cargar: ' + e.message;
     document.getElementById('error').classList.remove('hidden');
   }
+}
+window.initReporteFromId = initReporteFromId;
+window.renderReporte = render;
+
+// Auto-init from URL param if present (standalone use)
+(function() {
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (id) initReporteFromId(id);
 })();
 
-// Only show back button if user navigated from the organizer (not shared link)
-if(document.referrer && new URL(document.referrer).origin===location.origin){
-  document.getElementById('backBtn').style.display='';
-}
 function goBack(){
-  if(window.history.length>1){history.back();}
-  else{window.location.href=location.href.replace(/\/[^\/]*$/,'/');}
+  navigate('home');
 }
 
 function shareReport(){
-  const url=location.href;
+  // Build shareable URL with the mejenga ID
+  const reportEl=document.getElementById('report');
+  const id=reportEl?reportEl.dataset.mejengaId:'';
+  const base=location.href.replace(/\?.*$/,'');
+  const url=id?base+'?id='+id:location.href;
   if(navigator.share){
     navigator.share({title:'Reporte de Mejenga — Cona',url:url}).catch(()=>{});
   }else{
@@ -562,4 +558,3 @@ function shareReport(){
     }).catch(()=>{prompt('Copia el link:',url);});
   }
 }
-</script>

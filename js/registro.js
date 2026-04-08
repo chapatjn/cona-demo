@@ -1,63 +1,108 @@
-        /*
-         * ══════════════════════════════════════════════════════════════════
-         * CONFIGURACIÓN DE FIREBASE
-         * Proyecto: cona-demo-organizador (Firebase Console)
-         * Nota: la apiKey de Firebase para web NO es secreta — es pública
-         * por diseño. La seguridad se maneja con Firebase Security Rules
-         * en la consola de Firebase.
-         * ══════════════════════════════════════════════════════════════════
-         */
-        /*
-         * ══════════════════════════════════════════════════════════════════
-         * CONSTANTES POR MEJENGA — CAMBIAR AQUÍ PARA CADA NUEVA MEJENGA
-         *
-         * COLLECTION:     nombre único de la colección en Firestore.
-         *                 Formato sugerido: mejenga{N}_registros
-         *
-         * MAX_JUGADORES:  cupos de campo disponibles (sin porteros)
-         * MAX_PORTEROS:   cupos de portero
-         *
-         * Si alguien intenta registrarse cuando los cupos están llenos,
-         * queda automáticamente en la "banca" (lista de espera).
-         *
-         * Modelo de dato guardado en Firestore por cada jugador:
-         * {
-         *   name:      string   — nombre completo
-         *   position:  string   — "jugador" | "portero"
-         *   whatsapp:  string   — número de teléfono
-         *   paid:      boolean  — false por defecto; se cambia a true
-         *                         manualmente desde Firebase Console
-         *                         cuando confirman el pago por SINPE
-         *   banca:     boolean  — true si está en lista de espera
-         *   timestamp: Timestamp — serverTimestamp() de Firebase
-         * }
-         * ══════════════════════════════════════════════════════════════════
-         */
-        const COLLECTION    = 'mejenga4_registros';
-        const MAX_JUGADORES = 12;
-        const MAX_PORTEROS  = 2;
+        // ── Dynamic vars — set by initRegistro() ────────────────────────────
+        let MAX_JUGADORES, MAX_PORTEROS, COSTO;
+        let jugadoresRef = null; // Firestore ref: mejengas/{id}/jugadores
+        let currentMejengaData = null; // full mejenga doc — used by panel.js
 
         // Estado global de la UI
-        let currentPlayers   = [];   // lista completa de jugadores registrados
-        let selectedPosition = null; // "jugador" | "portero" | null
-        let paymentAccepted  = false; // si el usuario marcó el checkbox de pago
+        let currentPlayers   = [];
+        let selectedPosition = null;
+        let paymentAccepted  = false;
+        let registroUnsub    = null;
 
         /*
-         * ── LISTENER EN TIEMPO REAL ─────────────────────────────────────────
-         * Firestore onSnapshot dispara cada vez que alguien se registra.
-         * No se necesita recargar la página: la lista se actualiza sola.
-         * Todos los usuarios ven la lista actualizada al instante.
+         * ── initRegistro(mejengaData) ────────────────────────────────────────
+         * Called by home.js before navigating to screen-registro.
+         * Sets up the Firestore listener for the selected mejenga.
          */
-        db.collection(COLLECTION)
-            .orderBy('timestamp', 'asc')
-            .onSnapshot(snapshot => {
-                currentPlayers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderUI(currentPlayers);
-            }, err => {
-                console.error(err);
-                document.getElementById('jugadorList').innerHTML =
-                    '<div class="list-empty">Error al cargar. Recarg\u00e1 la p\u00e1gina.</div>';
-            });
+        function initRegistro(mejengaData) {
+            currentMejengaData = mejengaData; // expose for panel.js
+            // Sub-collection: mejengas/{gameId}/jugadores
+            jugadoresRef  = db.collection('mejengas').doc(mejengaData.id).collection('jugadores');
+            MAX_JUGADORES = mejengaData.maxJugadores || 12;
+            MAX_PORTEROS  = mejengaData.maxPorteros  || 2;
+            COSTO         = mejengaData.costo        || 3500;
+
+            // Reset state
+            currentPlayers   = [];
+            selectedPosition = null;
+            paymentAccepted  = false;
+
+            // Update header info
+            const subtitle = document.getElementById('regSubtitle');
+            if (subtitle) subtitle.textContent = mejengaData.nombre || '';
+
+            const fechaText = document.getElementById('regFechaText');
+            if (fechaText && mejengaData.fecha) {
+                fechaText.textContent = ' ' + formatFechaReg(mejengaData.fecha);
+            }
+
+            const lugarText = document.getElementById('regLugarText');
+            if (lugarText) lugarText.textContent = ' ' + (mejengaData.lugar || '');
+
+            // Update spots totals
+            const jugTotal = document.getElementById('jugadoresTotalCount');
+            if (jugTotal) jugTotal.textContent = ' / ' + MAX_JUGADORES;
+
+            const porTotal = document.getElementById('porterosTotalCount');
+            if (porTotal) porTotal.textContent = ' / ' + MAX_PORTEROS;
+
+            // Update payment text
+            const payText = document.getElementById('paymentCheckText');
+            if (payText) payText.textContent =
+                'Acepto pagar \u20a1' + COSTO.toLocaleString() + ' para reservar mi cupo en la Mejenga';
+
+            // Reset form UI
+            const nameEl = document.getElementById('nameInput');
+            const waEl   = document.getElementById('whatsappInput');
+            if (nameEl) nameEl.value = '';
+            if (waEl)   waEl.value   = '';
+            document.getElementById('btnJugador')?.classList.remove('selected');
+            document.getElementById('btnPortero')?.classList.remove('selected');
+            document.getElementById('customCheck')?.classList.remove('checked');
+            document.getElementById('paymentCheck')?.classList.remove('checked-active');
+            const bancaNotice = document.getElementById('bancaPosNotice');
+            if (bancaNotice) bancaNotice.style.display = 'none';
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirmar Asistencia';
+                submitBtn.classList.remove('banca-btn');
+            }
+
+            // Start real-time listener on subcollection
+            if (registroUnsub) registroUnsub();
+            let _regResolved = false;
+            const _regTimeout = setTimeout(() => {
+                if (!_regResolved) {
+                    const el = document.getElementById('jugadorList');
+                    if (el) el.innerHTML = '<div class="list-empty">Tiempo de espera agotado.<br>Revisá tu conexión.</div>';
+                }
+            }, 10000);
+            registroUnsub = jugadoresRef
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    _regResolved = true;
+                    clearTimeout(_regTimeout);
+                    currentPlayers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderUI(currentPlayers);
+                }, err => {
+                    _regResolved = true;
+                    clearTimeout(_regTimeout);
+                    console.error(err);
+                    const el = document.getElementById('jugadorList');
+                    if (el) el.innerHTML =
+                        '<div class="list-empty">Error al cargar. Recarg\u00e1 la p\u00e1gina.</div>';
+                });
+        }
+
+        function formatFechaReg(fechaStr) {
+            if (!fechaStr) return '';
+            const [y, m, d] = fechaStr.split('-').map(Number);
+            const days   = ['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+            const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+            const date   = new Date(y, m - 1, d);
+            return days[date.getDay()] + ' ' + d + ' ' + months[m - 1] + ', ' + y;
+        }
 
         /*
          * ── RENDER ──────────────────────────────────────────────────────────
@@ -229,13 +274,13 @@
                 notice.innerHTML = `El campo de ${posNombre} est\u00e1 lleno. Anot\u00e1te en la <strong>banca</strong>: faltando 24hs, si alguien no pag\u00f3 ni respondi\u00f3 por WhatsApp, Cona te escribe y pod\u00e9s pagar para asegurar el cupo.`;
                 submitBtn.textContent = 'Entrar a la Banca';
                 submitBtn.classList.add('banca-btn');
-                if (checkText) checkText.textContent = 'Pagar\u00e9 \u20a13,500 si Cona me confirma campo';
+                if (checkText) checkText.textContent = 'Pagar\u00e9 \u20a1' + (COSTO || 3500).toLocaleString() + ' si Cona me confirma campo';
                 if (disclaimer) disclaimer.textContent = 'Solo te contactamos si qued\u00e1 un cupo libre. No hay cobro hasta que te confirmemos.';
             } else {
                 notice.style.display = 'none';
                 submitBtn.textContent = 'Confirmar Asistencia';
                 submitBtn.classList.remove('banca-btn');
-                if (checkText) checkText.textContent = 'Acepto pagar \u20a13,500 para reservar mi cupo en la Mejenga';
+                if (checkText) checkText.textContent = 'Acepto pagar \u20a1' + (COSTO || 3500).toLocaleString() + ' para reservar mi cupo en la Mejenga';
                 if (disclaimer) disclaimer.textContent = 'Un miembro del equipo Cona se va a comunicar con vos para completar el pago via SINPE por WhatsApp.';
             }
         }
@@ -297,7 +342,7 @@
                 };
                 if (esBanca) data.banca = true;
 
-                await db.collection(COLLECTION).add(data);
+                await jugadoresRef.add(data);
 
                 nameInput.value = '';
                 whatsappInput.value = '';
@@ -349,8 +394,16 @@
             return `${date.getDate()} ${months[date.getMonth()]} - ${h12}:${m} ${ampm}`;
         }
 
+        function goToReporteFromRegistro() {
+            if (currentMejengaData && currentMejengaData.reporteId) {
+                navigate('reporte');
+                if (typeof initReporteFromId === 'function') initReporteFromId(currentMejengaData.reporteId);
+            } else {
+                openOrgPanel();
+            }
+        }
+
         ['nameInput','whatsappInput'].forEach(id => {
             document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') registerPlayer(); });
             document.getElementById(id)?.addEventListener('input',   e => { e.target.classList.remove('error'); });
         });
-    </script>
