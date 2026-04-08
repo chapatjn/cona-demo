@@ -48,7 +48,7 @@ function renderHomeList(mejengas) {
       : '';
     const actionBtn = isFinished && m.reporteId
       ? `<button class="sh-report-btn" onclick="event.stopPropagation();selectMejengaRegistro('${m.id}')">Ver Reporte</button>`
-      : `<button class="sh-org-btn" onclick="event.stopPropagation();organizarMejenga('${m.id}')">Organizar</button>`;
+      : '';
     return `<div class="sh-game-card${isFinished ? ' sh-game-card-done' : ''}" onclick="selectMejengaRegistro('${m.id}')">
       <div class="sh-game-num">${m.numero || '?'}</div>
       <div class="sh-game-info">
@@ -73,14 +73,6 @@ function selectMejengaRegistro(id) {
   navigate('registro');
 }
 
-function organizarMejenga(id) {
-  const mejenga = mejengasCache.find(m => m.id === id);
-  if (!mejenga) return;
-  navigate('organizador');
-  setTimeout(() => {
-    if (typeof initOrganizadorForMejenga === 'function') initOrganizadorForMejenga(mejenga);
-  }, 50);
-}
 
 function formatFechaHome(fechaStr) {
   if (!fechaStr) return '';

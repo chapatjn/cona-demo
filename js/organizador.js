@@ -88,70 +88,6 @@ function resetMejengaHard(){
 }
 
 // ── SETUP ──
-function initS(){
-  ren('st1',[{n:'',m:'',p:1},{n:'',m:''},{n:'',m:''},{n:'',m:''},{n:'',m:''}]);
-  ren('st2',[{n:'',m:'',p:1},{n:'',m:''},{n:'',m:''},{n:'',m:''},{n:'',m:''}]);
-}
-function ren(id,d){
-  const c=document.getElementById(id);
-  c.innerHTML=d.map((x,i)=>`<div class="su-r">
-    <input class="si sn" value="${x.n}" placeholder="#" maxlength="2" inputmode="numeric"
-      onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();focusNext(this)}">
-    <input class="si" value="${x.m}" placeholder="${x.p?'Portero':'Jugador '+(i+1)}" autocapitalize="words"
-      onkeydown="if(event.key==='Enter'){event.preventDefault();focusNext(this)}">
-    ${x.p?'<span class="su-p">POR</span>':`<button class="su-x" onclick="delR(this)">✕</button>`}
-  </div>`).join('');
-  c._d=d;
-}
-function focusNext(el){
-  const all=[...document.querySelectorAll('#setup .si')];
-  const i=all.indexOf(el);
-  if(i<all.length-1)all[i+1].focus();
-  else all[i].blur();
-}
-function syncD(id){
-  const c=document.getElementById(id),rows=c.querySelectorAll('.su-r');
-  const d=[];
-  rows.forEach((r,i)=>{
-    const n=r.querySelector('.sn').value;
-    const m=r.querySelectorAll('.si')[1].value;
-    const p=!!r.querySelector('.su-p');
-    d.push({n,m,p:p?1:0});
-  });
-  c._d=d;return d;
-}
-function addR(id){const d=syncD(id);d.push({n:'',m:''});ren(id,d);const c=document.getElementById(id),ins=c.querySelectorAll('.sn');ins[ins.length-1]?.focus();}
-function delR(b){const r=b.closest('.su-r'),c=r.parentElement;const d=syncD(c.id);const i=[...c.children].indexOf(r);if(d.length>2){d.splice(i,1);ren(c.id,d);}}
-function readT(id,t){
-  const rows=document.getElementById(id).querySelectorAll('.su-r'),out=[];
-  rows.forEach((r,i)=>{
-    const n=r.querySelector('.sn').value.trim();
-    const m=r.querySelectorAll('.si')[1].value.trim();
-    if(m||n)out.push({id:t+'_'+i,team:t,num:n||'-',name:m||(i===0?'Portero':'Jugador '+(i+1)),por:i===0,goals:0,autogoals:0,assists:0,saves:0,shotsOn:0,shotsOff:0,shotsOffError:0,shotsOffGood:0,shotsOffNeutral:0,posts:0,salvadas:0,defcon:0,rating:0});
-  });
-  return out;
-}
-function go(){
-  N=document.getElementById('sN').value.trim()||'Mejenga';
-  F=document.getElementById('sF').value.trim()||'Fut 5';
-  CA=document.getElementById('sC').value.trim();
-  UB=document.getElementById('sU').value.trim();
-  ORG=document.getElementById('sO').value.trim();
-  const a=readT('st1','t1'),b=readT('st2','t2');
-  if(!a.length||!b.length){show('Ambos equipos necesitan jugadores');return;}
-  P=[...a,...b];
-  mejengaId=generateId();
-  document.getElementById('setup').classList.add('gone');
-  document.getElementById('app').classList.add('on');
-  draw();
-  // Auto-start timer
-  const tmr=document.getElementById('tmr');
-  tI=setInterval(()=>{tS++;tmr.textContent=ft(tS);if(tS%10===0)saveState();},1000);
-  tOn=true;tmr.className='sb-tm on';tmr.textContent=ft(tS);
-  saveState();
-  // Force immediate first sync
-  syncToFirebase();
-}
 
 // ── START FROM REGISTRO ──────────────────────────────────────────────────
 // Called by panel.js after the organizer assigns teams + kit numbers.
@@ -204,17 +140,17 @@ function startFromRegistro(mejengaData, players) {
   }
 
   mejengaId = generateId();
+  registroMejengaId = mejengaData.id || null;
 
   // Stop any running timer from a previous session
   if (tI) { clearInterval(tI); tI = null; }
   tS = 0; tOn = false; EV = []; sel = null; done = false;
 
-  // Hide all internal views, close any open modals
-  document.getElementById('home').classList.add('gone');
-  document.getElementById('setup').classList.add('gone');
+  // Hide recovery modal, show app
   document.getElementById('recBg').classList.remove('on');
   document.getElementById('app').classList.add('on');
 
+  setView('pitch');
   draw();
   updSc();
   updIb();
@@ -231,6 +167,64 @@ function startFromRegistro(mejengaData, players) {
 }
 
 // ── FIELD ──
+// ── VIEW SWITCHER ──
+let currentView='pitch';
+function setView(v){
+  currentView=v;
+  ['pitch','list','grid'].forEach(id=>{
+    const btn=document.getElementById('vt-'+id);
+    if(btn)btn.classList.toggle('active',id===v);
+  });
+  const pitchEl=document.getElementById('pitchView');
+  const listEl=document.getElementById('listView');
+  const gridEl=document.getElementById('gridView');
+  if(pitchEl)pitchEl.style.display=v==='pitch'?'':'none';
+  if(listEl)listEl.style.display=v==='list'?'':'none';
+  if(gridEl)gridEl.style.display=v==='grid'?'':'none';
+  if(v==='list')drawList();
+  if(v==='grid')drawGrid();
+}
+
+function drawList(){
+  const sort=arr=>[...arr].sort((a,b)=>(b.por?1:0)-(a.por?1:0));
+  const t1=sort(P.filter(p=>p.team==='t1'));
+  const t2=sort(P.filter(p=>p.team==='t2'));
+  function row(p){
+    const goals=p.goals>0?`<span class="lv-stat gol">${p.goals} gol</span>`:'';
+    const saves=p.por&&p.saves>0?`<span class="lv-stat sav">${p.saves} tap</span>`:'';
+    const stat=goals||saves||'';
+    return `<div class="lv-row" onclick="tap('${p.id}')">
+      <div class="lv-num ${p.team}">${p.num}</div>
+      <div class="lv-info">
+        <div class="lv-name">${p.name.split(' ')[0]}</div>
+        <div class="lv-pos">${p.por?'Portero':'Jugador'}</div>
+      </div>${stat}</div>`;
+  }
+  document.getElementById('listContent').innerHTML=
+    `<div class="lv-teams">
+      <div class="lv-col"><div class="lv-hd t1">Negro</div>${t1.map(row).join('')}</div>
+      <div class="lv-col"><div class="lv-hd t2">Verde</div>${t2.map(row).join('')}</div>
+    </div>`;
+}
+
+function drawGrid(){
+  const sort=arr=>[...arr].sort((a,b)=>(b.por?1:0)-(a.por?1:0));
+  const t1=sort(P.filter(p=>p.team==='t1'));
+  const t2=sort(P.filter(p=>p.team==='t2'));
+  function card(p){
+    const goals=p.goals>0?`<div class="gv-stat"><span class="gv-sv g">${p.goals}</span><span class="gv-sl">gol</span></div>`:'';
+    const saves=p.por&&p.saves>0?`<div class="gv-stat"><span class="gv-sv s">${p.saves}</span><span class="gv-sl">tap</span></div>`:'';
+    const stats=goals||saves?`<div class="gv-stats">${goals}${saves}</div>`:'';
+    return `<div class="gv-card ${p.team}" onclick="tap('${p.id}')">
+      <div class="gv-num">${p.num}</div>
+      <div class="gv-name">${p.name.split(' ')[0]}</div>
+      <div class="gv-pos">${p.por?'POR':'JUG'}</div>${stats}</div>`;
+  }
+  document.getElementById('gridContent').innerHTML=
+    `<div class="gv-section"><div class="gv-hd t1">Negro</div><div class="gv-grid">${t1.map(card).join('')}</div></div>
+     <div class="gv-section"><div class="gv-hd t2">Verde</div><div class="gv-grid">${t2.map(card).join('')}</div></div>`;
+}
+
 function draw(){
   const nd=document.getElementById('nd');
   // Keeper always first so form() places them at their goal position
@@ -241,6 +235,8 @@ function draw(){
   t1.forEach((p,i)=>{h+=node(p,f1[i])});
   t2.forEach((p,i)=>{h+=node(p,f2[i])});
   nd.innerHTML=h;
+  if(currentView==='list')drawList();
+  if(currentView==='grid')drawGrid();
 }
 function form(n,top){
   if(!n)return[];
@@ -856,111 +852,15 @@ function openReport(){
 
 
 // ── HOME ──
-function goToSetup(){
-  document.getElementById('home').classList.add('gone');
-  document.getElementById('setup').classList.remove('gone');
-  initS();
-}
-function backToHome(){
-  document.getElementById('setup').classList.add('gone');
-  document.getElementById('home').classList.remove('gone');
-}
 function enterApp(){
-  document.getElementById('home').classList.add('gone');
-  document.getElementById('setup').classList.add('gone');
   document.getElementById('app').classList.add('on');
   document.getElementById('tmr').textContent=ft(tS);
   document.getElementById('tmr').className='sb-tm off';
-  updSc();draw();updIb();
+  setView('pitch');updSc();draw();updIb();
   if(done){
     document.getElementById('finBtn').textContent='Ver Reporte';
     document.getElementById('finBtn').classList.add('done');
   }
-}
-function loadMejengasList(){
-  const _t=new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),10000));
-  Promise.race([db.collection(MEJENGAS_COL).orderBy('ts','desc').limit(20).get(),_t]).then(snap=>{
-    const list=document.getElementById('hmList');
-    const cnt=document.getElementById('hmCnt');
-    if(snap.empty){
-      list.innerHTML='<div class="hm-empty">No hay mejengas todavía.<br>Creá tu primera mejenga.</div>';
-      cnt.textContent='0';
-      return;
-    }
-    cnt.textContent=snap.size;
-    let h='';
-    snap.forEach(doc=>{
-      const d=doc.data();
-      const g1=calcScore(d.P,'t1');
-      const g2=calcScore(d.P,'t2');
-      const isActive=!d.done;
-      const evCount=(d.EV||[]).length;
-      const date=d.ts?new Date(d.ts):null;
-      const dateStr=date?formatDate(date):'';
-      h+=`<div class="hm-card ${isActive?'active':'done'}">
-        <div onclick="openMejenga('${doc.id}')" style="cursor:pointer">
-          <div class="hm-top">
-            <span class="hm-name">${d.N||'Mejenga'} · ${d.F||''}</span>
-            <span class="hm-badge ${isActive?'live':'fin'}">${isActive?'En vivo':'Finalizada'}</span>
-          </div>
-          <div class="hm-score">
-            <span class="t1c">${g1}</span><span class="sep">-</span><span class="t2c">${g2}</span>
-          </div>
-          <div class="hm-meta">
-            ${d.CA?`<span class="hm-mi"><span>${d.CA}</span></span>`:''}
-            <span class="hm-mi">${ft(d.tS||0)} jugados</span>
-            <span class="hm-mi">${evCount} eventos</span>
-            ${dateStr?`<span class="hm-mi">${dateStr}</span>`:''}
-          </div>
-        </div>
-        <div style="display:flex;justify-content:flex-end;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.04)">
-          <button onclick="deleteMejenga('${doc.id}',event)" style="background:none;border:none;font-family:inherit;font-size:10px;font-weight:600;color:rgba(255,80,80,.5);cursor:pointer;padding:4px 8px">Borrar</button>
-        </div>
-      </div>`;
-    });
-    list.innerHTML=h;
-  }).catch(()=>{
-    document.getElementById('hmList').innerHTML='<div class="hm-empty">No se pudo cargar.<br>Revisá tu conexión.</div>';
-  });
-}
-function calcScore(players,team){
-  if(!players||!players.length)return 0;
-  const opp=team==='t1'?'t2':'t1';
-  return players.filter(p=>p.team===team).reduce((s,p)=>s+(p.goals||0),0)
-       + players.filter(p=>p.team===opp).reduce((s,p)=>s+(p.autogoals||0),0);
-}
-function formatDate(d){
-  const dias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
-}
-function deleteMejenga(id,e){
-  e.stopPropagation();
-  if(!confirm('¿Borrar esta mejenga? No se puede deshacer.'))return;
-  db.collection(MEJENGAS_COL).doc(id).delete().then(()=>{
-    show('Mejenga borrada');
-    loadMejengasList();
-  }).catch(()=>{show('Error al borrar');});
-}
-function openMejenga(id){
-  const _t=new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),10000));
-  Promise.race([db.collection(MEJENGAS_COL).doc(id).get(),_t]).then(doc=>{
-    if(!doc.exists){show('Mejenga no encontrada');return;}
-    const d=doc.data();
-    N=d.N||'';F=d.F||'';CA=d.CA||'';UB=d.UB||'';ORG=d.ORG||'';HO=d.hora||'';
-    P=d.P||[];EV=d.EV||[];tS=d.tS||0;MVP=d.MVP||null;done=d.done||false;
-    mejengaId=id;registroMejengaId=d.registroMejengaId||null;
-    _firstSync=false;
-    P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;});
-    saveState(); // save to localStorage
-    if(done){
-      // Finished game — open report directly
-      openReport();
-    }else{
-      // Active game — enter tracking
-      enterApp();
-    }
-  }).catch(()=>{show('Error al cargar');});
 }
 
 // ── RECOVERY FLOW ──
@@ -986,7 +886,7 @@ function discardState(){
   clearState();
   document.getElementById('recBg').classList.remove('on');
   N='';F='';CA='';UB='';ORG='';HO='';P=[];EV=[];sel=null;tOn=false;tS=0;MVP=null;done=false;mejengaId=null;registroMejengaId=null;
-  document.getElementById('home').classList.remove('gone');
+  navigate('home');
 }
 
 // ── BACK TO HOME (from tracking) ──
@@ -1018,22 +918,6 @@ function showFinishedBanner(id, name, g1, g2, wasDone){
   banner.classList.remove('hidden');
 }
 
-// ── OPEN FROM REGISTRO (home screen "Organizar" button) ──
-function initOrganizadorForMejenga(mejengaData){
-  // Pre-fill setup form from registration mejenga data
-  registroMejengaId=mejengaData.id;
-  const sN=document.getElementById('sN');
-  const sU=document.getElementById('sU');
-  if(sN)sN.value=mejengaData.nombre||'';
-  if(sU)sU.value=mejengaData.lugar||'';
-  // Ensure clean state — hide app and home, show setup
-  document.getElementById('app').classList.remove('on');
-  document.getElementById('home').classList.add('gone');
-  document.getElementById('setup').classList.remove('gone');
-  initS();
-}
-window.initOrganizadorForMejenga=initOrganizadorForMejenga;
-
 // Inject SVG icons into shot-type modal
 document.getElementById('styIcoErr').innerHTML=I.tfError;
 document.getElementById('styIcoNeu').innerHTML=I.tfNeutral;
@@ -1041,8 +925,6 @@ document.getElementById('styIcoGood').innerHTML=I.tfGood;
 
 // INIT
 if(loadState()){
-  document.getElementById('home').classList.add('gone');
   showRecovery();
-}else{
-  loadMejengasList();
 }
+// If no saved state, the screen just shows nothing until startFromRegistro() is called

@@ -25,7 +25,7 @@ function closeOrgPanel() {
 function checkOrgPass() {
   const val   = document.getElementById('opInput').value;
   const errEl = document.getElementById('opError');
-  if (val === ORG_PANEL_PASS) {
+  if (val.toLowerCase() === ORG_PANEL_PASS) {
     closeOrgPanel();
     openChoice();
   } else {
@@ -48,12 +48,28 @@ document.addEventListener('DOMContentLoaded', () => {
 function openChoice() {
   // Show the mejenga name
   const nameEl = document.getElementById('ocMejengaName');
-  if (nameEl && typeof jugadoresRef !== 'undefined' && jugadoresRef) {
-    // jugadoresRef path: mejengas/{id}/jugadores — grab the subtitle
+  if (nameEl) {
     const subtitle = document.getElementById('regSubtitle');
     if (subtitle) nameEl.textContent = subtitle.textContent || 'Mejenga';
   }
   document.getElementById('ocOverlay').classList.remove('hidden');
+}
+
+function goToReporteFromPanel() {
+  closeChoice();
+  // Look up fresh data from mejengasCache (always up-to-date via onSnapshot)
+  const data = (typeof currentMejengaData !== 'undefined') ? currentMejengaData : null;
+  const mejengaId = data && data.id;
+  const cached = mejengaId && typeof mejengasCache !== 'undefined'
+    ? mejengasCache.find(m => m.id === mejengaId)
+    : null;
+  const reporteId = (cached && cached.reporteId) || (data && data.reporteId);
+  if (reporteId) {
+    _origNavigate('reporte');
+    if (typeof initReporteFromId === 'function') initReporteFromId(reporteId);
+  } else {
+    alert('Esta mejenga todavía no tiene reporte. Finalizá la mejenga desde el Organizador.');
+  }
 }
 
 function closeChoice() {

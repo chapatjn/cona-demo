@@ -671,6 +671,9 @@
         }
         .oc-btn.pagos:hover  { background: rgba(167,238,67,0.08); border-color: rgba(167,238,67,0.2); }
         .oc-btn.equipo:hover { background: rgba(167,238,67,0.08); border-color: rgba(167,238,67,0.2); }
+        .oc-btn.reporte { border-color: rgba(167,238,67,0.35); color: #A7EE43; }
+        .oc-btn.reporte:hover { background: rgba(167,238,67,0.12); border-color: rgba(167,238,67,0.5); }
+        .oc-btn.reporte svg { opacity: 1; }
         .oc-btn.home-btn { opacity: 0.6; }
         .oc-btn.home-btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); opacity: 1; }
         .oc-cancel-sm {

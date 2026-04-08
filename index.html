@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CONA Futbol</title>
+
+  <!-- Favicons & app icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="conalogo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="conalogo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="conalogo.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="conalogo.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="conalogo.png">
+  <link rel="shortcut icon" href="conalogo.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CONA Futbol">
+  <meta name="theme-color" content="#0e1a22">
+
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Firebase -->
@@ -112,59 +125,10 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-     SCREEN: ORGANIZADOR (home for the organizer)
+     SCREEN: ORGANIZADOR (live tracker)
 ════════════════════════════════════════════════════════ -->
 <div id="screen-organizador" class="screen">
 <div class="toast" id="toast"></div>
-
-<!-- HOME -->
-<div class="home" id="home">
-<div class="hm-h">
-  <h1>Cona <span>Organizador</span></h1>
-  <p>Gestiona tus mejengas</p>
-</div>
-<button class="hm-new" onclick="goToSetup()">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-  Nueva Mejenga
-</button>
-<div class="hm-sec">
-  <span class="hm-sec-lb">Mejengas</span>
-  <div class="hm-sec-line"></div>
-  <span class="hm-sec-cnt" id="hmCnt">...</span>
-</div>
-<div class="hm-list" id="hmList">
-  <div class="hm-loading">Cargando mejengas...</div>
-</div>
-</div>
-
-<!-- SETUP -->
-<div class="setup gone" id="setup">
-<div class="su-h">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px">
-    <button onclick="backToHome()" style="background:none;border:none;color:var(--w4);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:8px 0">← Volver</button>
-    <span style="font-size:9px;color:var(--w4)">Nueva mejenga</span>
-  </div>
-  <h1>Setup Mejenga</h1><p>Arma los equipos y arranca</p>
-</div>
-<div class="su-b">
-  <div class="su-lbl">Partido</div>
-  <div class="su-fx">
-    <input class="si" id="sN" placeholder="Nombre del partido">
-    <input class="si" id="sF" placeholder="Fut 5" style="width:80px;flex:none">
-  </div>
-  <div class="su-lbl">Detalles</div>
-  <input class="si" id="sC" placeholder="Cancha (ej: PlayFútbol Curri)">
-  <input class="si" id="sU" placeholder="Ubicación (ej: Curridabat)" style="margin-top:6px">
-  <input class="si" id="sO" placeholder="Organizador (ej: Esteban)" style="margin-top:6px">
-  <div class="su-t"><div class="su-td t1"></div><span class="su-tn">Equipo Negro</span></div>
-  <div id="st1"></div>
-  <button class="su-a" onclick="addR('st1')">+ Jugador</button>
-  <div class="su-t"><div class="su-td t2"></div><span class="su-tn">Equipo Verde</span></div>
-  <div id="st2"></div>
-  <button class="su-a" onclick="addR('st2')">+ Jugador</button>
-</div>
-<div class="su-ft"><button class="su-go" onclick="go()">Iniciar Mejenga</button></div>
-</div>
 
 <!-- APP -->
 <div class="app" id="app">
@@ -180,20 +144,41 @@
   </div>
   <div class="sb-tm" style="visibility:hidden">00:00</div>
 </div>
-<div class="pitch">
+
+<!-- View tabs -->
+<div class="vt">
+  <button class="vt-btn active" id="vt-pitch" onclick="setView('pitch')">Cancha</button>
+  <button class="vt-btn" id="vt-list" onclick="setView('list')">Lista</button>
+  <button class="vt-btn" id="vt-grid" onclick="setView('grid')">Cuadrícula</button>
+</div>
+
+<!-- PITCH VIEW -->
+<div class="pitch" id="pitchView">
   <div class="fm bd"></div><div class="fm hl"></div><div class="fm cc"></div><div class="fm cd"></div>
   <div class="fm bt"></div><div class="fm bb"></div><div class="fm gt"></div><div class="fm gb"></div>
   <div id="nd"></div>
-  <div class="ib">
-    <div class="ib-ev" id="ec">0</div>
-    <div class="ib-btn" onclick="openTabla()">Tabla</div>
-    <div class="ib-btn" onclick="openTl()">Timeline</div>
-    <div class="ib-btn" onclick="openEx()">Datos</div>
-    <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
-    <button class="ib-btn" onclick="resetMejenga()" style="color:rgba(255,100,100,.8);border-color:rgba(255,60,60,.2);background:rgba(255,60,60,.06);font-size:8px;padding:5px 6px">Inicio</button>
-  </div>
   <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);z-index:10"><span id="syncBadge" style="font-size:8px;font-weight:600;transition:color .3s"></span></div>
   <div class="ib-last" id="le" style="position:absolute;bottom:4px;left:8px;font-size:9px;font-weight:600;color:var(--w4);z-index:10;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Toca un jugador</div>
+</div>
+
+<!-- LIST VIEW -->
+<div class="alt-view" id="listView" style="display:none">
+  <div id="listContent"></div>
+</div>
+
+<!-- GRID VIEW -->
+<div class="alt-view" id="gridView" style="display:none">
+  <div id="gridContent"></div>
+</div>
+
+<!-- Action sidebar (always visible) -->
+<div class="ib">
+  <div class="ib-ev" id="ec">0</div>
+  <div class="ib-btn" onclick="openTabla()">Tabla</div>
+  <div class="ib-btn" onclick="openTl()">Timeline</div>
+  <div class="ib-btn" onclick="openEx()">Datos</div>
+  <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
+  <button class="ib-btn" onclick="resetMejenga()" style="color:rgba(255,100,100,.8);border-color:rgba(255,60,60,.2);background:rgba(255,60,60,.06);font-size:8px;padding:5px 6px">Inicio</button>
 </div>
 </div>
 <!-- Desktop sidebar -->
@@ -532,6 +517,11 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="17" cy="21" r="1"/><circle cx="7" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 Armar Equipos
                 <span class="oc-desc">Asigná equipos y números</span>
+            </button>
+            <button class="oc-btn reporte" id="ocVerReporte" onclick="goToReporteFromPanel()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Ver Reporte
+                <span class="oc-desc">Reporte final de la mejenga</span>
             </button>
             <button class="oc-btn home-btn" onclick="closeChoice(); navigate('home')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
