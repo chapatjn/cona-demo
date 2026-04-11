@@ -17,7 +17,7 @@ const IC = {
 };
 
 /* ── Helpers ── */
-function teamScore(players, team) {
+function teamScoreR(players, team) {
   const own = team === 't1' ? 't2' : 't1';
   let g = 0;
   players.forEach(p => {
@@ -154,7 +154,7 @@ function render(D) {
   // Display-only — raw Firebase data is never modified.
   (function normalizeRatings(players) {
     if (players.length < 2) return;
-    const g1 = teamScore(players,'t1'), g2 = teamScore(players,'t2');
+    const g1 = teamScoreR(players,'t1'), g2 = teamScoreR(players,'t2');
     const totalGoals = g1 + g2;
     const winTeam = g1>g2?'t1':g2>g1?'t2':null;
     const conceded = {t1:g2, t2:g1};
@@ -220,8 +220,8 @@ function render(D) {
     });
   })(P);
 
-  const s1 = teamScore(P, 't1');
-  const s2 = teamScore(P, 't2');
+  const s1 = teamScoreR(P, 't1');
+  const s2 = teamScoreR(P, 't2');
 
   // Score
   $('score-t1').textContent = s1;
@@ -294,7 +294,7 @@ function render(D) {
   let cmpHtml = '';
 
   // Goles bar (regular)
-  const g1=teamScore(P,'t1'), g2=teamScore(P,'t2'), gT=g1+g2;
+  const g1=teamScoreR(P,'t1'), g2=teamScoreR(P,'t2'), gT=g1+g2;
   const gP1=gT>0?Math.round(g1/gT*100):50;
   cmpHtml += `<div class="cmp-row"><div class="cmp-lb">Goles</div><div class="cmp-bar-wrap"><div class="cmp-bar t1${g1>g2?' win':''}" style="flex:${gP1}">${g1}</div><div class="cmp-bar t2${g2>g1?' win':''}" style="flex:${100-gP1}">${g2}</div></div></div>`;
 
@@ -531,7 +531,7 @@ function openPP(id) {
   const winTeam = window._winTeam;
   const lines = [];
   const allP = window._allPlayers || [];
-  const s1 = teamScore(allP,'t1'), s2 = teamScore(allP,'t2');
+  const s1 = teamScoreR(allP,'t1'), s2 = teamScoreR(allP,'t2');
   const gc = p.team === 't1' ? s2 : s1;
 
   lines.push({l:'Base', stat:'', pts:6.0});
