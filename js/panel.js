@@ -133,7 +133,7 @@ function updateOrgStepper() {
         </div>
         <div class="org-step-sep"></div>
         <div class="org-step go" onclick="orgStepperStart()">
-          <div class="org-step-num">▶</div>
+          <div class="org-step-num"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
           <div class="org-step-lbl">Iniciar</div>
         </div>
       </div>
@@ -317,75 +317,91 @@ function renderEquipoList(players) {
 
   // Status banner
   if (unassigned.length > 0) {
-    html += '<div class="equipo-warning">Faltan ' + unassigned.length + ' sin asignar — tap para elegir equipo</div>';
+    html += '<div class="equipo-warning">Faltan ' + unassigned.length + ' jugador' + (unassigned.length > 1 ? 'es' : '') + ' sin asignar</div>';
   } else if (active.length > 0) {
     html += '<div class="equipo-ready">Equipos listos &middot; ' + negro.length + 'v' + verde.length + '</div>';
   }
 
-  // Unassigned players — tap chip to show quick team picker
+  // Unassigned picker — each player has Negro/Verde buttons
   if (unassigned.length > 0) {
-    html += '<div class="eq-group unassigned">';
-    html += '<div class="eq-group-hd"><span class="eq-group-ti">Sin asignar</span></div>';
-    html += '<div class="eq-chips">';
+    html += '<div class="eq-pick-wrap">';
+    html += '<div class="eq-pick-hd">Asignar a:</div>';
     unassigned.forEach(p => {
-      html += equipoChip(p, 0);
+      const pos = p.position === 'portero' ? '<span class="eq-pick-pos">POR</span>' : '';
+      html += `<div class="eq-pick-row">
+        <div class="eq-pick-name">${escapePanel(p.name)}${pos}</div>
+        <div class="eq-pick-btns">
+          <button type="button" class="eq-pick-btn t1" onclick="assignTo('${p.id}',1)">Negro</button>
+          <button type="button" class="eq-pick-btn t2" onclick="assignTo('${p.id}',2)">Verde</button>
+        </div>
+      </div>`;
     });
-    html += '</div></div>';
+    html += '</div>';
   }
 
-  // Equipo Negro group
-  html += '<div class="eq-group t1">';
-  html += '<div class="eq-group-hd"><span class="eq-dot t1"></span><span class="eq-group-ti">Equipo Negro</span><span class="eq-count">' + negro.length + '</span></div>';
+  // Two columns side by side: Negro | Verde
+  html += '<div class="eq-cols">';
+
+  // Negro column
+  html += '<div class="eq-col t1">';
+  html += '<div class="eq-col-hd"><span class="eq-dot t1"></span><span class="eq-col-ti">NEGRO</span><span class="eq-count">' + negro.length + '</span></div>';
   if (negro.length === 0) {
-    html += '<div class="eq-empty">Sin jugadores</div>';
+    html += '<div class="eq-empty">—</div>';
   } else {
-    html += '<div class="eq-chips">';
-    negro.forEach(p => { html += equipoChip(p, 1); });
+    html += '<div class="eq-col-list">';
+    negro.forEach(p => { html += equipoPill(p, 1); });
     html += '</div>';
   }
   html += '</div>';
 
-  // Equipo Verde group
-  html += '<div class="eq-group t2">';
-  html += '<div class="eq-group-hd"><span class="eq-dot t2"></span><span class="eq-group-ti">Equipo Verde</span><span class="eq-count">' + verde.length + '</span></div>';
+  // Verde column
+  html += '<div class="eq-col t2">';
+  html += '<div class="eq-col-hd"><span class="eq-dot t2"></span><span class="eq-col-ti">VERDE</span><span class="eq-count">' + verde.length + '</span></div>';
   if (verde.length === 0) {
-    html += '<div class="eq-empty">Sin jugadores</div>';
+    html += '<div class="eq-empty">—</div>';
   } else {
-    html += '<div class="eq-chips">';
-    verde.forEach(p => { html += equipoChip(p, 2); });
+    html += '<div class="eq-col-list">';
+    verde.forEach(p => { html += equipoPill(p, 2); });
     html += '</div>';
   }
   html += '</div>';
 
-  // Share + legend footer
+  html += '</div>'; // /eq-cols
+
+  // Share button
   if (unassigned.length === 0 && active.length > 0) {
     html += '<button class="eq-share-btn" onclick="shareEquipos()">Compartir equipos</button>';
   }
-  html += '<div class="eq-hint">Tap un chip para cambiarlo de equipo</div>';
+  html += '<div class="eq-hint">Tap un nombre para sacarlo del equipo</div>';
 
   list.innerHTML = html || '<div class="panel-empty">No hay jugadores.</div>';
 }
 
-function equipoChip(p, currentTeam) {
-  const pos = p.position === 'portero' ? 'POR' : '';
-  const posTag = pos ? `<span class="eq-chip-pos">${pos}</span>` : '';
-  return `<button type="button" class="eq-chip t${currentTeam}" onclick="cycleEquipo('${p.id}')">
-    <span class="eq-chip-name">${escapePanel(p.name)}</span>${posTag}
+function equipoPill(p, team) {
+  const pos = p.position === 'portero' ? '<span class="eq-pill-pos">POR</span>' : '';
+  return `<button type="button" class="eq-pill t${team}" onclick="unassignPlayer('${p.id}')">
+    <span class="eq-pill-name">${escapePanel(p.name)}</span>${pos}
   </button>`;
 }
 
-// Tap a chip → cycle its team: unassigned → negro → verde → unassigned
-function cycleEquipo(playerId) {
+function assignTo(playerId, team) {
   if (!jugadoresRef) return;
   const p = _equipoPlayers.find(x => x.id === playerId);
   if (!p) return;
-  const cur = p.equipo || 0;
-  const next = cur === 0 ? 1 : cur === 1 ? 2 : 0;
-  jugadoresRef.doc(playerId).update({ equipo: next }).then(() => {
-    // Refresh local data then re-render
-    p.equipo = next;
+  jugadoresRef.doc(playerId).update({ equipo: team }).then(() => {
+    p.equipo = team;
     renderEquipoList(_equipoPlayers);
-  }).catch(err => console.error('cycleEquipo error:', err));
+  }).catch(err => console.error('assignTo error:', err));
+}
+
+function unassignPlayer(playerId) {
+  if (!jugadoresRef) return;
+  const p = _equipoPlayers.find(x => x.id === playerId);
+  if (!p) return;
+  jugadoresRef.doc(playerId).update({ equipo: 0 }).then(() => {
+    p.equipo = 0;
+    renderEquipoList(_equipoPlayers);
+  }).catch(err => console.error('unassignPlayer error:', err));
 }
 
 function shareEquipos() {
