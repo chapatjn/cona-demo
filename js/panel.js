@@ -240,7 +240,7 @@ function pagosRow(p) {
     </div>
     <button class="pagos-toggle ${paid ? 'paid' : 'unpaid'}"
             onclick="togglePago('${p.id}', ${paid})">
-      ${paid ? '✓ Pagado' : '● Pendiente'}
+      ${paid ? 'Pagado' : 'Pendiente'}
     </button>
   </div>`;
 }
@@ -294,10 +294,10 @@ function renderEquipoList(players) {
   let html = '';
 
   if (unassigned.length > 0) {
-    html += '<div class="equipo-warning">⚠️ ' + unassigned.length + ' jugador' +
+    html += '<div class="equipo-warning">Faltan ' + unassigned.length + ' jugador' +
             (unassigned.length > 1 ? 'es' : '') + ' sin equipo asignado</div>';
   } else if (active.length > 0) {
-    html += '<div class="equipo-ready">✓ Todos los jugadores asignados</div>';
+    html += '<div class="equipo-ready">Todos los jugadores asignados</div>';
   }
 
   if (porteros.length > 0) {
@@ -369,7 +369,7 @@ function goToOrganizador() {
 
     if (unassigned.length > 0) {
       const names = unassigned.map(p => p.name).join(', ');
-      alert('⚠️ Faltan ' + unassigned.length + ' jugador' + (unassigned.length > 1 ? 'es' : '') +
+      alert('Faltan ' + unassigned.length + ' jugador' + (unassigned.length > 1 ? 'es' : '') +
             ' sin equipo asignado:\n\n' + names +
             '\n\nAsigná todos los jugadores a Negro o Verde antes de iniciar.');
       return;

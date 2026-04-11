@@ -410,7 +410,7 @@
             const link = base + '?mejenga=' + mejengaId;
             navigator.clipboard.writeText(link).then(() => {
                 const toast = document.getElementById('successToast');
-                toast.innerHTML = '📋 Link copiado al portapapeles';
+                toast.innerHTML = 'Link copiado al portapapeles';
                 toast.classList.remove('banca-toast');
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 2500);
@@ -423,7 +423,7 @@
                 document.execCommand('copy');
                 document.body.removeChild(ta);
                 const toast = document.getElementById('successToast');
-                toast.innerHTML = '📋 Link copiado';
+                toast.innerHTML = 'Link copiado';
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 2500);
             });

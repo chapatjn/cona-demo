@@ -199,7 +199,7 @@ rating = 6.5 + ((raw - rawMin) / rango) ^ 0.75 × (9.0 - 6.5)
 <!-- Feedback Modal -->
 <div id="fbModal" style="position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
   <div style="background:rgba(10,20,13,.97);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:90%;max-width:400px;padding:24px 20px;position:relative">
-    <button onclick="document.getElementById('fbModal').style.display='none'" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:28px;height:28px;color:var(--w4);font-size:14px;cursor:pointer;font-family:inherit">✕</button>
+    <button onclick="document.getElementById('fbModal').style.display='none'" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:28px;height:28px;color:var(--w4);font-size:14px;cursor:pointer;font-family:inherit">&times;</button>
     <p style="font-size:16px;font-weight:800;color:var(--w);margin-bottom:4px">Tu opinion importa</p>
     <p style="font-size:11px;color:var(--w4);margin-bottom:16px">Ayudanos a mejorar el Factor Cona y el sistema de rating</p>
     <textarea id="fbText" placeholder="Que pensas del sistema de rating? Algo que cambiarias? Ideas para mejorar el Factor Cona..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;font-family:inherit;font-size:13px;color:var(--w);resize:vertical;outline:none" onfocus="this.style.borderColor='rgba(167,238,67,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>

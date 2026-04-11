@@ -49,7 +49,7 @@
         </div>
         <div class="fin-banner-actions">
           <button class="fin-banner-report" onclick="viewFinishedReport()">Ver Reporte</button>
-          <button class="fin-banner-close" onclick="document.getElementById('finishedBanner').classList.add('hidden')">✕</button>
+          <button class="fin-banner-close" onclick="document.getElementById('finishedBanner').classList.add('hidden')">Cerrar</button>
         </div>
       </div>
     </div>
@@ -194,21 +194,20 @@
   <div class="fm bd"></div><div class="fm hl"></div><div class="fm cc" id="ccCircle"><div class="cc-fill" id="ccFill"></div><div class="cc-label" id="ccLabel"><span class="cc-stat" id="ccStat"></span><span class="cc-who" id="ccWho"></span></div></div><div class="fm cd"></div>
   <div class="fm bt"></div><div class="fm bb"></div><div class="fm gt"></div><div class="fm gb"></div>
   <div id="nd"></div>
-  <div class="ib">
-    <div class="ib-ev" id="ec">0</div>
-    <div class="ib-btn" onclick="openBanca()">Banca</div>
-    <div class="ib-btn" onclick="openTabla()">Tabla</div>
-    <div class="ib-btn" onclick="openTl()">Línea</div>
-    <div class="ib-btn" onclick="openEx()">Datos</div>
-    <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
-    <button class="ib-btn ib-inicio" onclick="resetMejenga()">Inicio</button>
-  </div>
   <div class="sync-badge-wrap"><span id="syncBadge" style="font-size:8px;font-weight:600;transition:color .3s"></span></div>
-  <div class="ib-last" id="le" style="position:absolute;bottom:4px;left:8px;font-size:9px;font-weight:600;color:var(--w4);z-index:10;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Toca un jugador</div>
 </div>
 <div class="vl" id="viewList" style="display:none"></div>
 <div class="vg" id="viewGrid" style="display:none"></div>
 <div class="ve" id="viewEvent" style="display:none"></div>
+<!-- Info bar (outside view containers so it's always visible) -->
+<div class="ib">
+  <div class="ib-ev" id="ec">0</div>
+  <button type="button" class="ib-btn" onclick="openBanca()">Banca</button>
+  <button type="button" class="ib-btn" onclick="openTabla()">Tabla</button>
+  <button type="button" class="ib-btn" onclick="openTl()">Timeline</button>
+  <button type="button" class="ib-btn" onclick="openEx()">Datos</button>
+  <button type="button" class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
+</div>
 </div>
 <!-- Desktop sidebar -->
 <div class="app-right" id="deskTabla">
@@ -586,8 +585,8 @@
             <div class="panel-sub" id="pagosSubtitle">Mejenga</div>
         </div>
         <div class="panel-legend">
-            <span class="legend-chip confirmed">✓ Pagado</span>
-            <span class="legend-chip pending">● Pendiente</span>
+            <span class="legend-chip confirmed">Pagado</span>
+            <span class="legend-chip pending">Pendiente</span>
         </div>
         <div class="panel-list" id="pagosList">
             <div class="panel-empty">Cargando jugadores...</div>
@@ -727,7 +726,7 @@
         <div class="pp-j" id="ppJ"></div>
         <div style="flex:1"><div class="pp-nm" id="ppNm"></div><div class="pp-pos" id="ppPos"></div></div>
         <span class="pp-rt" id="ppRt"></span>
-        <button class="pp-x" onclick="closePP()">✕</button>
+        <button class="pp-x" onclick="closePP()">&times;</button>
       </div>
       <div class="pp-tabs">
         <button class="pp-tab on" id="ppTab0" onclick="ppSlide(0)">Estadisticas</button>
@@ -788,7 +787,7 @@
 <!-- Feedback Modal -->
 <div id="fbModal" style="position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
   <div style="background:rgba(10,20,13,.97);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:90%;max-width:400px;padding:24px 20px;position:relative">
-    <button onclick="document.getElementById('fbModal').classList.remove('on')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:28px;height:28px;color:var(--w4);font-size:14px;cursor:pointer;font-family:inherit">✕</button>
+    <button onclick="document.getElementById('fbModal').classList.remove('on')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:28px;height:28px;color:var(--w4);font-size:14px;cursor:pointer;font-family:inherit">&times;</button>
     <p style="font-size:16px;font-weight:800;color:var(--w);margin-bottom:4px">Tu opinion importa</p>
     <p style="font-size:11px;color:var(--w4);margin-bottom:16px">Ayudanos a mejorar la experiencia de las mejengas Cona</p>
     <textarea id="fbText" placeholder="Que te parecio la mejenga? Algun comentario sobre los stats, el rating, la organizacion..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;font-family:inherit;font-size:13px;color:var(--w);resize:vertical;outline:none" onfocus="this.style.borderColor='rgba(167,238,67,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
