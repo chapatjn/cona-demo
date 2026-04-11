@@ -293,55 +293,142 @@ function initEquipo() {
   });
 }
 
+// Current snapshot of players on the equipo screen
+let _equipoPlayers = [];
+
 function renderEquipoList(players) {
+  _equipoPlayers = players;
   const list = document.getElementById('equipoList');
   if (!list) return;
 
-  const active  = players.filter(p => !p.banca);
-  const porteros = active.filter(p => p.position === 'portero');
-  const jugadores = active.filter(p => p.position === 'jugador');
+  const active = players.filter(p => !p.banca);
   const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
+  const negro = active.filter(p => p.equipo === 1);
+  const verde = active.filter(p => p.equipo === 2);
 
   let html = '';
 
+  // Status banner
   if (unassigned.length > 0) {
-    html += '<div class="equipo-warning">Faltan ' + unassigned.length + ' jugador' +
-            (unassigned.length > 1 ? 'es' : '') + ' sin equipo asignado</div>';
+    html += '<div class="equipo-warning">Faltan ' + unassigned.length + ' sin asignar — tap para elegir equipo</div>';
   } else if (active.length > 0) {
-    html += '<div class="equipo-ready">Todos los jugadores asignados</div>';
+    html += '<div class="equipo-ready">Equipos listos &middot; ' + negro.length + 'v' + verde.length + '</div>';
   }
 
-  if (porteros.length > 0) {
-    html += '<div class="panel-section-label">Porteros</div>';
-    html += porteros.map(p => equipoRow(p, true)).join('');
+  // Unassigned players — tap chip to show quick team picker
+  if (unassigned.length > 0) {
+    html += '<div class="eq-group unassigned">';
+    html += '<div class="eq-group-hd"><span class="eq-group-ti">Sin asignar</span></div>';
+    html += '<div class="eq-chips">';
+    unassigned.forEach(p => {
+      html += equipoChip(p, 0);
+    });
+    html += '</div></div>';
   }
-  if (jugadores.length > 0) {
-    html += '<div class="panel-section-label">Jugadores de Campo</div>';
-    html += jugadores.map(p => equipoRow(p, false)).join('');
+
+  // Equipo Negro group
+  html += '<div class="eq-group t1">';
+  html += '<div class="eq-group-hd"><span class="eq-dot t1"></span><span class="eq-group-ti">Equipo Negro</span><span class="eq-count">' + negro.length + '</span></div>';
+  if (negro.length === 0) {
+    html += '<div class="eq-empty">Sin jugadores</div>';
+  } else {
+    html += '<div class="eq-chips">';
+    negro.forEach(p => { html += equipoChip(p, 1); });
+    html += '</div>';
   }
+  html += '</div>';
+
+  // Equipo Verde group
+  html += '<div class="eq-group t2">';
+  html += '<div class="eq-group-hd"><span class="eq-dot t2"></span><span class="eq-group-ti">Equipo Verde</span><span class="eq-count">' + verde.length + '</span></div>';
+  if (verde.length === 0) {
+    html += '<div class="eq-empty">Sin jugadores</div>';
+  } else {
+    html += '<div class="eq-chips">';
+    verde.forEach(p => { html += equipoChip(p, 2); });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // Share + legend footer
+  if (unassigned.length === 0 && active.length > 0) {
+    html += '<button class="eq-share-btn" onclick="shareEquipos()">Compartir equipos</button>';
+  }
+  html += '<div class="eq-hint">Tap un chip para cambiarlo de equipo</div>';
 
   list.innerHTML = html || '<div class="panel-empty">No hay jugadores.</div>';
 }
 
-function equipoRow(p, isPortero) {
-  const eq = p.equipo || 0; // 0=unassigned, 1=negro, 2=verde
-  const num = p.numero || '';
-  return `<div class="equipo-row" id="erow-${p.id}">
-    <div class="equipo-info">
-      <div class="equipo-name">${escapePanel(p.name)}</div>
-      ${!isPortero ? `<input class="equipo-num-input"
-        type="number" min="1" max="99" placeholder="#"
-        value="${escapePanel(String(num))}"
-        onchange="updateNumero('${p.id}', this.value)"
-        oninput="this.value=this.value.slice(0,2)">` : '<span class="equipo-gk-badge">GK</span>'}
-    </div>
-    <div class="equipo-team-btns">
-      <button class="eq-btn t1-btn ${eq === 1 ? 'active' : ''}"
-              onclick="updateEquipo('${p.id}', 1, this)">Negro</button>
-      <button class="eq-btn t2-btn ${eq === 2 ? 'active' : ''}"
-              onclick="updateEquipo('${p.id}', 2, this)">Verde</button>
-    </div>
-  </div>`;
+function equipoChip(p, currentTeam) {
+  const pos = p.position === 'portero' ? 'POR' : '';
+  const posTag = pos ? `<span class="eq-chip-pos">${pos}</span>` : '';
+  return `<button type="button" class="eq-chip t${currentTeam}" onclick="cycleEquipo('${p.id}')">
+    <span class="eq-chip-name">${escapePanel(p.name)}</span>${posTag}
+  </button>`;
+}
+
+// Tap a chip → cycle its team: unassigned → negro → verde → unassigned
+function cycleEquipo(playerId) {
+  if (!jugadoresRef) return;
+  const p = _equipoPlayers.find(x => x.id === playerId);
+  if (!p) return;
+  const cur = p.equipo || 0;
+  const next = cur === 0 ? 1 : cur === 1 ? 2 : 0;
+  jugadoresRef.doc(playerId).update({ equipo: next }).then(() => {
+    // Refresh local data then re-render
+    p.equipo = next;
+    renderEquipoList(_equipoPlayers);
+  }).catch(err => console.error('cycleEquipo error:', err));
+}
+
+function shareEquipos() {
+  const active = _equipoPlayers.filter(p => !p.banca);
+  const negro = active.filter(p => p.equipo === 1);
+  const verde = active.filter(p => p.equipo === 2);
+  const title = document.getElementById('regSubtitle')?.textContent || 'Mejenga';
+  let text = '*Equipos ' + title + '*\n\n';
+  text += '*EQUIPO NEGRO*\n';
+  if (negro.length === 0) {
+    text += '(vacio)\n';
+  } else {
+    negro.forEach(p => {
+      const pos = p.position === 'portero' ? ' (POR)' : '';
+      text += '- ' + p.name + pos + '\n';
+    });
+  }
+  text += '\n*EQUIPO VERDE*\n';
+  if (verde.length === 0) {
+    text += '(vacio)\n';
+  } else {
+    verde.forEach(p => {
+      const pos = p.position === 'portero' ? ' (POR)' : '';
+      text += '- ' + p.name + pos + '\n';
+    });
+  }
+  text += '\nCona Futbol';
+
+  // Try native share, fallback to WhatsApp URL, fallback to clipboard
+  if (navigator.share) {
+    navigator.share({ title: 'Equipos ' + title, text: text })
+      .catch(err => {
+        if (err.name !== 'AbortError') fallbackShareEquipos(text);
+      });
+  } else {
+    fallbackShareEquipos(text);
+  }
+}
+
+function fallbackShareEquipos(text) {
+  // Open WhatsApp with pre-filled text, or copy to clipboard
+  const waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+  // Try clipboard first
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Equipos copiados al portapapeles. Pegá en WhatsApp para compartir.');
+    }).catch(() => window.open(waUrl, '_blank'));
+  } else {
+    window.open(waUrl, '_blank');
+  }
 }
 
 function updateEquipo(playerId, equipo, btn) {

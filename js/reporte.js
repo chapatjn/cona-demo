@@ -592,7 +592,7 @@ function openPP(id) {
     </p>
     <div style="margin-top:8px;text-align:center">
       <a href="factor-cona.html" style="display:inline-block;background:rgba(167,238,67,.1);border:1px solid rgba(167,238,67,.2);border-radius:8px;padding:6px 14px;font-size:10px;font-weight:700;color:var(--g);text-decoration:none;margin-right:6px">Conoce el Factor Cona →</a>
-      <button onclick="document.getElementById('fbModal').classList.add('on')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 14px;font-family:inherit;font-size:10px;font-weight:700;color:var(--w4);cursor:pointer">Feedback</button>
+      <button onclick="openFbModal()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 14px;font-family:inherit;font-size:10px;font-weight:700;color:var(--w4);cursor:pointer">Feedback</button>
     </div>
   </div>`;
 
@@ -629,6 +629,17 @@ function closePP() {
 })();
 
 /* ── Feedback ── */
+function openFbModal(){
+  const el = document.getElementById('fbModal');
+  if (el) el.classList.add('on');
+  const ta = document.getElementById('fbText');
+  if (ta) setTimeout(() => ta.focus(), 100);
+}
+function closeFbModal(){
+  const el = document.getElementById('fbModal');
+  if (el) el.classList.remove('on');
+}
+
 async function sendFeedback() {
   const text = document.getElementById('fbText').value.trim();
   if (!text) return;
@@ -636,42 +647,35 @@ async function sendFeedback() {
   btn.textContent = 'Enviando...';
   btn.disabled = true;
   try {
-    const params = new URLSearchParams(window.location.search);
-    const url = 'https://firestore.googleapis.com/v1/projects/cona-demo-organizador/databases/(default)/documents/feedback';
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        fields: {
-          mejengaId: {stringValue: params.get('id') || ''},
-          mensaje: {stringValue: text},
-          ts: {timestampValue: new Date().toISOString()},
-          userAgent: {stringValue: navigator.userAgent}
-        }
-      })
+    // Use Firestore SDK (more reliable than REST) — saves to 'feedback' collection
+    const report = document.getElementById('report');
+    const mejengaId = (report && report.dataset && report.dataset.mejengaId) || '';
+    await db.collection('feedback').add({
+      mejengaId: mejengaId,
+      mensaje: text,
+      ts: firebase.firestore.FieldValue.serverTimestamp(),
+      userAgent: navigator.userAgent,
+      source: 'reporte'
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || res.status);
-    }
     btn.textContent = 'Enviado!';
-    btn.style.background = 'rgba(167,238,67,.3)';
-    btn.style.color = 'var(--g)';
+    btn.classList.add('sent');
     document.getElementById('fbText').value = '';
     setTimeout(() => {
-      document.getElementById('fbModal').classList.remove('on');
+      closeFbModal();
       btn.textContent = 'Enviar feedback';
-      btn.style.background = '';
-      btn.style.color = '';
+      btn.classList.remove('sent');
       btn.disabled = false;
     }, 1500);
   } catch(e) {
-    btn.textContent = 'Error: ' + e.message;
-    btn.style.fontSize = '10px';
+    console.error('sendFeedback error:', e);
+    btn.textContent = 'Error, reintentar';
     btn.disabled = false;
-    console.error(e);
   }
 }
+// Export for onclick usage
+window.openFbModal = openFbModal;
+window.closeFbModal = closeFbModal;
+window.sendFeedback = sendFeedback;
 
 /* ── Init ── */
 async function initReporteFromId(id) {

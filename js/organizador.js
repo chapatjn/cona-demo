@@ -207,7 +207,10 @@ function draw(){
   if(_viewMode==='grid')return drawGrid();
   if(_viewMode==='event')return drawEvent();
   const nd=document.getElementById('nd');
-  const t1=P.filter(p=>p.team==='t1'&&!p.bench),t2=P.filter(p=>p.team==='t2'&&!p.bench);
+  // Sort so goalkeepers (por:true) come first — they get the goal position from form()
+  const byGkFirst=(a,b)=>(b.por?1:0)-(a.por?1:0);
+  const t1=P.filter(p=>p.team==='t1'&&!p.bench).sort(byGkFirst);
+  const t2=P.filter(p=>p.team==='t2'&&!p.bench).sort(byGkFirst);
   const f1=form(t1.length,true),f2=form(t2.length,false);
   let h='';
   t1.forEach((p,i)=>{h+=node(p,f1[i])});
@@ -419,7 +422,8 @@ function lpEnd(e){
 let _dblTapId=null,_dblTapTimer=null;
 function tap(id){
   if(_lpFired||_lpBarShown)return;
-  if(_viewMode==='field'){
+  // Double-tap = goal shortcut in Cancha and Grid views
+  if(_viewMode==='field'||_viewMode==='grid'){
     if(_dblTapId===id&&_dblTapTimer){clearTimeout(_dblTapTimer);_dblTapTimer=null;_dblTapId=null;
       const p=P.find(x=>x.id===id);if(!p)return;p.goals++;addEv('goal',p);_lastAction={pid:p.id,stat:'goals',delta:1,evIndex:EV.length-1};updSc();draw();saveState();goalP=p;showAst(p);if(navigator.vibrate)navigator.vibrate([15,50,15]);return;}
     _dblTapId=id;_dblTapTimer=setTimeout(()=>{_dblTapTimer=null;_dblTapId=null;openPopup(id);},300);return;
@@ -548,6 +552,20 @@ function updIb(){
   if(ec)ec.textContent=EV.length;
   const le=document.getElementById('le');
   if(le&&EV.length){const l=EV[EV.length-1];le.textContent=l.time+' '+l.player;}
+}
+// Collapsible side menu
+function toggleIb(){
+  const ib=document.getElementById('ib'),bd=document.getElementById('ibBackdrop'),btn=document.getElementById('ibToggle');
+  if(!ib)return;
+  const isOpen=ib.classList.contains('on');
+  if(isOpen){closeIb();}
+  else{ib.classList.add('on');if(bd)bd.classList.add('on');if(btn)btn.classList.add('on');}
+}
+function closeIb(){
+  const ib=document.getElementById('ib'),bd=document.getElementById('ibBackdrop'),btn=document.getElementById('ibToggle');
+  if(ib)ib.classList.remove('on');
+  if(bd)bd.classList.remove('on');
+  if(btn)btn.classList.remove('on');
 }
 function updSc(){
   const t1g=P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.autogoals,0);

@@ -263,10 +263,27 @@ details[open] summary::after{transform:rotate(180deg)}
 /* Team label row */
 .team-divider{display:flex;align-items:center;gap:8px;padding:10px 16px 4px}
 .team-divider .line{flex:1;height:1px;background:rgba(255,255,255,.06)}
-</style>
 
 /* Feedback modal */
-#fbModal.on{display:flex!important}
+.fb-modal{position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
+.fb-modal.on{display:flex}
+.fb-card{background:rgba(10,20,13,.97);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:100%;max-width:400px;padding:24px 20px;position:relative}
+.fb-close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:30px;height:30px;color:var(--w4);font-size:16px;cursor:pointer;font-family:inherit;line-height:1}
+.fb-close:active{background:rgba(255,255,255,.12)}
+.fb-title{font-size:17px;font-weight:800;color:var(--w);margin-bottom:4px;padding-right:34px}
+.fb-sub{font-size:11px;color:var(--w4);margin-bottom:16px}
+.fb-text{width:100%;min-height:130px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;font-family:inherit;font-size:13px;color:var(--w);resize:vertical;outline:none}
+.fb-text:focus{border-color:rgba(167,238,67,.4)}
+.fb-send{margin-top:12px;width:100%;padding:13px;background:var(--g);border:none;border-radius:12px;font-family:inherit;font-size:13px;font-weight:800;color:#0a1a10;cursor:pointer;-webkit-appearance:none}
+.fb-send:active{opacity:.85}
+.fb-send.sent{background:rgba(167,238,67,.3);color:var(--g)}
+
+/* Report actions: Factor Cona link + feedback button */
+.rp-actions{display:flex;align-items:center;justify-content:center;gap:16px;padding:20px 10px 4px;flex-wrap:wrap}
+.rp-fc-link{color:var(--g);font-size:12px;font-weight:700;text-decoration:none;padding:10px 16px;border-radius:10px;background:rgba(167,238,67,.06);border:1px solid rgba(167,238,67,.15)}
+.rp-fc-link:active{background:rgba(167,238,67,.15)}
+.rp-fb-btn{background:var(--g2);border:1px solid rgba(167,238,67,.2);border-radius:10px;padding:10px 20px;font-family:inherit;font-size:12px;font-weight:700;color:var(--g);cursor:pointer;-webkit-appearance:none}
+.rp-fb-btn:active{opacity:.75}
 
 /* Back-to-home button below footer */
 .rp-org-wrap{padding:0 16px 48px;text-align:center}

@@ -200,14 +200,20 @@
 <div class="vg" id="viewGrid" style="display:none"></div>
 <div class="ve" id="viewEvent" style="display:none"></div>
 <!-- Info bar (outside view containers so it's always visible) -->
-<div class="ib">
+<!-- On mobile: collapsible side menu with toggle button -->
+<button type="button" class="ib-toggle" id="ibToggle" onclick="toggleIb()" aria-label="Menu">
+  <span class="ib-toggle-line"></span>
+  <span class="ib-toggle-line"></span>
+  <span class="ib-toggle-line"></span>
+</button>
+<div class="ib" id="ib">
   <div class="ib-ev" id="ec">0</div>
-  <button type="button" class="ib-btn" onclick="openBanca()">Banca</button>
-  <button type="button" class="ib-btn" onclick="openTabla()">Tabla</button>
-  <button type="button" class="ib-btn" onclick="openTl()">Timeline</button>
-  <button type="button" class="ib-btn" onclick="openEx()">Datos</button>
-  <button type="button" class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
+  <button type="button" class="ib-btn" onclick="closeIb();openBanca()">Banca</button>
+  <button type="button" class="ib-btn" onclick="closeIb();openTabla()">Tabla</button>
+  <button type="button" class="ib-btn" onclick="closeIb();openTl()">Timeline</button>
+  <button type="button" class="fin-btn" id="finBtn" onclick="closeIb();finalizar()">Finalizar</button>
 </div>
+<div class="ib-backdrop" id="ibBackdrop" onclick="closeIb()"></div>
 </div>
 <!-- Desktop sidebar -->
 <div class="app-right" id="deskTabla">
@@ -646,6 +652,13 @@
   <!-- Report -->
   <div id="report" class="hidden">
 
+    <!-- Back bar -->
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">&#8592; Volver</button>
+      <div style="flex:1"></div>
+      <button class="share-btn" onclick="shareReport()">Compartir</button>
+    </div>
+
     <!-- Header -->
     <div class="hdr">
       <svg class="logo" height="28" viewBox="0 0 1880 632" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -654,12 +667,7 @@
         <path d="M1492.6 147C1483.9 146.942 1477.59 140.191 1472.58 134.796C1470.37 132.401 1449.6 109.523 1459.8 91.6353C1466.99 79.0275 1484.84 77.2676 1491.75 76.5751C1499.42 75.825 1511.44 74.6133 1519.02 81.8548C1529.41 91.8084 1523.52 110.071 1521.58 116.043C1518.11 126.776 1507.79 147.087 1492.63 146.971L1492.6 147Z" fill="#A7EE43"/>
         <path d="M1223.55 205.546C1218.12 219.928 1231.18 236.208 1237.16 243.686C1244.36 252.66 1254.17 264.913 1266.56 264.827C1278.68 264.74 1285.82 252.832 1300.86 232.871C1318.81 209.055 1342.11 179.228 1374.91 159.67C1389.07 151.242 1406.32 141.29 1423.42 146.899C1435.81 150.983 1444.83 162.143 1448.42 173.073C1457.11 199.449 1430.35 214.146 1415.55 255.996C1398.27 304.979 1423.06 314.155 1403.22 365.899C1390.19 399.897 1369.63 420.836 1356.93 432.916C1341.74 447.413 1334.15 454.632 1327.68 453.252C1309.76 449.397 1299.25 397.739 1301.95 355.084C1303.29 333.915 1307.48 321.691 1299.22 314.874C1284.64 302.822 1249.43 322.151 1246.64 323.733C1238.98 327.99 1210.43 343.982 1211.01 366.388C1211.25 375.592 1218.6 383.387 1232.24 399.379C1235.61 403.348 1238.53 406.483 1241.35 409.36C1255.3 423.396 1266.87 433.089 1277.95 442.178C1316.23 473.501 1317.99 475.802 1324.67 475.917C1335.24 476.118 1343.75 470.509 1360.18 459.694C1370.26 453.079 1376.55 447.326 1385.75 438.87C1404.01 422.102 1410.18 411.488 1427.16 401.421C1440.82 393.339 1461.78 390.808 1503.37 386.464C1576.6 378.842 1623.86 373.895 1635.8 394.633C1641.69 404.901 1636.59 417.356 1629.69 434.153C1617.82 463.146 1595.55 482.417 1577.42 497.834C1551.18 520.125 1538.63 523.577 1537.66 536.491C1536.35 553.95 1557.77 568.216 1564.51 572.732C1566.94 574.343 1602.21 597.209 1629.88 583.806C1636.65 580.527 1645.28 573.969 1660.71 523.088C1676.9 469.704 1685.1 442.35 1674.86 417.384C1672.31 411.114 1662.1 386.206 1636.2 372.543C1611.5 359.485 1581.22 362.476 1567.06 363.771C1556.22 364.748 1545.77 366.848 1526.51 366.963C1513.03 367.049 1506.28 367.078 1498.48 365.324C1472.57 359.485 1457.32 340.933 1454.37 337.222C1439.34 318.325 1438.36 298.306 1438.03 289.016C1437.73 280.243 1437.27 254.846 1456.01 232.296C1470.38 215.009 1488.6 208.336 1497.29 205.288C1512.14 200.053 1519.71 201.146 1540.48 199.104C1564.97 196.716 1602.78 193.035 1636.16 174.224C1644.34 169.622 1653.42 161.827 1671.55 146.295C1713.65 110.198 1734.97 92.0772 1730.39 76.6028C1726.71 64.2061 1708.94 57.9645 1691.6 51.9243C1675.71 46.4019 1658.82 40.5055 1644.85 46.5457C1626.87 54.3117 1631.06 74.5607 1613.93 113.937C1601.48 142.556 1587.99 173.62 1558.34 184.204C1531.25 193.897 1501.82 182.479 1496.29 180.206C1487.91 176.755 1477.18 169.794 1456.01 155.47C1436.21 142.096 1433.2 138.155 1423.12 134.79C1416.49 132.604 1404.71 129.958 1373.27 136.372C1356.08 139.881 1331.9 146.353 1304.14 159.066C1304.14 159.066 1287.31 165.509 1242.63 188.979C1233.85 193.581 1226.56 197.579 1223.58 205.489L1223.55 205.546Z" fill="#A7EE43"/>
       </svg>
-      <div class="game-name-row">
-        <div id="game-name" class="game-name"></div>
-        <button class="share-icon-btn" onclick="shareReport()" title="Compartir">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        </button>
-      </div>
+      <div id="game-name" class="game-name"></div>
       <div id="format-badge" class="format-badge"></div>
       <div class="meta">
         <span id="meta-date"></span>
@@ -766,8 +774,9 @@
       </div>
     </details>
 
-    <div style="text-align:center;padding:16px 10px 0">
-      <button onclick="document.getElementById('fbModal').classList.add('on')" style="background:var(--g2);border:1px solid rgba(167,238,67,.2);border-radius:12px;padding:10px 24px;font-family:inherit;font-size:12px;font-weight:700;color:var(--g);cursor:pointer">Danos tu feedback</button>
+    <div class="rp-actions">
+      <a class="rp-fc-link" href="factor-cona.html" target="_blank">&rarr; Factor Cona</a>
+      <button class="rp-fb-btn" onclick="openFbModal()">Danos tu feedback</button>
     </div>
 
     <!-- Footer -->
@@ -785,13 +794,13 @@
 </div>
 
 <!-- Feedback Modal -->
-<div id="fbModal" style="position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
-  <div style="background:rgba(10,20,13,.97);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:90%;max-width:400px;padding:24px 20px;position:relative">
-    <button onclick="document.getElementById('fbModal').classList.remove('on')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:28px;height:28px;color:var(--w4);font-size:14px;cursor:pointer;font-family:inherit">&times;</button>
-    <p style="font-size:16px;font-weight:800;color:var(--w);margin-bottom:4px">Tu opinion importa</p>
-    <p style="font-size:11px;color:var(--w4);margin-bottom:16px">Ayudanos a mejorar la experiencia de las mejengas Cona</p>
-    <textarea id="fbText" placeholder="Que te parecio la mejenga? Algun comentario sobre los stats, el rating, la organizacion..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;font-family:inherit;font-size:13px;color:var(--w);resize:vertical;outline:none" onfocus="this.style.borderColor='rgba(167,238,67,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
-    <button id="fbSend" onclick="sendFeedback()" style="margin-top:12px;width:100%;padding:12px;background:var(--g);border:none;border-radius:12px;font-family:inherit;font-size:13px;font-weight:800;color:#0a1a10;cursor:pointer">Enviar feedback</button>
+<div id="fbModal" class="fb-modal">
+  <div class="fb-card">
+    <button class="fb-close" onclick="closeFbModal()">&times;</button>
+    <p class="fb-title">Tu opinion importa</p>
+    <p class="fb-sub">Ayudanos a mejorar la experiencia de las mejengas Cona</p>
+    <textarea id="fbText" class="fb-text" placeholder="Que te parecio la mejenga? Algun comentario sobre los stats, el rating, la organizacion..."></textarea>
+    <button id="fbSend" class="fb-send" onclick="sendFeedback()">Enviar feedback</button>
   </div>
 </div>
 

@@ -889,7 +889,7 @@
             font-weight: 600;
             padding: 10px 16px;
             border-radius: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 14px;
             text-align: center;
         }
         .equipo-ready {
@@ -897,11 +897,137 @@
             border: 1px solid rgba(167,238,67,0.2);
             color: #A7EE43;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             padding: 10px 16px;
             border-radius: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 14px;
             text-align: center;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Equipo grouped chips layout ── */
+        .eq-group {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 14px 14px 16px;
+            margin-bottom: 12px;
+        }
+        .eq-group.t1 { border-color: rgba(255,255,255,0.12); }
+        .eq-group.t2 { border-color: rgba(167,238,67,0.22); background: rgba(167,238,67,0.03); }
+        .eq-group.unassigned { border-color: rgba(255,180,0,0.25); background: rgba(255,180,0,0.04); }
+
+        .eq-group-hd {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .eq-group-ti {
+            font-size: 11px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            flex: 1;
+        }
+        .eq-group.t2 .eq-group-ti { color: #A7EE43; }
+        .eq-group.unassigned .eq-group-ti { color: #ffb400; }
+        .eq-count {
+            font-size: 11px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 2px 8px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .eq-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+        }
+        .eq-dot.t1 { background: rgba(255,255,255,0.75); }
+        .eq-dot.t2 { background: #A7EE43; }
+
+        .eq-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .eq-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: transform .1s, background .15s;
+        }
+        .eq-chip:active { transform: scale(0.96); }
+        .eq-chip.t0 {
+            background: rgba(255,180,0,0.1);
+            border-color: rgba(255,180,0,0.3);
+            color: #ffb400;
+        }
+        .eq-chip.t1 {
+            background: rgba(20,20,25,0.8);
+            border-color: rgba(255,255,255,0.35);
+            color: #fff;
+        }
+        .eq-chip.t2 {
+            background: rgba(167,238,67,0.85);
+            border-color: rgba(167,238,67,0.95);
+            color: #0a1a10;
+        }
+        .eq-chip-pos {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            background: rgba(0,0,0,0.3);
+            color: inherit;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .eq-chip.t2 .eq-chip-pos {
+            background: rgba(0,0,0,0.22);
+            color: #0a1a10;
+        }
+        .eq-empty {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            padding: 12px 0 4px;
+            font-style: italic;
+        }
+
+        .eq-share-btn {
+            margin-top: 14px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(167,238,67,0.14);
+            border: 1px solid rgba(167,238,67,0.4);
+            border-radius: 12px;
+            color: #A7EE43;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            -webkit-appearance: none;
+            letter-spacing: 0.02em;
+        }
+        .eq-share-btn:active { background: rgba(167,238,67,0.22); }
+
+        .eq-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            margin-top: 10px;
         }
         .equipo-row {
             display: flex; align-items: center;

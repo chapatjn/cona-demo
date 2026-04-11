@@ -81,8 +81,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .vg-cells{display:grid;gap:8px;padding:10px}
 .vg-cell{border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid rgba(255,255,255,.06);padding:12px 6px 10px;position:relative;-webkit-tap-highlight-color:transparent;gap:4px}
 .vg-cell:active{transform:scale(.95);opacity:.8}
-.vg-cell.t1{background:rgba(255,255,255,.04);color:rgba(255,255,255,.8)}
-.vg-cell.t2{background:rgba(167,238,67,.06);color:var(--t2c);border-color:rgba(167,238,67,.1)}
+.vg-cell.t1{background:rgba(20,20,25,.9);color:#fff;border-color:rgba(255,255,255,.35)}
+.vg-cell.t2{background:var(--g);color:#0a1a10;border-color:rgba(120,200,30,.6)}
+.vg-cell.t2 .vg-nm{color:rgba(10,26,16,.7)}
+.vg-cell.t2 .vg-s{color:#0a1a10;background:rgba(0,0,0,.15)}
+.vg-cell.t2 .vg-s.sg{color:#fff;background:rgba(10,26,16,.35)}
+.vg-cell.t2 .vg-s.sd{color:#fff;background:rgba(10,26,16,.3)}
+.vg-cell.t2 .vg-s.sy{color:#0a1a10;background:rgba(255,255,255,.4)}
 .vg-cell .vg-n{font-size:28px;font-weight:800;line-height:1}
 .vg-cell .vg-nm{font-size:10px;font-weight:600;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;text-align:center}
 .vg-cell .vg-por{position:absolute;top:4px;right:4px;font-size:7px;font-weight:800;background:#fbbf24;color:#0a1a10;padding:1px 5px;border-radius:4px}
@@ -241,22 +246,54 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 }
 
 /* ═══ INFO BAR ═══ */
-/* Mobile: horizontal bar at bottom, full width */
-.ib{position:fixed;left:0;right:0;bottom:0;top:auto;transform:none;display:flex;flex-direction:row;align-items:center;justify-content:space-around;gap:4px;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(10,26,16,.96);backdrop-filter:blur(14px);border:none;border-top:1px solid rgba(167,238,67,.15);border-radius:0;z-index:25}
+/* Mobile: collapsible side panel (hamburger toggle) */
+.ib-toggle{
+  position:fixed;top:max(68px,calc(var(--sat) + 56px));right:10px;z-index:30;
+  width:44px;height:44px;border-radius:12px;border:1px solid rgba(167,238,67,.25);
+  background:rgba(10,26,16,.92);backdrop-filter:blur(12px);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  -webkit-appearance:none;padding:0;
+  transition:all .15s;
+}
+.ib-toggle:active{background:rgba(167,238,67,.15)}
+.ib-toggle-line{
+  display:block;width:18px;height:2px;border-radius:1px;
+  background:var(--g);transition:transform .2s, opacity .2s;
+}
+.ib-toggle.on .ib-toggle-line:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.ib-toggle.on .ib-toggle-line:nth-child(2){opacity:0}
+.ib-toggle.on .ib-toggle-line:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+.ib-backdrop{
+  position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.35);
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.ib-backdrop.on{opacity:1;pointer-events:auto}
+
+.ib{
+  position:fixed;top:0;right:0;bottom:0;width:180px;z-index:29;
+  background:rgba(10,26,16,.97);backdrop-filter:blur(14px);
+  border-left:1px solid rgba(167,238,67,.18);
+  display:flex;flex-direction:column;align-items:stretch;gap:8px;
+  padding:max(80px,calc(var(--sat) + 72px)) 14px calc(14px + env(safe-area-inset-bottom,0px));
+  transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);
+}
+.ib.on{transform:translateX(0)}
 .ib-ev{display:none}
 .ib-last{display:none}
-.ib-btn{padding:9px 4px;border-radius:10px;background:rgba(167,238,67,.06);border:1px solid rgba(167,238,67,.12);font-family:inherit;font-size:10px;font-weight:700;color:var(--g);cursor:pointer;white-space:nowrap;flex:1;text-align:center;-webkit-appearance:none;min-width:0}
-.ib-btn:active{background:rgba(167,238,67,.15)}
-.ib-inicio{color:rgba(255,120,120,.9)!important;border-color:rgba(255,60,60,.22)!important;background:rgba(255,60,60,.06)!important}
-.ib-inicio:active{background:rgba(255,60,60,.15)!important}
-.fin-btn{flex:1.2;padding:9px 4px;border-radius:10px;font-family:inherit;font-size:11px;font-weight:800;color:#fff;background:rgba(167,238,67,.2);border:1px solid rgba(167,238,67,.5);cursor:pointer;-webkit-appearance:none;min-width:0}
-.fin-btn:active{background:rgba(167,238,67,.3)}
-.fin-btn.done{background:rgba(167,238,67,.3);border-color:var(--g)}
-/* Reserve bottom space in pitch/views so content doesn't hide behind .ib */
-.pitch,.vl,.vg,.ve{padding-bottom:62px!important}
-@supports(padding:max(0px)){
-  .pitch,.vl,.vg,.ve{padding-bottom:max(62px,calc(52px + env(safe-area-inset-bottom,0px)))!important}
+.ib-btn{
+  padding:14px 12px;border-radius:12px;background:rgba(167,238,67,.08);
+  border:1px solid rgba(167,238,67,.18);font-family:inherit;font-size:13px;font-weight:700;
+  color:var(--g);cursor:pointer;text-align:left;-webkit-appearance:none;
 }
+.ib-btn:active{background:rgba(167,238,67,.2)}
+.fin-btn{
+  margin-top:auto;padding:16px 12px;border-radius:12px;font-family:inherit;font-size:14px;
+  font-weight:800;color:#0a1a10;background:var(--g);border:1px solid var(--g);
+  cursor:pointer;-webkit-appearance:none;text-align:center;
+}
+.fin-btn:active{background:rgba(167,238,67,.8)}
+.fin-btn.done{background:rgba(167,238,67,.4);color:#fff;border-color:var(--g)}
 
 /* ═══ TIMELINE ═══ */
 .tl-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(6,16,10,.95);flex-direction:column}
@@ -446,11 +483,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   .app-left{display:flex;flex-direction:column;flex:1;min-width:0;position:relative}
   .pitch,.vl,.vg,.ve{padding-bottom:0!important}
   .pitch{flex:1}
-  /* Restore .ib as right sidebar on desktop */
-  .ib{position:absolute;right:4px;top:50%;left:auto;bottom:auto;transform:translateY(-50%);flex-direction:column;justify-content:flex-start;gap:5px;padding:8px 4px;background:rgba(10,26,16,.85);border:1px solid rgba(167,238,67,.1);border-top:1px solid rgba(167,238,67,.1);border-radius:12px;z-index:10}
+  /* Desktop: hide hamburger, use right sidebar always visible */
+  .ib-toggle{display:none}
+  .ib-backdrop{display:none}
+  .ib{position:absolute;right:4px;top:50%;left:auto;bottom:auto;width:auto;transform:translateY(-50%);flex-direction:column;justify-content:flex-start;gap:5px;padding:8px 4px;background:rgba(10,26,16,.85);border:1px solid rgba(167,238,67,.1);border-top:1px solid rgba(167,238,67,.1);border-radius:12px;z-index:10;transition:none}
+  .ib.on,.ib{transform:translateY(-50%)}
   .ib-ev{display:block;font-size:8px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 6px;border-radius:4px}
-  .ib-btn{padding:7px 8px;font-size:9px;flex:initial;text-align:center}
-  .fin-btn{flex:initial}
+  .ib-btn{padding:7px 8px;font-size:9px;flex:initial;text-align:center;margin:0}
+  .fin-btn{flex:initial;margin-top:4px;padding:7px 8px;font-size:9px}
   .app-right{display:none;width:360px;flex-shrink:0;background:rgba(6,16,10,.95);border-left:1px solid rgba(167,238,67,.08);overflow-y:auto}
   .app.on .app-right{display:block}
   .desk-tb-hd{padding:16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
