@@ -20,7 +20,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 /* Header */
 .hdr{text-align:center;padding:24px 16px 16px}
-.hdr .logo{margin:0 auto 12px}
+.hdr .logo{display:block;margin:0 auto 12px;position:static;transform:none}
 .hdr .meta{font-size:11px;color:var(--w4);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin-top:8px}
 .hdr .meta span{display:flex;align-items:center;gap:4px}
 .hdr .game-name{font-size:22px;font-weight:800;margin-top:4px}

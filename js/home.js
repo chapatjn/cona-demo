@@ -119,12 +119,11 @@ function jumpToLiveOrganizador(id) {
   if (typeof initRegistro === 'function') {
     try { initRegistro(mejenga); } catch(e) { console.error(e); }
   }
-  // Open password gate → navigates to organizador on success,
-  // and checkOrgRecovery() auto-fires from router to show recovery dialog
-  if (typeof openPasswordGate === 'function') {
-    openPasswordGate('organizador');
+  // Open the org password modal — checkOrgPass will detect enCurso and jump directly
+  if (typeof openOrgPanel === 'function') {
+    openOrgPanel();
   } else {
-    navigate('organizador');
+    navigate('registro');
   }
 }
 

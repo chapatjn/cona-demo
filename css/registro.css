@@ -39,7 +39,7 @@
             }
 
             .header { grid-area: header; padding: 28px 0 20px; }
-            .logo svg { height: 26px; }
+            #screen-registro .logo svg { height: 26px; }
 
             .left-col {
                 grid-area: left;
@@ -120,8 +120,8 @@
             flex-shrink: 0;
         }
 
-        .logo { position: absolute; left: 50%; transform: translateX(-50%); }
-        .logo svg { height: 22px; width: auto; }
+        #screen-registro .logo { position: absolute; left: 50%; transform: translateX(-50%); }
+        #screen-registro .logo svg { height: 22px; width: auto; }
 
         .live-badge {
             display: flex;

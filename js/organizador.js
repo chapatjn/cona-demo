@@ -67,12 +67,28 @@ function loadState(){
     const raw=localStorage.getItem(LS_KEY);
     if(!raw)return false;
     const s=JSON.parse(raw);
-    N=s.N||'';F=s.F||'';CA=s.CA||'';UB=s.UB||'';ORG=s.ORG||'';
-    P=s.P||[];EV=s.EV||[];tS=s.tS||0;MVP=s.MVP||null;done=s.done||false;
-    mejengaId=s.mejengaId||null;registroMejengaId=s.registroMejengaId||null;
-    P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.faltas===undefined)p.faltas=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;if(p.bench===undefined)p.bench=false;});
+    _applyState(s);
     return P.length>0;
   }catch(e){return false;}
+}
+// Apply state from any source (localStorage or Firestore)
+function _applyState(s){
+  N=s.N||'';F=s.F||'';CA=s.CA||'';UB=s.UB||'';ORG=s.ORG||'';
+  // Firestore stores players as a keyed map; convert back to array
+  if(s.players && !s.P){
+    P=Object.values(s.players);
+  } else {
+    P=s.P||[];
+  }
+  EV=s.EV||[];tS=s.tS||0;MVP=s.MVP||null;done=s.done||false;
+  mejengaId=s.mejengaId||null;registroMejengaId=s.registroMejengaId||null;
+  P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.faltas===undefined)p.faltas=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;if(p.bench===undefined)p.bench=false;});
+}
+// Load state from Firestore doc (called when localStorage is empty — e.g. organizer on a different device)
+function loadStateFromFirestore(data){
+  _applyState(data);
+  saveState(); // Cache locally so next visit is instant
+  return P.length>0;
 }
 function clearState(){localStorage.removeItem(LS_KEY);}
 function generateId(){

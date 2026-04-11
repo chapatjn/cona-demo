@@ -30,13 +30,50 @@ function checkOrgPass() {
     // Unlock organizer mode — persists until reload
     window.isOrganizer = true;
     sessionStorage.setItem('cona_org_mode', '1');
-    updateOrgStepper();
-    openChoice();
+    // Check if this mejenga is live — jump directly to the live tracker
+    const cur = (typeof currentMejengaData !== 'undefined') ? currentMejengaData : null;
+    if (cur && cur.enCurso && !cur.finalizado) {
+      jumpToLiveFromPassword(cur);
+      return;
+    }
+    // Otherwise go to the next logical step: Pagos
+    window.navigate('pagos');
   } else {
     errEl.textContent = 'Contraseña incorrecta';
     const card = document.getElementById('opCard');
     card.classList.add('op-shake');
     setTimeout(() => card.classList.remove('op-shake'), 400);
+  }
+}
+
+// Jump to organizador for a live mejenga (fetches state from Firestore)
+function jumpToLiveFromPassword(mejenga) {
+  _origNavigate('organizador');
+  // Try localStorage first, then Firestore
+  if (typeof loadState === 'function' && loadState()) {
+    if (typeof showRecovery === 'function') showRecovery();
+    return;
+  }
+  // Fetch from Firestore
+  if (mejenga.organizadorMejengaId) {
+    db.collection('mejengas_organizador').doc(mejenga.organizadorMejengaId).get()
+      .then(doc => {
+        if (!doc.exists) {
+          alert('No se encontró el estado de la mejenga en vivo. Iniciá una nueva.');
+          _origNavigate('home');
+          return;
+        }
+        if (typeof loadStateFromFirestore === 'function') {
+          loadStateFromFirestore(doc.data());
+          if (typeof resumeState === 'function') resumeState();
+        }
+      })
+      .catch(err => {
+        console.error('Error loading live state:', err);
+        alert('Error cargando la mejenga en vivo.');
+      });
+  } else {
+    alert('Esta mejenga está marcada como en vivo pero no tiene datos del organizador.');
   }
 }
 
@@ -106,16 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Choice modal ─────────────────────────────────────────────────────────
-
-function openChoice() {
-  // Show the mejenga name
-  const nameEl = document.getElementById('ocMejengaName');
-  if (nameEl) {
-    const subtitle = document.getElementById('regSubtitle');
-    if (subtitle) nameEl.textContent = subtitle.textContent || 'Mejenga';
-  }
-  document.getElementById('ocOverlay').classList.remove('hidden');
-}
+// DEPRECATED: The choice modal has been removed in favor of the persistent
+// stepper. These functions are kept as no-ops for backwards compatibility.
+function openChoice() { /* deprecated */ }
 
 function goToReporteFromPanel() {
   closeChoice();
@@ -134,9 +164,7 @@ function goToReporteFromPanel() {
   }
 }
 
-function closeChoice() {
-  document.getElementById('ocOverlay').classList.add('hidden');
-}
+function closeChoice() { /* deprecated */ }
 
 // ── Navigate override: init pagos/equipo screens on navigate ────────────
 // Hook into router.js navigate by wrapping it.
