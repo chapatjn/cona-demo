@@ -6,9 +6,9 @@
 --neg-bg:rgba(20,20,25,.85);--neg-c:rgba(255,255,255,.55);
 --ver-bg:rgba(167,238,67,.88);--ver-c:#0a1a10;
 }
-html{background:var(--bg)}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--w);min-height:100vh;display:flex;justify-content:center}
-.wrap{width:100%;max-width:480px;padding:0 0 40px}
+/* Scope report styles to its screen — avoid leaking body:flex to other screens */
+#screen-reporte{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--w);min-height:100vh;display:flex;justify-content:center}
+#screen-reporte .wrap{width:100%;max-width:520px;padding:0 0 40px}
 
 /* Loading / Error */
 .state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;padding:20px}
@@ -77,7 +77,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .pn .stat-icon svg{width:11px;height:11px;flex-shrink:0}
 .pn .stat-icon .stat-x{font-size:8px;font-weight:800;color:#fff;line-height:1}
 @media(min-width:600px){
-  .wrap{max-width:720px}
+  #screen-reporte .wrap{max-width:720px}
   .pn .bl{width:64px;height:64px;font-size:22px}
   .pn .rating{font-size:12px;padding:4px 10px;top:-12px}
   .pn .lb{font-size:11px;max-width:100px;margin-top:6px}

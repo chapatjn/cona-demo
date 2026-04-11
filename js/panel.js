@@ -48,6 +48,8 @@ function checkOrgPass() {
 
 // Jump to organizador for a live mejenga (fetches state from Firestore)
 function jumpToLiveFromPassword(mejenga) {
+  console.log('[live] jumpToLiveFromPassword:', mejenga.id, mejenga.organizadorMejengaId);
+
   // Suppress auto-recovery check so it doesn't use stale localStorage
   window._suppressOrgRecovery = true;
   _origNavigate('organizador');
@@ -55,23 +57,30 @@ function jumpToLiveFromPassword(mejenga) {
 
   // Try localStorage FIRST — but only if it matches this specific mejenga
   if (typeof loadState === 'function' && loadState(mejenga.id)) {
+    console.log('[live] loaded from localStorage');
     if (typeof resumeState === 'function') resumeState();
     return;
   }
+  console.log('[live] localStorage empty/stale, fetching from Firestore');
 
   // Fetch from Firestore — try direct ref first, then search by registroMejengaId
   const tryDirect = mejenga.organizadorMejengaId
     ? db.collection('mejengas_organizador').doc(mejenga.organizadorMejengaId).get()
-        .then(doc => doc.exists ? doc : null)
+        .then(doc => {
+          console.log('[live] direct fetch:', doc.exists);
+          return doc.exists ? doc : null;
+        })
     : Promise.resolve(null);
 
   tryDirect.then(doc => {
     if (doc) return doc;
-    // Fallback: search by registroMejengaId field (no orderBy to avoid needing composite index)
+    // Fallback: search by registroMejengaId field
+    console.log('[live] searching mejengas_organizador by registroMejengaId=' + mejenga.id);
     return db.collection('mejengas_organizador')
       .where('registroMejengaId', '==', mejenga.id)
       .get()
       .then(snap => {
+        console.log('[live] search result:', snap.empty ? 'empty' : (snap.size + ' docs'));
         if (snap.empty) return null;
         // Pick the most recent by ts field
         const docs = snap.docs.sort((a,b) => (b.data().ts||0) - (a.data().ts||0));
@@ -79,19 +88,23 @@ function jumpToLiveFromPassword(mejenga) {
       });
   }).then(doc => {
     if (!doc) {
-      // No saved state — offer to start fresh from equipos
-      alert('Esta mejenga no tiene sesión en vivo guardada todavía. Te llevamos a Equipos para iniciarla.');
+      console.warn('[live] no live state found for mejenga', mejenga.id);
+      alert('Esta mejenga no tiene sesión en vivo guardada todavía.\n\nEsto puede pasar si se inició antes de los últimos cambios.\nTe llevamos a Equipos para iniciarla de nuevo.');
       _origNavigate('equipo');
       if (typeof initEquipo === 'function') initEquipo();
       return;
     }
+    console.log('[live] got state doc:', doc.id);
+    const data = doc.data();
+    console.log('[live] state has', (data.P || []).length, 'players');
     if (typeof loadStateFromFirestore === 'function') {
-      loadStateFromFirestore(doc.data());
+      loadStateFromFirestore(data);
       if (typeof resumeState === 'function') resumeState();
+      console.log('[live] resumed successfully');
     }
   }).catch(err => {
-    console.error('Error loading live state:', err);
-    alert('Error cargando la mejenga en vivo: ' + (err.message || err));
+    console.error('[live] Error loading state:', err);
+    alert('Error cargando la mejenga en vivo:\n' + (err.message || err));
   });
 }
 
