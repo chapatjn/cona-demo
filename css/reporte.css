@@ -7,7 +7,8 @@
 --ver-bg:rgba(167,238,67,.88);--ver-c:#0a1a10;
 }
 /* Scope report styles to its screen — avoid leaking body:flex to other screens */
-#screen-reporte{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--w);min-height:100vh;display:flex;justify-content:center}
+/* IMPORTANT: use .active to avoid overriding .screen{display:none} from router.css */
+#screen-reporte.active{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--w);min-height:100vh;display:flex;justify-content:center}
 #screen-reporte .wrap{width:100%;max-width:520px;padding:0 0 40px}
 
 /* Loading / Error */
