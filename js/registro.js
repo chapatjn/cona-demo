@@ -216,7 +216,7 @@
 
         function renderBancaSection(bancaPlayers) {
             const section = document.getElementById('bancaSection');
-            const list    = document.getElementById('bancaList');
+            const list    = document.getElementById('regBancaList');
             const count   = document.getElementById('bancaListCount');
             if (!section) return;
             if (bancaPlayers.length === 0) { section.style.display = 'none'; return; }
