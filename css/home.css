@@ -217,20 +217,46 @@
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
-  padding: 14px 16px;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
+  flex-direction: column;
   transition: background 0.15s, border-color 0.15s;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  overflow: hidden;
+}
+
+.sh-game-tap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
 }
 
 .sh-game-card:hover  { background: rgba(255,255,255,0.06); }
-.sh-game-card:active {
+.sh-game-tap:active {
   background: rgba(167,238,67,0.06);
-  border-color: rgba(167,238,67,0.2);
+}
+
+.sh-game-del {
+  background: none;
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  color: rgba(255,80,80,0.5);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 7px 16px;
+  cursor: pointer;
+  text-align: right;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.sh-game-del:active {
+  background: rgba(255,80,80,0.08);
+  color: rgba(255,80,80,0.8);
 }
 
 .sh-game-num {

@@ -83,14 +83,45 @@ function renderMejengaCard(m, state) {
     action = `onclick="selectMejengaRegistro('${m.id}')"`;
   }
 
-  return `<div class="sh-game-card${cardClass}" ${action}>
-    <div class="sh-game-num">${m.numero || '?'}</div>
-    <div class="sh-game-info">
-      <div class="sh-game-name">${escapeH(m.nombre || 'Mejenga')}${badge}</div>
-      <div class="sh-game-meta">${meta || '&mdash;'}</div>
+  return `<div class="sh-game-card${cardClass}">
+    <div class="sh-game-tap" ${action}>
+      <div class="sh-game-num">${m.numero || '?'}</div>
+      <div class="sh-game-info">
+        <div class="sh-game-name">${escapeH(m.nombre || 'Mejenga')}${badge}</div>
+        <div class="sh-game-meta">${meta || '&mdash;'}</div>
+      </div>
+      <div class="sh-game-arrow">&#8250;</div>
     </div>
-    <div class="sh-game-arrow">&#8250;</div>
+    <button class="sh-game-del" onclick="event.stopPropagation();deleteMejenga('${m.id}')">Borrar</button>
   </div>`;
+}
+
+function deleteMejenga(id) {
+  const mejenga = mejengasCache.find(m => m.id === id);
+  const name = mejenga ? (mejenga.nombre || 'esta mejenga') : 'esta mejenga';
+  if (!confirm('Borrar "' + name + '"?\nEsta accion no se puede deshacer.')) return;
+  // Delete the mejenga doc + any linked organizador doc
+  const tasks = [
+    db.collection('mejengas').doc(id).delete()
+  ];
+  if (mejenga && mejenga.organizadorMejengaId) {
+    tasks.push(
+      db.collection('mejengas_organizador').doc(mejenga.organizadorMejengaId).delete()
+        .catch(e => console.warn('Delete organizador doc failed:', e.message))
+    );
+  }
+  if (mejenga && mejenga.reporteId && mejenga.reporteId !== mejenga.organizadorMejengaId) {
+    tasks.push(
+      db.collection('mejengas_organizador').doc(mejenga.reporteId).delete()
+        .catch(e => console.warn('Delete reporte doc failed:', e.message))
+    );
+  }
+  Promise.all(tasks).then(() => {
+    // onSnapshot will auto-refresh the list
+  }).catch(err => {
+    console.error('Delete mejenga error:', err);
+    alert('Error al borrar la mejenga: ' + (err.message || err));
+  });
 }
 
 function selectMejengaRegistro(id) {
