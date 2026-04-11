@@ -68,23 +68,20 @@ function renderMejengaCard(m, state) {
 
   let badge = '';
   let cardClass = '';
-  let action = '';
 
   if (state === 'vivo') {
     badge = `<span class="sh-game-badge live"><span class="sh-game-live-dot"></span>En vivo</span>`;
     cardClass = ' sh-game-card-live';
-    action = `onclick="jumpToLiveOrganizador('${m.id}')"`;
   } else if (state === 'final') {
     badge = `<span class="sh-game-badge fin">Finalizada</span>`;
     cardClass = ' sh-game-card-done';
-    action = `onclick="viewMejengaReport('${m.id}')"`;
   } else {
     badge = `<span class="sh-game-badge open">Abierta</span>`;
-    action = `onclick="selectMejengaRegistro('${m.id}')"`;
   }
 
-  return `<div class="sh-game-card${cardClass}">
-    <div class="sh-game-tap" ${action}>
+  // Use data attributes + event delegation (more reliable than inline onclick in iOS Safari)
+  return `<div class="sh-game-card${cardClass}" data-mejenga-id="${escapeH(m.id)}" data-state="${state}">
+    <div class="sh-game-tap" data-action="open">
       <div class="sh-game-num">${m.numero || '?'}</div>
       <div class="sh-game-info">
         <div class="sh-game-name">${escapeH(m.nombre || 'Mejenga')}${badge}</div>
@@ -92,9 +89,36 @@ function renderMejengaCard(m, state) {
       </div>
       <div class="sh-game-arrow">&#8250;</div>
     </div>
-    <button class="sh-game-del" onclick="event.stopPropagation();deleteMejenga('${m.id}')">Borrar</button>
+    <button type="button" class="sh-game-del" data-action="delete">Borrar</button>
   </div>`;
 }
+
+// Event delegation: single listener on homeList catches all clicks
+document.addEventListener('DOMContentLoaded', () => {
+  const list = document.getElementById('homeList');
+  if (!list) return;
+  list.addEventListener('click', (e) => {
+    const actionEl = e.target.closest('[data-action]');
+    if (!actionEl) return;
+    const card = actionEl.closest('.sh-game-card');
+    if (!card) return;
+    const id = card.dataset.mejengaId;
+    const state = card.dataset.state;
+    const action = actionEl.dataset.action;
+    if (!id) return;
+
+    if (action === 'delete') {
+      e.stopPropagation();
+      deleteMejenga(id);
+      return;
+    }
+    if (action === 'open') {
+      if (state === 'vivo') jumpToLiveOrganizador(id);
+      else if (state === 'final') viewMejengaReport(id);
+      else selectMejengaRegistro(id);
+    }
+  });
+});
 
 function deleteMejenga(id) {
   const mejenga = mejengasCache.find(m => m.id === id);
