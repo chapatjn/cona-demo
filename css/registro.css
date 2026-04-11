@@ -710,6 +710,103 @@
             background: #142029; min-height: 100vh;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+        /* ═══ ORGANIZER STEPPER ═══ */
+        .org-stepper {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            background: rgba(14,26,34,0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(167,238,67,0.15);
+            padding: 10px 12px;
+            margin: 0 -20px 12px;
+        }
+        .org-stepper-inner {
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .org-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 6px 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: all .15s;
+            min-width: 0;
+        }
+        .org-step:active { background: rgba(167,238,67,0.08); }
+        .org-step-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            transition: all .15s;
+        }
+        .org-step-lbl {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            white-space: nowrap;
+        }
+        .org-step.active .org-step-num {
+            background: #A7EE43;
+            color: #0a1a10;
+            box-shadow: 0 0 0 3px rgba(167,238,67,0.18);
+        }
+        .org-step.active .org-step-lbl {
+            color: #A7EE43;
+        }
+        .org-step.go .org-step-num {
+            background: rgba(167,238,67,0.15);
+            color: #A7EE43;
+            border: 1px solid rgba(167,238,67,0.3);
+        }
+        .org-step.go:active .org-step-num {
+            background: #A7EE43;
+            color: #0a1a10;
+        }
+        .org-step.go .org-step-lbl {
+            color: #A7EE43;
+        }
+        .org-step-sep {
+            width: 12px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+        @media (min-width: 600px) {
+            .org-stepper { margin: 0 -40px 16px; padding: 14px 16px; }
+            .org-step-num { width: 26px; height: 26px; font-size: 12px; }
+            .org-step-lbl { font-size: 10px; }
+            .org-step-sep { width: 20px; }
+        }
+        @media (min-width: 960px) {
+            .org-stepper { margin: 0 -80px 20px; }
+        }
+        /* Registro screen: inject stepper into container padding */
+        #screen-registro .org-stepper { margin: 0 -20px 16px; }
+        @media (min-width: 600px) { #screen-registro .org-stepper { margin: 0 -20px 16px; } }
+        @media (min-width: 900px) { #screen-registro .org-stepper { margin: 0 -20px 20px; } }
+
         .panel-wrap {
             width: 100%;
             padding: 0 20px 80px;

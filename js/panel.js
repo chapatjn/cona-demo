@@ -27,6 +27,10 @@ function checkOrgPass() {
   const errEl = document.getElementById('opError');
   if (val.toLowerCase() === ORG_PANEL_PASS) {
     closeOrgPanel();
+    // Unlock organizer mode — persists until reload
+    window.isOrganizer = true;
+    sessionStorage.setItem('cona_org_mode', '1');
+    updateOrgStepper();
     openChoice();
   } else {
     errEl.textContent = 'Contraseña incorrecta';
@@ -34,6 +38,64 @@ function checkOrgPass() {
     card.classList.add('op-shake');
     setTimeout(() => card.classList.remove('op-shake'), 400);
   }
+}
+
+// Restore organizer mode on page reload within same session
+if (sessionStorage.getItem('cona_org_mode') === '1') {
+  window.isOrganizer = true;
+}
+
+// ── ORGANIZER STEPPER ────────────────────────────────────────────────
+// Persistent navigation between Registro → Pagos → Equipos → Iniciar
+// Visible only when the user has entered the organizer password
+function updateOrgStepper() {
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen) return;
+  const screenId = activeScreen.id; // screen-registro, screen-pagos, etc.
+  const onStepperScreen = ['screen-registro', 'screen-pagos', 'screen-equipo'].includes(screenId);
+
+  // Remove any existing stepper
+  document.querySelectorAll('.org-stepper').forEach(el => el.remove());
+
+  if (!window.isOrganizer || !onStepperScreen) return;
+
+  const stepperHtml = `
+    <div class="org-stepper">
+      <div class="org-stepper-inner">
+        <div class="org-step ${screenId === 'screen-registro' ? 'active' : ''}" onclick="orgStepperNav('registro')">
+          <div class="org-step-num">1</div>
+          <div class="org-step-lbl">Registro</div>
+        </div>
+        <div class="org-step-sep"></div>
+        <div class="org-step ${screenId === 'screen-pagos' ? 'active' : ''}" onclick="orgStepperNav('pagos')">
+          <div class="org-step-num">2</div>
+          <div class="org-step-lbl">Pagos</div>
+        </div>
+        <div class="org-step-sep"></div>
+        <div class="org-step ${screenId === 'screen-equipo' ? 'active' : ''}" onclick="orgStepperNav('equipo')">
+          <div class="org-step-num">3</div>
+          <div class="org-step-lbl">Equipos</div>
+        </div>
+        <div class="org-step-sep"></div>
+        <div class="org-step go" onclick="orgStepperStart()">
+          <div class="org-step-num">▶</div>
+          <div class="org-step-lbl">Iniciar</div>
+        </div>
+      </div>
+    </div>
+  `;
+  activeScreen.insertAdjacentHTML('afterbegin', stepperHtml);
+}
+
+function orgStepperNav(dest) {
+  _origNavigate(dest);
+  if (dest === 'pagos') initPagos();
+  if (dest === 'equipo') initEquipo();
+  updateOrgStepper();
+}
+
+function orgStepperStart() {
+  goToOrganizador();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -83,6 +145,12 @@ window.navigate = function(screen) {
   _origNavigate(screen);
   if (screen === 'pagos')  initPagos();
   if (screen === 'equipo') initEquipo();
+  // Reset organizer mode when leaving the stepper screens
+  if (screen === 'home') {
+    window.isOrganizer = false;
+    sessionStorage.removeItem('cona_org_mode');
+  }
+  updateOrgStepper();
 };
 
 // ── PAGOS SCREEN ─────────────────────────────────────────────────────────
