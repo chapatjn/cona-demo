@@ -721,15 +721,34 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(167,238,67,0.15);
-            padding: 10px 12px;
+            padding: 10px 10px;
             margin: 0 -20px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .org-home-btn {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(167,238,67,0.1);
+            border: 1px solid rgba(167,238,67,0.25);
+            color: #A7EE43;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .org-home-btn:active { background: rgba(167,238,67,0.22); }
         .org-stepper-inner {
-            max-width: 520px;
-            margin: 0 auto;
+            flex: 1;
             display: flex;
             align-items: center;
             gap: 4px;
+            min-width: 0;
         }
         .org-step {
             flex: 1;

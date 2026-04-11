@@ -8,6 +8,18 @@ const ORG_PANEL_PASS = 'messi';
 // ── Password modal ───────────────────────────────────────────────────────
 
 function openOrgPanel() {
+  // If already organizer, skip the password modal and act directly
+  if (window.isOrganizer) {
+    // If viewing a live mejenga — jump directly to the tracker
+    const cur = (typeof currentMejengaData !== 'undefined') ? currentMejengaData : null;
+    if (cur && cur.enCurso && !cur.finalizado) {
+      jumpToLiveFromPassword(cur);
+      return;
+    }
+    // Otherwise go to pagos (the first organizer step)
+    window.navigate('pagos');
+    return;
+  }
   const overlay = document.getElementById('opOverlay');
   const input   = document.getElementById('opInput');
   const errEl   = document.getElementById('opError');
@@ -129,6 +141,9 @@ function updateOrgStepper() {
 
   const stepperHtml = `
     <div class="org-stepper">
+      <button class="org-home-btn" type="button" onclick="orgStepperNav('home')" aria-label="Inicio">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </button>
       <div class="org-stepper-inner">
         <div class="org-step ${screenId === 'screen-registro' ? 'active' : ''}" onclick="orgStepperNav('registro')">
           <div class="org-step-num">1</div>
@@ -156,6 +171,10 @@ function updateOrgStepper() {
 }
 
 function orgStepperNav(dest) {
+  if (dest === 'home') {
+    window.navigate('home');
+    return;
+  }
   _origNavigate(dest);
   if (dest === 'pagos') initPagos();
   if (dest === 'equipo') initEquipo();
