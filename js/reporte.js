@@ -491,6 +491,7 @@ function render(D) {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('report').classList.remove('hidden');
   document.getElementById('report').dataset.mejengaId = D.id || '';
+  document.getElementById('report').dataset.registroMejengaId = D.registroMejengaId || '';
 }
 
 /* ── Player Popup ── */
@@ -732,9 +733,10 @@ function goBack(){
 
 function shareReport(){
   const reportEl=document.getElementById('report');
-  const id=reportEl?reportEl.dataset.mejengaId:'';
+  // Use registroMejengaId for deep link (matches router.js ?mejenga= handler)
+  const regId=reportEl?reportEl.dataset.registroMejengaId:'';
   const base=location.href.replace(/\?.*$/,'');
-  const url=id?base+'?id='+id:location.href;
+  const url=regId?base+'?mejenga='+regId:location.href;
   if(navigator.share){
     navigator.share({title:'Reporte de Mejenga — Cona',url:url}).catch(()=>{});
   }else{

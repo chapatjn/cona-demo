@@ -1154,6 +1154,34 @@
             font-style: italic;
         }
 
+        /* Drag & Drop visual feedback */
+        .eq-dragging { opacity: 0.3; }
+        .eq-drag-ghost {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #A7EE43;
+            color: #0a1a10;
+            border: 2px solid #fff;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            opacity: 0.92;
+            transform: scale(1.05);
+        }
+        .eq-col.eq-drop-target {
+            border-style: dashed !important;
+            border-width: 2px !important;
+            transition: all 0.15s;
+        }
+        .eq-col.t1.eq-drop-target { border-color: rgba(255,255,255,0.5) !important; background: rgba(255,255,255,0.06); }
+        .eq-col.t2.eq-drop-target { border-color: rgba(167,238,67,0.6) !important; background: rgba(167,238,67,0.08); }
+
         .eq-share-btn {
             margin-top: 18px;
             width: 100%;

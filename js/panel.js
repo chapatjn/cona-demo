@@ -447,9 +447,11 @@ function renderEquipoList(players) {
 function equipoPill(p, team) {
   const pos = p.position === 'portero' ? '<span class="eq-pill-pos">POR</span>' : '';
   const num = p.numero ? `<span class="eq-pill-num">${p.numero}</span>` : '';
-  return `<button type="button" class="eq-pill t${team}" onclick="unassignPlayer('${p.id}')">
+  return `<div class="eq-pill t${team}" data-player-id="${p.id}" data-team="${team}"
+    ontouchstart="eqDragStart(event,'${p.id}')" ontouchmove="eqDragMove(event)" ontouchend="eqDragEnd(event,'${p.id}')"
+    onclick="unassignPlayer('${p.id}')">
     ${num}<span class="eq-pill-name">${escapePanel(p.name)}</span>${pos}
-  </button>`;
+  </div>`;
 }
 
 // Get next available number for a team (1, 2, 3...) skipping any already used
@@ -821,6 +823,102 @@ function startFromAlistar() {
   }
   // Use goToOrganizador which handles the final validation and start
   goToOrganizador();
+}
+
+// ── Equipos Drag & Drop ──────────────────────────────────────────────────
+let _eqDrag = null; // {pid, startX, startY, el, ghost, moved}
+
+function eqDragStart(e, pid) {
+  const touch = e.touches[0];
+  const el = e.currentTarget;
+  _eqDrag = {
+    pid: pid,
+    startX: touch.clientX,
+    startY: touch.clientY,
+    el: el,
+    ghost: null,
+    moved: false,
+    longPress: false
+  };
+  // Start a timer — drag only activates after 300ms hold
+  _eqDrag._timer = setTimeout(() => {
+    if (!_eqDrag) return;
+    _eqDrag.longPress = true;
+    // Create floating ghost
+    const rect = el.getBoundingClientRect();
+    const ghost = el.cloneNode(true);
+    ghost.className = 'eq-drag-ghost';
+    ghost.style.width = rect.width + 'px';
+    ghost.style.left = rect.left + 'px';
+    ghost.style.top = rect.top + 'px';
+    document.body.appendChild(ghost);
+    _eqDrag.ghost = ghost;
+    el.classList.add('eq-dragging');
+    // Highlight drop zones
+    document.querySelectorAll('.eq-col').forEach(c => c.classList.add('eq-drop-target'));
+    if (navigator.vibrate) navigator.vibrate(15);
+  }, 300);
+}
+
+function eqDragMove(e) {
+  if (!_eqDrag || !_eqDrag.longPress) return;
+  e.preventDefault();
+  _eqDrag.moved = true;
+  const touch = e.touches[0];
+  if (_eqDrag.ghost) {
+    _eqDrag.ghost.style.left = (touch.clientX - 40) + 'px';
+    _eqDrag.ghost.style.top = (touch.clientY - 20) + 'px';
+  }
+}
+
+function eqDragEnd(e, pid) {
+  if (!_eqDrag) return;
+  clearTimeout(_eqDrag._timer);
+  const wasDrag = _eqDrag.moved && _eqDrag.longPress;
+
+  // Clean up ghost + classes
+  if (_eqDrag.ghost) _eqDrag.ghost.remove();
+  if (_eqDrag.el) _eqDrag.el.classList.remove('eq-dragging');
+  document.querySelectorAll('.eq-col').forEach(c => c.classList.remove('eq-drop-target'));
+
+  if (wasDrag) {
+    // Determine drop target — which column did we drop on?
+    const touch = e.changedTouches[0];
+    const cols = document.querySelectorAll('.eq-col');
+    let dropTeam = null;
+    cols.forEach(col => {
+      const rect = col.getBoundingClientRect();
+      if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+          touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        dropTeam = col.classList.contains('t1') ? 1 : 2;
+      }
+    });
+
+    const p = _equipoPlayers.find(x => x.id === pid);
+    if (dropTeam && p && p.equipo !== dropTeam) {
+      // Move player to the other team
+      const update = { equipo: dropTeam };
+      if (p.position !== 'portero') {
+        update.numero = nextNumForTeam(dropTeam);
+      }
+      jugadoresRef.doc(pid).update(update).then(() => {
+        p.equipo = dropTeam;
+        if (update.numero) p.numero = update.numero;
+        renderEquipoList(_equipoPlayers);
+      });
+    } else if (dropTeam === null && p) {
+      // Dropped outside columns — unassign
+      jugadoresRef.doc(pid).update({ equipo: 0, numero: null }).then(() => {
+        p.equipo = 0;
+        p.numero = null;
+        renderEquipoList(_equipoPlayers);
+      });
+    }
+
+    // Prevent the onclick from firing after drag
+    e.preventDefault();
+  }
+  _eqDrag = null;
 }
 
 // ── Util ──────────────────────────────────────────────────────────────────
