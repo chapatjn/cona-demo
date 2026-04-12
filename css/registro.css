@@ -1077,6 +1077,27 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        .eq-pill-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+        .eq-pill.t1 .eq-pill-num {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .eq-pill.t2 .eq-pill-num {
+            background: rgba(10,26,16,0.2);
+            color: #0a1a10;
+        }
         .eq-pill-pos {
             font-size: 8px;
             font-weight: 900;

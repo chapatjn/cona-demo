@@ -406,17 +406,36 @@ function renderEquipoList(players) {
 
 function equipoPill(p, team) {
   const pos = p.position === 'portero' ? '<span class="eq-pill-pos">POR</span>' : '';
+  const num = p.numero ? `<span class="eq-pill-num">${p.numero}</span>` : '';
   return `<button type="button" class="eq-pill t${team}" onclick="unassignPlayer('${p.id}')">
-    <span class="eq-pill-name">${escapePanel(p.name)}</span>${pos}
+    ${num}<span class="eq-pill-name">${escapePanel(p.name)}</span>${pos}
   </button>`;
+}
+
+// Get next available number for a team (1, 2, 3...) skipping any already used
+function nextNumForTeam(team) {
+  const used = new Set(
+    _equipoPlayers
+      .filter(x => x.equipo === team && x.numero && x.position !== 'portero')
+      .map(x => x.numero)
+  );
+  let n = 1;
+  while (used.has(n)) n++;
+  return n;
 }
 
 function assignTo(playerId, team) {
   if (!jugadoresRef) return;
   const p = _equipoPlayers.find(x => x.id === playerId);
   if (!p) return;
-  jugadoresRef.doc(playerId).update({ equipo: team }).then(() => {
+  // Auto-assign number: porteros don't get numbers, field players get next available
+  const update = { equipo: team };
+  if (p.position !== 'portero' && !p.numero) {
+    update.numero = nextNumForTeam(team);
+  }
+  jugadoresRef.doc(playerId).update(update).then(() => {
     p.equipo = team;
+    if (update.numero) p.numero = update.numero;
     renderEquipoList(_equipoPlayers);
   }).catch(err => console.error('assignTo error:', err));
 }
@@ -425,8 +444,10 @@ function unassignPlayer(playerId) {
   if (!jugadoresRef) return;
   const p = _equipoPlayers.find(x => x.id === playerId);
   if (!p) return;
-  jugadoresRef.doc(playerId).update({ equipo: 0 }).then(() => {
+  // Clear both team and number so the number becomes free again
+  jugadoresRef.doc(playerId).update({ equipo: 0, numero: null }).then(() => {
     p.equipo = 0;
+    p.numero = null;
     renderEquipoList(_equipoPlayers);
   }).catch(err => console.error('unassignPlayer error:', err));
 }
