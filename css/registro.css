@@ -884,6 +884,9 @@
             gap: 12px;
         }
         .pagos-info { flex: 1; min-width: 0; }
+        .pagos-info-editable { cursor: pointer; border-radius: 8px; padding: 4px 6px; margin: -4px -6px; transition: background 0.15s; }
+        .pagos-info-editable:hover { background: rgba(255,255,255,0.04); }
+        .pagos-info-editable:active { background: rgba(255,255,255,0.08); }
         .pagos-name { font-size: 15px; font-weight: 700; color: #fff; }
         .pagos-pos  { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 3px; font-weight: 500; }
         .pagos-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }

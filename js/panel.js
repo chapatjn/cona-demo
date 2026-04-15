@@ -294,7 +294,7 @@ function pagosRow(p, inBanca, hasSpace) {
                onclick="meterDeBanca('${p.id}')">Meter</button>`
     : '';
   return `<div class="pagos-row" id="prow-${p.id}">
-    <div class="pagos-info">
+    <div class="pagos-info pagos-info-editable" onclick="editJugadorNombre('${p.id}')" title="Editar nombre">
       <div class="pagos-name">${escapePanel(p.name)}</div>
       <div class="pagos-pos">${pos}${inBanca ? ' · En banca' : ''}</div>
     </div>
@@ -307,6 +307,30 @@ function pagosRow(p, inBanca, hasSpace) {
       <button class="pagos-retirar" onclick="retirarJugador('${p.id}')">Retirar</button>
     </div>
   </div>`;
+}
+
+function editJugadorNombre(playerId) {
+  if (!jugadoresRef) return;
+  jugadoresRef.doc(playerId).get().then(doc => {
+    if (!doc.exists) return;
+    const current = (doc.data().name || '').toString();
+    const next = prompt('Editar nombre del jugador:', current);
+    if (next === null) return;
+    const clean = next.trim();
+    if (!clean || clean === current) return;
+
+    jugadoresRef.where('name', '==', clean).get().then(snap => {
+      const dup = snap.docs.find(d => d.id !== playerId && !d.data().retirado);
+      if (dup) {
+        alert('Ya hay un jugador activo con ese nombre.');
+        return;
+      }
+      jugadoresRef.doc(playerId).update({ name: clean }).then(() => initPagos());
+    });
+  }).catch(err => {
+    console.error('editJugadorNombre error:', err);
+    alert('No se pudo actualizar el nombre.');
+  });
 }
 
 function meterDeBanca(playerId) {
@@ -334,7 +358,7 @@ function meterDeBanca(playerId) {
 function retiradoRow(p) {
   const pos = p.position === 'portero' ? 'Portero' : 'Jugador';
   return `<div class="pagos-row retirado-row">
-    <div class="pagos-info">
+    <div class="pagos-info pagos-info-editable" onclick="editJugadorNombre('${p.id}')" title="Editar nombre">
       <div class="pagos-name retirado-name">${escapePanel(p.name)}</div>
       <div class="pagos-pos">${pos} — retirado</div>
     </div>
@@ -375,7 +399,15 @@ function togglePago(playerId, currentlyPaid) {
   if (typeof jugadoresRef === 'undefined' || !jugadoresRef) return;
   const newVal = !currentlyPaid;
   jugadoresRef.doc(playerId).update({ paid: newVal }).then(() => {
-    initPagos();
+    const row = document.getElementById('prow-' + playerId);
+    const btn = row && row.querySelector('.pagos-toggle');
+    if (btn) {
+      btn.className = 'pagos-toggle ' + (newVal ? 'paid' : 'unpaid');
+      btn.textContent = newVal ? 'Pagado' : 'Pendiente';
+      btn.setAttribute('onclick', "togglePago('" + playerId + "', " + newVal + ")");
+    } else {
+      initPagos();
+    }
   }).catch(err => console.error('togglePago error:', err));
 }
 
