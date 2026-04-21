@@ -455,14 +455,19 @@ function render(D) {
     const winTeam = s1>s2?'t1':s2>s1?'t2':null;
     const onWinner = winTeam && m.team === winTeam;
 
+    const shotsOnGoal = (m.shotsOn||0) + (m.goals||0);
+    const shotsTotal  = shotsOnGoal + (m.shotsOffError||0) + (m.shotsOffNeutral||0) + (m.shotsOffGood||0) + (m.posts||0);
+
     const mvpStats = [
-      {k:'goals',    l:'Goles',                    ic:IC.goal},
-      {k:'assists',  l:'Asistencias',              ic:IC.assist},
-      {k:'defcon',   l:'Contribuciones defensivas',ic:IC.defcon},
-      {k:'salvadas', l:'Salvadas',                 ic:IC.shield},
-      {k:'saves',    l:'Tapadas',                  ic:IC.glove}
-    ].filter(s => (m[s.k]||0) > 0)
-     .map(s => `<div class="mvp-stat">${s.ic}<div class="mvp-stat-v">${m[s.k]}</div><div class="mvp-stat-l">${s.l}</div></div>`).join('');
+      {l:'Goles',                    ic:IC.goal,      v:m.goals||0},
+      {l:'Asistencias',              ic:IC.assist,    v:m.assists||0},
+      {l:'Contribuciones defensivas',ic:IC.defcon,    v:m.defcon||0},
+      {l:'Salvadas',                 ic:IC.shield,    v:m.salvadas||0},
+      {l:'Tapadas',                  ic:IC.glove,     v:m.saves||0},
+      {l:'Tiros al marco',           ic:IC.shotOn,    v:shotsOnGoal},
+      {l:'Tiros',                    ic:IC.tfNeutral, v:shotsTotal}
+    ].filter(s => s.v > 0)
+     .map(s => `<div class="mvp-stat">${s.ic}<div class="mvp-stat-v">${s.v}</div><div class="mvp-stat-l">${s.l}</div></div>`).join('');
 
     const videoBase = location.href.replace(/\/[^\/]*$/,'/');
     $('mvp-section').innerHTML = `
