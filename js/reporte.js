@@ -452,18 +452,16 @@ function render(D) {
     const mDot = m.team === 't1' ? 't1' : 't2';
     const r = m.rating ? parseFloat(m.rating).toFixed(1) : '-';
 
-    // Build context line explaining why they won MVP
-    const highlights = [];
-    if (m.goals) highlights.push(m.goals + (m.goals===1?' gol':' goles'));
-    if (m.assists) highlights.push(m.assists + (m.assists===1?' asistencia':' asistencias'));
-    if (m.saves) highlights.push(m.saves + (m.saves===1?' tapada':' tapadas'));
-    if (m.salvadas) highlights.push(m.salvadas + (m.salvadas===1?' salvada clave':' salvadas clave'));
     const winTeam = s1>s2?'t1':s2>s1?'t2':null;
     const onWinner = winTeam && m.team === winTeam;
-    let reason = '';
-    if (highlights.length) reason = highlights.join(', ');
-    if (onWinner) reason += (reason ? ' con el equipo ganador' : 'Del equipo ganador');
-    reason += '.';
+
+    const mvpStats = [
+      {k:'goals',    l:'Goles',       ic:IC.goal},
+      {k:'assists',  l:'Asistencias', ic:IC.assist},
+      {k:'defcon',   l:'DEF CON',     ic:IC.defcon},
+      {k:'salvadas', l:'Salvadas',    ic:IC.shield},
+      {k:'saves',    l:'Tapadas',     ic:IC.glove}
+    ].map(s => `<div class="mvp-stat">${s.ic}<div class="mvp-stat-v">${m[s.k]||0}</div><div class="mvp-stat-l">${s.l}</div></div>`).join('');
 
     const videoBase = location.href.replace(/\/[^\/]*$/,'/');
     $('mvp-section').innerHTML = `
@@ -476,7 +474,8 @@ function render(D) {
           <span class="mvp-team-label">Equipo ${mTeam} · #${m.num||''}</span>
         </div>
         <div class="mvp-rating">${r}</div>
-        <div class="mvp-reason">${reason}</div>
+        <div class="mvp-stats">${mvpStats}</div>
+        ${onWinner ? '<div class="mvp-reason">Del equipo ganador</div>' : ''}
       </div>`;
     // Robust autoplay for dynamically injected video
     const vid = $('mvp-section').querySelector('video');
