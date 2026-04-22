@@ -803,8 +803,9 @@ function confirmPreview(){
 function calcRatings(){
   if(!P||P.length===0){MVP=null;return;}
   const g1=teamScore('t1'),g2=teamScore('t2');const totalGoals=g1+g2;const winTeam=g1>g2?'t1':g2>g1?'t2':null;const conceded={t1:g2,t2:g1};
-  P.forEach(p=>{let r=6.0;r+=(p.goals||0)*0.8;r+=(p.assists||0)*0.5;r+=(p.defcon||0)*0.1;
-    if((p.defcon||0)>=12)r+=1.5;else if((p.defcon||0)>=8)r+=1.0;else if((p.defcon||0)>=5)r+=0.5;
+  P.forEach(p=>{let r=6.0;r+=(p.goals||0)*0.8;r+=(p.assists||0)*0.5;
+    // DEFCON bonus escalonado: +0.8 desde 8, +0.8 extra desde 15.
+    if((p.defcon||0)>=15)r+=1.6;else if((p.defcon||0)>=8)r+=0.8;
     r+=(p.salvadas||0)*0.35;r+=(p.por?(p.saves||0)*0.2:0);if(p.por)r+=(conceded[p.team]||0)*(-0.2);if(!p.por)r+=(conceded[p.team]||0)*(-0.05);
     r+=(p.shotsOn||0)*0.1;r+=(p.posts||0)*0.05;r+=(p.autogoals||0)*(-1.0);if(winTeam&&p.team===winTeam)r+=0.5;p._raw=r;
   });
