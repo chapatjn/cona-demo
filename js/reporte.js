@@ -253,29 +253,46 @@ function render(D) {
   window._allPlayers = P;
   window._winTeam = s1 > s2 ? 't1' : s2 > s1 ? 't2' : null;
 
+  function placePlayer(p, x, y, extraClass) {
+    const isMvp = p.id === mvpId;
+    const node = document.createElement('div');
+    node.className = `pn ${p.team}${p.por ? ' por' : ''}${isMvp ? ' mvp' : ''}${extraClass ? ' ' + extraClass : ''}`;
+    node.style.left = x + '%';
+    node.style.top = y + '%';
+    node.style.cursor = 'pointer';
+    node.onclick = function(e) { e.stopPropagation(); openPP(p.id); };
+
+    const r = p.rating ? parseFloat(p.rating).toFixed(1) : null;
+    const icons = statIcons(p);
+    node.innerHTML = `
+      ${icons ? `<div class="pn-top"><div class="stats-row">${icons}</div></div>` : ''}
+      <div class="bl">${p.por ? '−' : (p.num || '')}${r ? `<span class="rating ${ratingClass(parseFloat(r))}">${r}</span>` : ''}</div>
+      <div class="lb">${(p.name || '').split(' ')[0]}</div>
+    `;
+    pitch.appendChild(node);
+  }
+
   function renderTeam(players, isTop) {
-    const sorted = sortByRole(players);
+    const active = players.filter(p => !p.bench);
+    const benched = players.filter(p => p.bench);
+
+    const sorted = sortByRole(active);
     const positions = getFormation(sorted, isTop);
     sorted.forEach((p, i) => {
       if (!positions[i]) return;
-      const [x, y] = positions[i];
-      const isMvp = p.id === mvpId;
-      const node = document.createElement('div');
-      node.className = `pn ${p.team}${p.por ? ' por' : ''}${isMvp ? ' mvp' : ''}`;
-      node.style.left = x + '%';
-      node.style.top = y + '%';
-      node.style.cursor = 'pointer';
-      node.onclick = function(e) { e.stopPropagation(); openPP(p.id); };
-
-      const r = p.rating ? parseFloat(p.rating).toFixed(1) : null;
-      const icons = statIcons(p);
-      node.innerHTML = `
-        ${icons ? `<div class="pn-top"><div class="stats-row">${icons}</div></div>` : ''}
-        <div class="bl">${p.por ? '−' : (p.num || '')}${r ? `<span class="rating ${ratingClass(parseFloat(r))}">${r}</span>` : ''}</div>
-        <div class="lb">${(p.name || '').split(' ')[0]}</div>
-      `;
-      pitch.appendChild(node);
+      placePlayer(p, positions[i][0], positions[i][1]);
     });
+
+    // Subs: en la banda lateral, del lado del equipo que jugaron
+    if (benched.length) {
+      const baseY = isTop ? 28 : 72;
+      const xPos = 4;
+      const step = 9;
+      benched.forEach((p, i) => {
+        const yOff = (i - (benched.length - 1) / 2) * step;
+        placePlayer(p, xPos, baseY + yOff, 'sub');
+      });
+    }
   }
   renderTeam(t1p, true);
   renderTeam(t2p, false);
